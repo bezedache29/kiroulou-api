@@ -1,0 +1,99 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Kiroulou API Documentation",
+        "description": "Documentation de l'API utilisée par l'application mobile KiRoulOu, faite avec Laravel",
+        "contact": {
+            "email": "bezedache29@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "https://localhost/api",
+            "description": "Server API KiRoulOu"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Inscription",
+                "description": "Inscription d'un utilisateur",
+                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/PostUser"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "user created"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "requestBodies": {
+            "PostUser": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "email, password"
+                            ],
+                            "properties": {
+                                "firstname": {
+                                    "type": "string",
+                                    "example": "Simon"
+                                },
+                                "lastname": {
+                                    "type": "string",
+                                    "example": "Strueux"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "simon-strueux@gmail.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "password12345"
+                                },
+                                "lat": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": "48.1478596"
+                                },
+                                "lng": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": "-4.1458755"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
