@@ -42,9 +42,147 @@
                     }
                 }
             }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Connexion",
+                "description": "Connexion d'un utilisateur",
+                "operationId": "2dd578ff7aba2721293dac66833b27d1",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/PostUser"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Accès autorisé à la ressource demandée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "Token envoyé par sanctum, lorsque le user a réussi a se connecter",
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                }
+            }
         }
     },
     "components": {
+        "schemas": {
+            "User": {
+                "description": "User Simple",
+                "properties": {
+                    "id": {
+                        "description": "Id du user",
+                        "type": "number",
+                        "example": "0"
+                    },
+                    "email": {
+                        "description": "Email du user",
+                        "type": "string",
+                        "example": "simon-strueux@gmail.com"
+                    },
+                    "created_at": {
+                        "description": "Date de création du user",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Date d'édition du user",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "deleted_at": {
+                        "description": "Date d'e suppression du user",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserLoggedIn": {
+                "description": "Token du user une fois connecté",
+                "properties": {
+                    "token": {
+                        "description": "Token généré par sanctum, après connexion du user",
+                        "type": "string",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                    }
+                },
+                "type": "object"
+            },
+            "UserDetails": {
+                "description": "Détails du user connecté",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    {
+                        "properties": {
+                            "firstname": {
+                                "description": "Prénom du user",
+                                "type": "string",
+                                "example": "Simon",
+                                "nullable": true
+                            },
+                            "lastname": {
+                                "description": "Nom du user",
+                                "type": "string",
+                                "example": "Strueux",
+                                "nullable": true
+                            },
+                            "address_id": {
+                                "description": "Adresse du user (relation avec la table Address)",
+                                "type": "number",
+                                "example": "1",
+                                "nullable": true
+                            },
+                            "is_push_notifications": {
+                                "description": "Est-ce que le user souhaite recevoir des notifications push",
+                                "type": "number",
+                                "example": "1"
+                            },
+                            "is_email_notifications": {
+                                "description": "Est-ce que le user souhaite recevoir des notifications email",
+                                "type": "number",
+                                "example": "1"
+                            },
+                            "stripe_id": {
+                                "description": "ID du customer stripe. On le récupère lors du premier abonnement premium a l'app",
+                                "type": "string",
+                                "example": "cus_ME3MRUkWeQ9vEu",
+                                "nullable": true
+                            },
+                            "club_id": {
+                                "description": "club dans lequel le user fait partie",
+                                "type": "number",
+                                "example": "1",
+                                "nullable": true
+                            }
+                        }
+                    }
+                ]
+            }
+        },
         "responses": {
             "Conflit": {
                 "description": "Conflit de ressource",
@@ -90,6 +228,22 @@
                                     "example": [
                                         "L'adresse email est obligatoire"
                                     ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "Accès refusé à la ressource demandée",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "email et/ou mot de passe incorrect(s)"
                                 }
                             },
                             "type": "object"
