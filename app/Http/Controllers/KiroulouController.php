@@ -18,6 +18,22 @@ namespace App\Http\Controllers;
  *   url=L5_SWAGGER_CONST_HOST,
  *   description="Server API KiRoulOu"
  * )
+ * 
+ * @OA\Response(
+ *   response="Conflit",
+ *   description="Conflit de ressource",
+ *   @OA\JsonContent(
+ *     @OA\Property(property="message", type="string", example="email address already exists")
+ *   )
+ * )
+ * 
+ * @OA\Response(
+ *   response="Created",
+ *   description="Ressource créé",
+ *   @OA\JsonContent(
+ *     @OA\Property(property="message", type="string", example="user created")
+ *   )
+ * ),
  */
 class KiroulouController
 {

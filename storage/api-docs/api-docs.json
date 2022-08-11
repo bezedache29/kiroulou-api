@@ -31,27 +31,51 @@
                     "$ref": "#/components/requestBodies/PostUser"
                 },
                 "responses": {
-                    "200": {
-                        "description": "Utilisateur créé",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "user created"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/Conflit"
                     }
                 }
             }
         }
     },
     "components": {
+        "responses": {
+            "Conflit": {
+                "description": "Conflit de ressource",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "email address already exists"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "Created": {
+                "description": "Ressource créé",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "user created"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "requestBodies": {
             "PostUser": {
                 "required": true,
@@ -62,14 +86,6 @@
                                 "email, password"
                             ],
                             "properties": {
-                                "firstname": {
-                                    "type": "string",
-                                    "example": "Simon"
-                                },
-                                "lastname": {
-                                    "type": "string",
-                                    "example": "Strueux"
-                                },
                                 "email": {
                                     "type": "string",
                                     "example": "simon-strueux@gmail.com"
@@ -77,16 +93,6 @@
                                 "password": {
                                     "type": "string",
                                     "example": "password12345"
-                                },
-                                "lat": {
-                                    "type": "number",
-                                    "format": "float",
-                                    "example": "48.1478596"
-                                },
-                                "lng": {
-                                    "type": "number",
-                                    "format": "float",
-                                    "example": "-4.1458755"
                                 }
                             },
                             "type": "object"
