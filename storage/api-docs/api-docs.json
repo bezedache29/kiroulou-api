@@ -36,6 +36,9 @@
                     },
                     "409": {
                         "$ref": "#/components/responses/Conflit"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
                     }
                 }
             }
@@ -51,7 +54,7 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "email address already exists"
+                                    "example": "Un compte avec cette adresse email existe déjà"
                                 }
                             },
                             "type": "object"
@@ -60,7 +63,7 @@
                 }
             },
             "Created": {
-                "description": "Ressource créé",
+                "description": "Ressource créée",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -68,6 +71,25 @@
                                 "message": {
                                     "type": "string",
                                     "example": "user created"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "UnprocessableEntity": {
+                "description": "Ressource non traitée",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "email": {
+                                    "type": "array",
+                                    "items": {},
+                                    "example": [
+                                        "L'adresse email est obligatoire"
+                                    ]
                                 }
                             },
                             "type": "object"

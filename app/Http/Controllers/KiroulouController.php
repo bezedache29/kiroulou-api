@@ -23,15 +23,30 @@ namespace App\Http\Controllers;
  *   response="Conflit",
  *   description="Conflit de ressource",
  *   @OA\JsonContent(
- *     @OA\Property(property="message", type="string", example="email address already exists")
+ *     @OA\Property(property="message", type="string", example="Un compte avec cette adresse email existe déjà")
  *   )
  * )
  * 
  * @OA\Response(
  *   response="Created",
- *   description="Ressource créé",
+ *   description="Ressource créée",
  *   @OA\JsonContent(
  *     @OA\Property(property="message", type="string", example="user created")
+ *   )
+ * ),
+ * 
+ * @OA\Response(
+ *   response="UnprocessableEntity",
+ *   description="Ressource non traitée",
+ *   @OA\JsonContent(
+ *     @OA\Property(
+ *       property="email",
+ *       type="array",
+ *       @OA\Items(),
+ *       example={
+ *         "L'adresse email est obligatoire",
+ *       },
+ *     )
  *   )
  * ),
  */
