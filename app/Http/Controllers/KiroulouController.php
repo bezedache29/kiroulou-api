@@ -49,6 +49,14 @@ namespace App\Http\Controllers;
  *     )
  *   )
  * ),
+ * 
+ * @OA\Response(
+ *   response="Forbidden",
+ *   description="Accès refusé à la ressource demandée",
+ *   @OA\JsonContent(
+ *     @OA\Property(property="message", type="string", example="email et/ou mot de passe incorrect(s)")
+ *   )
+ * ),
  */
 class KiroulouController
 {
