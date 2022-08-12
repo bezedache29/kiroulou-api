@@ -38,7 +38,7 @@ class AuthController extends Controller
             $request->all(),
             [
                 'email' => ['required', 'email', 'unique:App\Models\User,email'],
-                'password' => ['required', Rules\Password::defaults()],
+                'password' => ['required', 'string'],
             ],
             [
                 'email.required' => 'L\'adresse email est obligatoire',

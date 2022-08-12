@@ -129,6 +129,7 @@ class User extends Authenticatable
         'email',
         'password',
         'adresse_id',
+        'avatar',
         'is_push_notifications',
         'is_email_notifications',
         'club_id',
