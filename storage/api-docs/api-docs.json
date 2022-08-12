@@ -61,10 +61,23 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "token": {
-                                            "description": "Token envoyé par sanctum, lorsque le user a réussi a se connecter",
-                                            "type": "string",
-                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                                        "auth_token": {
+                                            "description": "Le token d'authentification reçu par Sanctum de Laravel ainsi que le type de token",
+                                            "properties": {
+                                                "token": {
+                                                    "description": "Le token fourni par Sanctum de Laravel",
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "description": "Le type de token reçu",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "example": {
+                                                "token": "2|kqRoYkSd01vGLlDwkYet4CmNdtic46lOYooJZn8A",
+                                                "type": "Bearer"
+                                            }
                                         }
                                     },
                                     "type": "object"

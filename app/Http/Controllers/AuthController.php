@@ -53,6 +53,7 @@ class AuthController extends Controller
             if ($validator->errors()->first() == 'Un compte avec cette adresse email existe déjà') {
                 return response()->json(["message" => $validator->errors()->first()], 409);
             }
+
             return response()->json($validator->errors(), 422);
         }
 
@@ -66,7 +67,7 @@ class AuthController extends Controller
 
         User::create($user);
 
-        return response()->json(["message" => $password_hashed], 201);
+        return response()->json(["message" => "user created"], 201);
     }
 
     /**
@@ -80,11 +81,26 @@ class AuthController extends Controller
      *     response=200,
      *     description="Accès autorisé à la ressource demandée",
      *     @OA\JsonContent(
+     *       type="object",
      *       @OA\Property(
-     *         property="token", 
-     *         type="string", 
-     *         example="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", 
-     *         description="Token envoyé par sanctum, lorsque le user a réussi a se connecter")
+     *         property="auth_token",
+     *         description="Le token d'authentification reçu par Sanctum de Laravel ainsi que le type de token",
+     *         type="object",
+     *         example={
+     *           "token": "2|kqRoYkSd01vGLlDwkYet4CmNdtic46lOYooJZn8A",
+     *           "type": "Bearer",
+     *         },
+     *         @OA\Property(
+     *           property="token",
+     *           type="string",
+     *           description="Le token fourni par Sanctum de Laravel"
+     *         ),
+     *         @OA\Property(
+     *           property="type",
+     *           type="string",
+     *           description="Le type de token reçu"
+     *         ),
+     *       )
      *     )
      *   ),
      *   @OA\Response(
@@ -118,8 +134,46 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        // Sanctum
+        // Check si l'email et le Pwd correspondent
+        // Return null si pas trouvé
+        $user = User::where('email', $request->email)->first();
 
-        return response()->json(["message" => "Login"], 403);
+        if ($user == null) {
+            return response()->json(['message' => "email et/ou mot de passe incorrect(s)"], 403);
+        }
+
+        // Return false si pwd invalide
+        $is_user_password = Hash::check($request->password, $user->password);
+
+        if (!$is_user_password) {
+            return response()->json(['message' => "email et/ou mot de passe incorrect(s)"], 403);
+        }
+
+        if ($user !== null && $is_user_password) {
+            $token = $user->createToken('auth_token')->plainTextToken;
+        }
+
+        return response()->json([
+            "auth_token" => [
+                "token" => $token,
+                "type" => "Bearer",
+            ]
+        ], 200);
+    }
+
+    public function disconnect(Request $request)
+    {
+        // $user->tokens()->delete();
+        $request->user()->tokens()->delete();
+    }
+
+    public function me(Request $request)
+    {
+        return $request->user();
+    }
+
+    public function unauthenticated()
+    {
+        return response()->json(["message" => "unauthenticated"]);
     }
 }
