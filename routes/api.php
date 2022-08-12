@@ -19,4 +19,11 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
-Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+// Route::get('/login', [AuthController::class, 'unauthenticated'])->name('login');
+
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/disconnect', [AuthController::class, 'disconnect'])->middleware('auth:sanctum');
+
+
+Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
