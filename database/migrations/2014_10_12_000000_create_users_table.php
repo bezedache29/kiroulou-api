@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('avatar')->default('default.png')->nullable();
             $table->foreignId('address_id')->nullable()->constrained();
             $table->boolean('is_push_notifications')->default(true);
             $table->boolean('is_email_notifications')->default(true);
