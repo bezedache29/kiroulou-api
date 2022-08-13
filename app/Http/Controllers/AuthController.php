@@ -168,6 +168,19 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
     }
 
+    /**
+     * @OA\Post(
+     *   path="/me",
+     *   summary="User",
+     *   description="Récupère toutes les infos du user connecté",
+     *   tags={"Tests"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="Accès autorisé à la ressource demandée",
+     *   )
+     * )
+     */
     public function me(Request $request)
     {
 

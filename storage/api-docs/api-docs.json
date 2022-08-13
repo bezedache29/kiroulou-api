@@ -93,6 +93,26 @@
                     }
                 }
             }
+        },
+        "/me": {
+            "post": {
+                "tags": [
+                    "Tests"
+                ],
+                "summary": "User",
+                "description": "Récupère toutes les infos du user connecté",
+                "operationId": "af3b8d149797532336b3d65ef346c917",
+                "responses": {
+                    "200": {
+                        "description": "Accès autorisé à la ressource demandée"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -178,18 +198,6 @@
                                 "description": "Est-ce que le user souhaite recevoir des notifications email",
                                 "type": "number",
                                 "example": "1"
-                            },
-                            "stripe_id": {
-                                "description": "ID du customer stripe. On le récupère lors du premier abonnement premium a l'app",
-                                "type": "string",
-                                "example": "cus_ME3MRUkWeQ9vEu",
-                                "nullable": true
-                            },
-                            "club_id": {
-                                "description": "club dans lequel le user fait partie",
-                                "type": "number",
-                                "example": "1",
-                                "nullable": true
                             }
                         }
                     }
@@ -288,6 +296,16 @@
                         }
                     }
                 }
+            }
+        },
+        "securitySchemes": {
+            "bearer_token": {
+                "type": "http",
+                "description": "S'authentifier avec email & password pour récupérer un token d'authentification",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     }

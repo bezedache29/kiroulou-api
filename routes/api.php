@@ -19,11 +19,12 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
-// Route::get('/login', [AuthController::class, 'unauthenticated'])->name('login');
+Route::get('/login', [AuthController::class, 'unauthenticated'])->name('login');
 
-Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/disconnect', [AuthController::class, 'disconnect'])->middleware('auth:sanctum');
 
-
-Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+  Route::post('/me', [AuthController::class, 'me']);
+  Route::post('/disconnect', [AuthController::class, 'disconnect']);
+});
