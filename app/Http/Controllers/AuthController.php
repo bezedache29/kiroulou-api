@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -169,7 +170,12 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return $request->user();
+
+        $me = $request->user();
+
+        $full_me = $me->load('address')->load('posts')->load('bikes')->load('followers')->load('followings')->load('subscriptions');
+
+        return $full_me;
     }
 
     public function unauthenticated()

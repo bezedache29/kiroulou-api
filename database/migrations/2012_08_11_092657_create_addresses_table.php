@@ -21,8 +21,8 @@ class CreateAddressesTable extends Migration
             $table->string('region');
             $table->string('department');
             $table->string('department_code');
-            $table->foreignId('city_id')->constrained();
-            $table->foreignId('zipcode_id')->constrained();
+            $table->foreignId('city_id')->constrained()->onDelete('cascade');
+            $table->foreignId('zipcode_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

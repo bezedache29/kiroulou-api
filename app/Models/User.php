@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Bike;
 use App\Models\Address;
+use App\Models\PostUser;
+use App\Models\Subscription;
+use App\Models\PostUserComment;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -98,20 +102,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     example="1",
  *     description="Est-ce que le user souhaite recevoir des notifications email",
  *   ),
- *   @OA\Property(
- *     property="stripe_id",
- *     type="string",
- *     example="cus_ME3MRUkWeQ9vEu",
- *     description="ID du customer stripe. On le récupère lors du premier abonnement premium a l'app",
- *     nullable=true
- *   ),
- *   @OA\Property(
- *     property="club_id",
- *     type="number",
- *     example="1",
- *     description="club dans lequel le user fait partie",
- *     nullable=true
- *   ),
  * )
  */
 class User extends Authenticatable
@@ -132,8 +122,6 @@ class User extends Authenticatable
         'avatar',
         'is_push_notifications',
         'is_email_notifications',
-        'club_id',
-        'stripe_id',
     ];
 
     /**
@@ -158,5 +146,35 @@ class User extends Authenticatable
     public function address()
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(PostUser::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(PostUserComment::class);
+    }
+
+    public function bikes()
+    {
+        return $this->hasMany(Bike::class);
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follow_users', 'user_followed_id', 'user_follower_id')->withTimestamps();
+    }
+
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'follow_users', 'user_follower_id', 'user_followed_id')->withTimestamps();
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
     }
 }
