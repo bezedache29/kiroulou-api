@@ -21,11 +21,9 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->default('default.png')->nullable();
-            $table->foreignId('address_id')->nullable()->constrained();
+            $table->foreignId('address_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_push_notifications')->default(true);
             $table->boolean('is_email_notifications')->default(true);
-            $table->foreignId('club_id')->nullable()->constrained();
-            $table->string('stripe_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

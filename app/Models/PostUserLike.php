@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\City;
-use App\Models\Zipcode;
+use App\Models\User;
+use App\Models\PostUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Address extends Model
+class PostUserLike extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -18,24 +18,21 @@ class Address extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'address',
-        'city_id',
-        'zipcode_id',
         'user_id',
+        'post_user_id'
     ];
 
     protected $with = [
-        'city',
-        'zipcode',
+        'user'
     ];
 
-    public function city()
+    public function user()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function zipcode()
+    public function userPost()
     {
-        return $this->belongsTo(Zipcode::class);
+        return $this->belongsTo(PostUser::class);
     }
 }
