@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Bike;
+use App\Models\Club;
 use App\Models\Address;
 use App\Models\PostUser;
+use App\Models\ClubMember;
 use App\Models\Subscription;
 use App\Models\PostUserComment;
 use Laravel\Sanctum\HasApiTokens;
@@ -176,5 +178,15 @@ class User extends Authenticatable
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function clubMember()
+    {
+        return $this->hasOne(ClubMember::class);
+    }
+
+    public function clubFollows()
+    {
+        return $this->belongsToMany(Club::class, 'club_follows');
     }
 }

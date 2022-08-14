@@ -16,6 +16,14 @@ class Zipcode extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'number',
+        'code',
+    ];
+
+    // Permet de cacher ces valeurs
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 }

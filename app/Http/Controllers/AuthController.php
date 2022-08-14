@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClubMember;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
@@ -186,9 +187,11 @@ class AuthController extends Controller
 
         $me = $request->user();
 
-        $full_me = $me->load('address')->load('posts')->load('bikes')->load('followers')->load('followings')->load('subscriptions');
+        $full_me = $me->load('address')->load('posts')->load('bikes')->load('followers')->load('followings')->load('subscriptions')->load('clubMember')->load('clubFollows');
 
-        return $full_me;
+        // $admin = ClubMember::where('user_id', $request->user()->id)->where('is_user_admin', true)->first();
+
+        return response()->json($full_me);
     }
 
     public function unauthenticated()

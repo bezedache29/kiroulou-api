@@ -8,6 +8,48 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @OA\Schema(
+ *   schema="address",
+ *   description="Adresse simplifié",
+ *   @OA\Property(
+ *     property="street_address",
+ *     type="string",
+ *     example="Ma super adresse",
+ *     description="Rue / lieu-dit"
+ *   ),
+ *   @OA\Property(
+ *     property="lat",
+ *     type="string",
+ *     example="48.5740185",
+ *     description="Lattitude"
+ *   ),
+ *   @OA\Property(
+ *     property="lng",
+ *     type="string",
+ *     example="-4.3335965",
+ *     description="Longitude"
+ *   ),
+ *   @OA\Property(
+ *     property="region",
+ *     type="string",
+ *     example="Ma super région",
+ *     description="Region"
+ *   ),
+ *   @OA\Property(
+ *     property="department",
+ *     type="string",
+ *     example="Mon super département",
+ *     description="Département"
+ *   ),
+ *   @OA\Property(
+ *     property="department_code",
+ *     type="string",
+ *     example="29",
+ *     description="Code du département"
+ *   ),
+ * )
+ */
 class Address extends Model
 {
     use HasFactory, SoftDeletes;
@@ -18,15 +60,29 @@ class Address extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'address',
+        'street_address',
+        'lat',
+        'lng',
+        'region',
+        'department',
+        'department_code',
         'city_id',
         'zipcode_id',
-        'user_id',
     ];
 
     protected $with = [
         'city',
         'zipcode',
+    ];
+
+    // Permet de cacher ces valeurs
+    protected $hidden = [
+        'id',
+        'city_id',
+        'zipcode_id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     public function city()

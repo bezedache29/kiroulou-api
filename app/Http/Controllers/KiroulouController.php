@@ -18,6 +18,17 @@ namespace App\Http\Controllers;
  *   url=L5_SWAGGER_CONST_HOST,
  *   description="Server API KiRoulOu"
  * )
+ * 
+ * @OA\Tag(
+ *     name="Auth",
+ *     description="Opérations d'authentification"
+ * )
+ * 
+ * @OA\Tag(
+ *     name="Clubs",
+ *     description="Opérations en relation avec les clubs"
+ * )
+ * 
  * @OA\SecurityScheme(
  *   type="http",
  *   description="S'authentifier avec email & password pour récupérer un token d'authentification",
