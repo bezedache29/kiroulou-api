@@ -113,10 +113,187 @@
                     }
                 ]
             }
+        },
+        "/clubs": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Tous les clubs",
+                "operationId": "866030e46cf2d577d67746695d081d1c",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Le nombre de clubs à récupérer",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Club"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Ajout Club",
+                "description": "Création d'un club",
+                "operationId": "9413538608c46edac6723799dfd1f707",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddClub"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "422": {
+                        "description": "Déjà dans un club",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vous faites déjà partie d'un club !"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "address": {
+                "description": "Adresse simplifié",
+                "properties": {
+                    "street_address": {
+                        "description": "Rue / lieu-dit",
+                        "type": "string",
+                        "example": "Ma super adresse"
+                    },
+                    "lat": {
+                        "description": "Lattitude",
+                        "type": "string",
+                        "example": "48.5740185"
+                    },
+                    "lng": {
+                        "description": "Longitude",
+                        "type": "string",
+                        "example": "-4.3335965"
+                    },
+                    "region": {
+                        "description": "Region",
+                        "type": "string",
+                        "example": "Ma super région"
+                    },
+                    "department": {
+                        "description": "Département",
+                        "type": "string",
+                        "example": "Mon super département"
+                    },
+                    "department_code": {
+                        "description": "Code du département",
+                        "type": "string",
+                        "example": "29"
+                    }
+                },
+                "type": "object"
+            },
+            "Club": {
+                "description": "Club Détails",
+                "properties": {
+                    "id": {
+                        "description": "Id du user",
+                        "type": "number",
+                        "example": "1"
+                    },
+                    "name": {
+                        "description": "Nom du club",
+                        "type": "string",
+                        "example": "Côte des légendes VTT"
+                    },
+                    "shortName": {
+                        "description": "Nom raccourci du club",
+                        "type": "string",
+                        "example": "CDL VTT"
+                    },
+                    "website": {
+                        "description": "Site internet du club",
+                        "type": "string",
+                        "example": "http://cotedeslegendesvtt.free.fr/",
+                        "nullable": true
+                    },
+                    "avatar": {
+                        "description": "Nom de l'avatar (id du club + .png)",
+                        "type": "string",
+                        "example": "1.png",
+                        "nullable": true
+                    },
+                    "address": {
+                        "description": "Adresse complète du club",
+                        "properties": {
+                            "street_address": {
+                                "description": "Adresse du Club",
+                                "type": "string"
+                            }
+                        },
+                        "type": "object",
+                        "example": {
+                            "street_address": "1 Rue Alexandre Baley",
+                            "lat": "48.5740185",
+                            "lng": "-4.3335965",
+                            "region": "Bretagne",
+                            "department": "Finistère",
+                            "department_code": "29",
+                            "city": {
+                                "name": "Lesneven"
+                            },
+                            "zipcode": {
+                                "code": "29260"
+                            }
+                        }
+                    },
+                    "organization": {
+                        "description": "Type d'organisation du club",
+                        "type": "object",
+                        "example": {
+                            "name": "Association"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "description": "User Simple",
                 "properties": {
@@ -274,6 +451,119 @@
             }
         },
         "requestBodies": {
+            "AddAddress": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "street_address, lat, lng, region, department, department_code"
+                            ],
+                            "properties": {
+                                "street_address": {
+                                    "type": "string",
+                                    "example": "Ma super rue"
+                                },
+                                "lat": {
+                                    "description": "Lattitude GPS",
+                                    "type": "string",
+                                    "example": "48.5740185"
+                                },
+                                "lng": {
+                                    "description": "Longitude GPS",
+                                    "type": "string",
+                                    "example": "-4.3335965"
+                                },
+                                "region": {
+                                    "type": "string",
+                                    "example": "Bretagne"
+                                },
+                                "department": {
+                                    "type": "string",
+                                    "example": "Finistère"
+                                },
+                                "department_code": {
+                                    "type": "string",
+                                    "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "AddClub": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "name, street_address, city, zipcode, lat, lng, region, department, department_code, organization"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Mon super club"
+                                },
+                                "shortName": {
+                                    "description": "Diminutif du club",
+                                    "type": "string",
+                                    "example": "MSC"
+                                },
+                                "website": {
+                                    "type": "string",
+                                    "example": "https://mon-super-club.com"
+                                },
+                                "avatar": {
+                                    "description": "Renommage de l'avatar avec id du club",
+                                    "type": "string",
+                                    "example": "1.png"
+                                },
+                                "organization": {
+                                    "description": "organization_id du type de club",
+                                    "type": "number",
+                                    "example": "3"
+                                },
+                                "street_address": {
+                                    "type": "string",
+                                    "example": "Ma super rue"
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "example": "Nantes"
+                                },
+                                "zipcode": {
+                                    "type": "string",
+                                    "example": "44000"
+                                },
+                                "lat": {
+                                    "description": "Lattitude GPS",
+                                    "type": "string",
+                                    "example": "48.5740185"
+                                },
+                                "lng": {
+                                    "description": "Longitude GPS",
+                                    "type": "string",
+                                    "example": "-4.3335965"
+                                },
+                                "region": {
+                                    "type": "string",
+                                    "example": "Bretagne"
+                                },
+                                "department": {
+                                    "type": "string",
+                                    "example": "Finistère"
+                                },
+                                "department_code": {
+                                    "type": "string",
+                                    "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
             "PostUser": {
                 "required": true,
                 "content": {
@@ -308,5 +598,15 @@
                 "scheme": "bearer"
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Opérations d'authentification"
+        },
+        {
+            "name": "Clubs",
+            "description": "Opérations en relation avec les clubs"
+        }
+    ]
 }

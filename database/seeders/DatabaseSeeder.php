@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
 
         // Adresses
         $address_1 = Address::create([
-            'address' => '1 Rue Alexandre Baley',
+            'street_address' => '1 Rue Alexandre Baley',
             'lat' => 48.5740185,
             'lng' => -4.3335965,
             'region' => 'Bretgane',
@@ -102,7 +102,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $address_2 = Address::create([
-            'address' => '41 Rue Edmond Michelet',
+            'street_address' => '41 Rue Edmond Michelet',
             'lat' => 48.50274001409201,
             'lng' => -4.417145225223007,
             'region' => 'Bretgane',

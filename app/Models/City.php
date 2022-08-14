@@ -18,4 +18,12 @@ class City extends Model
     protected $fillable = [
         'name',
     ];
+
+    // Permet de cacher ces valeurs
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 }

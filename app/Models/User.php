@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Models\Bike;
+use App\Models\Club;
 use App\Models\Address;
 use App\Models\PostUser;
+use App\Models\ClubFollow;
+use App\Models\ClubMember;
 use App\Models\Subscription;
 use App\Models\PostUserComment;
 use Laravel\Sanctum\HasApiTokens;
@@ -106,75 +109,85 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+  use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'firstname',
-        'lastname',
-        'email',
-        'password',
-        'adresse_id',
-        'avatar',
-        'is_push_notifications',
-        'is_email_notifications',
-    ];
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
+  protected $fillable = [
+    'firstname',
+    'lastname',
+    'email',
+    'password',
+    'adresse_id',
+    'avatar',
+    'is_push_notifications',
+    'is_email_notifications',
+  ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+  /**
+   * The attributes that should be hidden for serialization.
+   *
+   * @var array<int, string>
+   */
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+  /**
+   * The attributes that should be cast.
+   *
+   * @var array<string, string>
+   */
+  protected $casts = [
+    'email_verified_at' => 'datetime',
+  ];
 
-    public function address()
-    {
-        return $this->belongsTo(Address::class);
-    }
+  public function address()
+  {
+    return $this->belongsTo(Address::class);
+  }
 
-    public function posts()
-    {
-        return $this->hasMany(PostUser::class);
-    }
+  public function posts()
+  {
+    return $this->hasMany(PostUser::class);
+  }
 
-    public function comments()
-    {
-        return $this->hasMany(PostUserComment::class);
-    }
+  public function comments()
+  {
+    return $this->hasMany(PostUserComment::class);
+  }
 
-    public function bikes()
-    {
-        return $this->hasMany(Bike::class);
-    }
+  public function bikes()
+  {
+    return $this->hasMany(Bike::class);
+  }
 
-    public function followers()
-    {
-        return $this->belongsToMany(User::class, 'follow_users', 'user_followed_id', 'user_follower_id')->withTimestamps();
-    }
+  public function followers()
+  {
+    return $this->belongsToMany(User::class, 'follow_users', 'user_followed_id', 'user_follower_id')->withTimestamps();
+  }
 
-    public function followings()
-    {
-        return $this->belongsToMany(User::class, 'follow_users', 'user_follower_id', 'user_followed_id')->withTimestamps();
-    }
+  public function followings()
+  {
+    return $this->belongsToMany(User::class, 'follow_users', 'user_follower_id', 'user_followed_id')->withTimestamps();
+  }
 
-    public function subscriptions()
-    {
-        return $this->hasMany(Subscription::class);
-    }
+  public function subscriptions()
+  {
+    return $this->hasMany(Subscription::class);
+  }
+
+  public function clubMember()
+  {
+    return $this->hasOne(ClubMember::class);
+  }
+
+  public function clubFollows()
+  {
+    return $this->belongsToMany(Club::class, 'club_follows');
+  }
 }
