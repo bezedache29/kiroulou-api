@@ -7,8 +7,6 @@ use App\Models\Club;
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Zipcode;
-use App\Models\ClubFollow;
-use App\Models\ClubMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -219,6 +217,10 @@ class ClubController extends Controller
      *   @OA\Response(
      *     response=422,
      *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
      *   )
      * )
      */
@@ -262,6 +264,10 @@ class ClubController extends Controller
      *         example="Votre demande est déjà en traitement pour ce club"
      *       )
      *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
      *   )
      * )
      */
@@ -308,6 +314,10 @@ class ClubController extends Controller
      *   @OA\Response(
      *     response=422,
      *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
      *   )
      * )
      */
@@ -379,6 +389,10 @@ class ClubController extends Controller
      *   @OA\Response(
      *     response=422,
      *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
      *   )
      * )
      */
@@ -417,6 +431,55 @@ class ClubController extends Controller
             "message" => "Deny Membership Request",
             "club" => $club
         ], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{id}/showJoinRequests",
+     *   summary="Show user's requests",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(
+     *         @OA\Property(
+     *           property="user_id",
+     *           type="number",
+     *           example=10005
+     *         ),
+     *         @OA\Property(
+     *           property="club_id",
+     *           type="number",
+     *           example=1
+     *         ),
+     *         @OA\Property(
+     *           property="created_at",
+     *           type="string",
+     *           example="2022-08-15 14:25:01"
+     *         ),
+     *         @OA\Property(
+     *           property="updated_at",
+     *           type="string",
+     *           example=null
+     *         ),
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function showJoinRequests(Request $request, Club $club)
+    {
+        $join_requests = DB::table('club_join_requests')->where('club_id', $club->id)->get();
+
+        return response()->json($join_requests);
     }
 
     /**

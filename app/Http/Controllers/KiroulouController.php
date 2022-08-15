@@ -89,6 +89,15 @@ namespace App\Http\Controllers;
  *     @OA\Property(property="message", type="string", example="email et/ou mot de passe incorrect(s)")
  *   )
  * ),
+ * 
+ * @OA\Response(
+ *   response=404,
+ *   response="NotFound",
+ *   description="Ressource introuvable",
+ *   @OA\JsonContent(
+ *     @OA\Property(property="message", type="string", example="Resource not found")
+ *   )
+ * ),
  */
 class KiroulouController
 {

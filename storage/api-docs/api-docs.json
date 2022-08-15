@@ -247,6 +247,9 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -288,6 +291,9 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -335,6 +341,9 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -382,6 +391,64 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{id}/showJoinRequests": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Show user's requests",
+                "operationId": "1124ec94bfc211351f5e284f1805b010",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "user_id": {
+                                                "type": "number",
+                                                "example": 10005
+                                            },
+                                            "club_id": {
+                                                "type": "number",
+                                                "example": 1
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "example": "2022-08-15 14:25:01"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "example": null
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -666,6 +733,22 @@
                                 "message": {
                                     "type": "string",
                                     "example": "email et/ou mot de passe incorrect(s)"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "Ressource introuvable",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Resource not found"
                                 }
                             },
                             "type": "object"
