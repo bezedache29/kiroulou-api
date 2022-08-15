@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubPostController;
+use App\Http\Controllers\UserPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/clubs/{club}/posts', [ClubPostController::class, 'storePost']);
   Route::get('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'comments']);
   Route::post('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'storeComment']);
+
+  Route::post('/posts', [UserPostController::class, 'storePost']);
+  Route::post('/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
+
+  Route::get('/users/{user}/posts', [UserPostController::class, 'posts']);
+  Route::post('/users/{user}/posts/{post}/comments', [UserPostController::class, 'storeComment']);
+  Route::get('/users/{user}/posts/{post}/comments', [UserPostController::class, 'comments']);
 });
