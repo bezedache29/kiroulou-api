@@ -228,17 +228,17 @@
                 ]
             }
         },
-        "/clubs/{id}/followOrUnfollow": {
+        "/clubs/{club_id}/followOrUnfollow": {
             "post": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Follow club",
                 "description": "Follow un club",
-                "operationId": "ac4e24e2a9e75208ff9f136ffa5f964c",
+                "operationId": "af69a344716587613075fbb0f84ab25b",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/id"
+                        "$ref": "#/components/parameters/club_id"
                     }
                 ],
                 "responses": {
@@ -259,17 +259,17 @@
                 ]
             }
         },
-        "/clubs/{id}/requestToJoin": {
+        "/clubs/{club_id}/requestToJoin": {
             "post": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Request to join club",
                 "description": "Demande d'adhésion au club",
-                "operationId": "fac8365ba54499cb124b9a6ebc9fb2aa",
+                "operationId": "848adbaaf99fd7b610ed94a7e19e70a1",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/id"
+                        "$ref": "#/components/parameters/club_id"
                     }
                 ],
                 "responses": {
@@ -303,17 +303,17 @@
                 ]
             }
         },
-        "/clubs/{id}/acceptRequestToJoin": {
+        "/clubs/{club_id}/acceptRequestToJoin": {
             "post": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Accept user request to join club",
                 "description": "Acceptation de la demande d'adhésion d'un user au club",
-                "operationId": "faf0e172cad7f6da0002b50390f55392",
+                "operationId": "0872b4c80819300ae0644ed9745ab75a",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/id"
+                        "$ref": "#/components/parameters/club_id"
                     }
                 ],
                 "responses": {
@@ -353,17 +353,17 @@
                 ]
             }
         },
-        "/clubs/{id}/denyRequestToJoin": {
+        "/clubs/{club_id}/denyRequestToJoin": {
             "post": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Deny user request to join club",
                 "description": "Refus de la demande d'adhésion d'un user au club",
-                "operationId": "03115874b39416531e8d194d44e222fd",
+                "operationId": "ca66c9a1d3862b4b8da825db0bb4b521",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/id"
+                        "$ref": "#/components/parameters/club_id"
                     }
                 ],
                 "responses": {
@@ -403,16 +403,16 @@
                 ]
             }
         },
-        "/clubs/{id}/showJoinRequests": {
+        "/clubs/{club_id}/showJoinRequests": {
             "get": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Show user's requests",
-                "operationId": "1124ec94bfc211351f5e284f1805b010",
+                "operationId": "11bcf9290d59a6633d4d3d63c273a077",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/id"
+                        "$ref": "#/components/parameters/club_id"
                     }
                 ],
                 "responses": {
@@ -449,6 +449,167 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/posts": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "All club posts",
+                "operationId": "5f0c20c540e9d2dfb7eeee6088ccd288",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubPost"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Create club post",
+                "description": "Ajout d'un article par un club",
+                "operationId": "d4fd58758e03d42acf3c6461f094dab8",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddClubPost"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Article d'un club créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "post created"
+                                        },
+                                        "post": {
+                                            "description": "Détails de l'article",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ClubPost"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/posts/{post_id}/comments": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "All club posts",
+                "operationId": "8eae86a55a90b1b947b0c9bcb7dde8cd",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubPostComment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Create club post comment",
+                "description": "Ajout d'un commentaire à un article de club",
+                "operationId": "89560aff7aa2df8192802f4bcbee53bf",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddClubPostComment"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commentaire d'article de club créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "comment created"
+                                        },
+                                        "comments": {
+                                            "$ref": "#/components/schemas/ClubPostComment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
                     }
                 },
                 "security": [
@@ -554,6 +715,90 @@
                         "items": {
                             "$ref": "#/components/schemas/UserDetails"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "ClubPost": {
+                "description": "Article d'un club",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Mon super titre"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ma super description d'article"
+                    },
+                    "club_id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2022-08-15 14:25:01"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": null
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClubPostImage"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ClubPostComment": {
+                "description": "Commentaire d'un article d'un club par un user",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "number",
+                        "example": 10005
+                    },
+                    "club_post_id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Mon super commentaire d'un article du club"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2022-08-15 14:25:01"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": null
+                    }
+                },
+                "type": "object"
+            },
+            "ClubPostImage": {
+                "description": "Image d'un post de club",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "mon-image.png"
+                    },
+                    "club_post_id": {
+                        "type": "number",
+                        "example": 1
                     }
                 },
                 "type": "object"
@@ -766,6 +1011,24 @@
                 "schema": {
                     "type": "integer"
                 }
+            },
+            "club_id": {
+                "name": "club_id",
+                "in": "path",
+                "description": "ID du club",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "post_id": {
+                "name": "post_id",
+                "in": "path",
+                "description": "ID du post du club",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
             }
         },
         "requestBodies": {
@@ -803,6 +1066,60 @@
                                 "department_code": {
                                     "type": "string",
                                     "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "AddClubPostComment": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "message, user_id, club_post_id"
+                            ],
+                            "properties": {
+                                "user_id": {
+                                    "type": "number",
+                                    "example": 10005
+                                },
+                                "club_post_id": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Mon super commentaire"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "AddClubPost": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "title, description, club_id"
+                            ],
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "example": "Mon super titre"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Ma super description"
+                                },
+                                "club_id": {
+                                    "type": "number",
+                                    "example": 1
                                 }
                             },
                             "type": "object"

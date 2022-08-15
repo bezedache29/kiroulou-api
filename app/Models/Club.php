@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Address;
+use App\Models\ClubPost;
 use App\Models\ClubFollow;
 use App\Models\ClubMember;
 use App\Models\Organization;
@@ -87,7 +88,8 @@ class Club extends Model
         'organization',
         'members',
         'userFollows',
-        'userJoinRequests'
+        'userJoinRequests',
+        'posts'
     ];
 
     // Permet de cacher ces valeurs
@@ -127,5 +129,10 @@ class Club extends Model
     public function userJoinRequests()
     {
         return $this->belongsToMany(User::class, 'club_join_requests');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(ClubPost::class);
     }
 }

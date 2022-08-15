@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\ClubPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
   Route::get('/clubs/{club}/showJoinRequests', [ClubController::class, 'showJoinRequests']);
 
-  Route::post('/clubs/membershipRequest', [ClubController::class, 'membershipRequest']);
-  Route::post('/clubs/acceptMembershipRequest', [ClubController::class, 'acceptMembershipRequest']);
+  Route::get('/clubs/{club}/posts', [ClubPostController::class, 'posts']);
+  Route::post('/clubs/{club}/posts', [ClubPostController::class, 'storePost']);
+  Route::get('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'comments']);
+  Route::post('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'storeComment']);
 });
