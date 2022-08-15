@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
- *   schema="address",
+ *   schema="Address",
  *   description="Adresse simplifié",
  *   @OA\Property(
  *     property="street_address",
@@ -47,6 +47,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="string",
  *     example="29",
  *     description="Code du département"
+ *   ),
+ *   @OA\Property(
+ *     property="city",
+ *     ref="#/components/schemas/City"
+ *   ),
+ *   @OA\Property(
+ *     property="zipcode",
+ *     ref="#/components/schemas/Zipcode"
  *   ),
  * )
  */

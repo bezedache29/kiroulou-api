@@ -135,6 +135,7 @@ class DatabaseSeeder extends Seeder
             'id' => 10005,
             'email' => 'my@email.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'address_id' => 1
         ])->tokens()->create([
             'id' => 10005,
             'name' => 'api',

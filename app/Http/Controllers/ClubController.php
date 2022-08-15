@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Club;
+use App\Models\User;
 use App\Models\Address;
+use App\Models\Zipcode;
 use App\Models\ClubFollow;
 use App\Models\ClubMember;
-use App\Models\Zipcode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ClubController extends Controller
@@ -55,7 +57,38 @@ class ClubController extends Controller
      *   @OA\RequestBody(ref="#/components/requestBodies/AddClub"),
      *   @OA\Response(
      *     response=201,
-     *     ref="#/components/responses/Created"
+     *     description="Club créé",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="club created"
+     *       ),
+     *       @OA\Property(
+     *         property="user_update",
+     *         type="object",
+     *         example={
+     *           "is_club_admin": true,
+     *           "club_id": 1
+     *         },
+     *         @OA\Property(
+     *           property="is_club_admin",
+     *           type="boolean",
+     *           description="Le user devient admin du club qu'il vient de créer"
+     *         ),
+     *         @OA\Property(
+     *           property="club_id",
+     *           type="number",
+     *           description="Le user est membre du club qu'il vient de créer"
+     *         ),
+     *       ),
+     *       @OA\Property(
+     *         property="club",
+     *         type="array",
+     *         description="Détails du club",
+     *         @OA\Items(ref="#/components/schemas/Club")
+     *       )
+     *     ),
      *   ),
      *   @OA\Response(
      *     response=422, 
@@ -110,7 +143,7 @@ class ClubController extends Controller
         }
 
         // On check que le user n'est pas déjà dans un club
-        $is_on_club = ClubMember::where('user_id', $request->user()->id)->where('deleted_at', null)->first();
+        $is_on_club = $request->user()->haveClub();
 
         if ($is_on_club) {
             return response()->json(["message" => "Vous faites déjà partie d'un club"], 422);
@@ -158,26 +191,136 @@ class ClubController extends Controller
 
         $club_created = Club::create($club);
 
-        // Ici ajouter l'admin du club
-        ClubMember::create([
-            'user_id' => $request->user()->id,
-            'club_id' => $club_created->id,
-            'is_user_admin' => true
-        ]);
+        // On met à jour le user avec l'id du club et le fait qu'il soit admin du club
+        $user_update = [
+            "is_club_admin" => true,
+            "club_id" => $club_created->id
+        ];
+        User::where('id', $request->user()->id)->update($user_update);
 
-        return response()->json(["message" => "club created"], 201);
+        // On récupère toutes les infos du club pour le retourner
+        $club = Club::find($club_created->id);
+
+        return response()->json(["message" => "club created", "user_update" => $user_update, "club" => $club], 201);
     }
 
-    public function follow(Request $request)
+    /**
+     * @OA\Post(
+     *   path="/clubs/{id}/followOrUnfollow",
+     *   @OA\Parameter(ref="#/components/parameters/id"),
+     *   summary="Follow club",
+     *   description="Follow un club",
+     *   tags={"Clubs"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   )
+     * )
+     */
+    public function followOrUnfollow(Request $request, Club $club)
+    {
+        // On check si le user ne follow déjà pas le club
+        $is_follow = DB::table('club_follows')->where('user_id', $request->user()->id)->where('club_id', $club->id)->first();
+
+        // S'il follow déjà, on unfollow
+        // Sinon on entre le user et le club dans la DB
+        if ($is_follow) {
+            $request->user()->clubFollows()->wherePivot('club_id', $club->id)->detach();
+            $action = 'UnFollow';
+        } else {
+            $request->user()->clubFollows()->attach($club->id);
+            $action = 'Follow';
+        }
+
+        return response()->json(["message" => $action], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/clubs/{id}/requestToJoin",
+     *   @OA\Parameter(ref="#/components/parameters/id"),
+     *   summary="Request to join club",
+     *   description="Demande d'adhésion au club",
+     *   tags={"Clubs"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=403,
+     *     description="Demande déjà en cours de traitement",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="Votre demande est déjà en traitement pour ce club"
+     *       )
+     *     )
+     *   )
+     * )
+     */
+    public function requestToJoin(Request $request, Club $club)
+    {
+
+        // On check si le user n'a pas déjà une demande en attente pour le club
+        $is_request = DB::table('club_join_requests')->where('user_id', $request->user()->id)->where('club_id', $club->id)->first();
+
+        if ($is_request) {
+            return response()->json(["message" => "Votre demande est déjà en traitement pour ce club"], 403);
+        }
+
+        $request->user()->myMembershipRequests()->attach($club->id);
+
+        return response()->json(["message" => "Request club to join it"], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/clubs/{id}/acceptRequestToJoin",
+     *   @OA\Parameter(ref="#/components/parameters/id"),
+     *   summary="Accept user request to join club",
+     *   description="Acceptation de la demande d'adhésion d'un user au club",
+     *   tags={"Clubs"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     description="Accept la demande d'adhésion du user dans le club",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Accept Membership Request"),
+     *       @OA\Property(
+     *         property="club",
+     *         type="object",
+     *         description="Détails du club",
+     *         ref="#/components/schemas/Club"
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=409,
+     *     ref="#/components/responses/Conflit"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   )
+     * )
+     */
+    public function acceptRequestToJoin(Request $request, Club $club)
     {
         // On check les requests
         $validator = Validator::make(
             $request->all(),
             [
-                'club_id' => ['required'],
+                'user_id' => ['required'],
             ],
             [
-                'club_id.required' => 'Le club_id est obligatoire',
+                'user_id.required' => 'Le club_id est obligatoire',
             ]
         );
 
@@ -186,33 +329,94 @@ class ClubController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        // On rempli la table pivot des users qui follow le club en ajoutant le club_id avec le user connecté
-        $request->user()->clubFollows()->attach($request->club_id);
+        // On check que le user n'est pas déjà dans un club
+        $is_already_in_club = User::where('id', $request->user_id)->where('club_id', '!=', NULL)->first();
 
-        return response()->json(["message" => "Follow"], 200);
+        if ($is_already_in_club) {
+            return response()->json(["message" => "L'utilisateur est déjà membre dans un club"], 409);
+        }
+
+        // On met à jour le user avec le club id
+        User::where('id', $request->user_id)->update(['club_id' => $club->id]);
+
+        // On supprime toutes les autres demande du use qui sont en attente dans la table club_join_requests
+        DB::table('club_join_requests')->where('user_id', $request->user_id)->delete();
+
+        // On récupère le club à jour
+        $club = Club::find($club->id);
+
+        return response()->json([
+            "message" => "Accept Membership Request",
+            "club" => $club
+        ], 201);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *   path="/clubs/{id}/denyRequestToJoin",
+     *   @OA\Parameter(ref="#/components/parameters/id"),
+     *   summary="Deny user request to join club",
+     *   description="Refus de la demande d'adhésion d'un user au club",
+     *   tags={"Clubs"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     description="Refuse la demande d'adhésion du user dans le club",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Deny Membership Request"),
+     *       @OA\Property(
+     *         property="club",
+     *         type="object",
+     *         description="Détails du club",
+     *         ref="#/components/schemas/Club"
+     *       )
+     *     )
+     *   ),
+     *     @OA\Response(
+     *     response=409,
+     *     ref="#/components/responses/Conflit"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   )
+     * )
      */
-    public function edit($id)
+    public function denyRequestToJoin(Request $request, Club $club)
     {
-        //
-    }
+        // On check les requests
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'user_id' => ['required'],
+            ],
+            [
+                'user_id.required' => 'Le club_id est obligatoire',
+            ]
+        );
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        // S'il y a une erreur dans la validation
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // On check que le user n'est pas déjà dans un club
+        $is_already_in_club = User::where('id', $request->user_id)->where('club_id', '!=', NULL)->first();
+
+        if ($is_already_in_club) {
+            return response()->json(["message" => "L'utilisateur est déjà membre dans un club"], 409);
+        }
+
+        // On supprime la demande du user qui est en attente dans la table club_join_requests pour le club
+        DB::table('club_join_requests')->where('user_id', $request->user_id)->where('club_id', $club->id)->delete();
+
+        // On récupère le club à jour
+        $club = Club::find($club->id);
+
+        return response()->json([
+            "message" => "Deny Membership Request",
+            "club" => $club
+        ], 201);
     }
 
     /**

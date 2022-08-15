@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @OA\Schema(
+ *   schema="Organization",
+ *   description="Type d'organisation de club",
+ *   @OA\Property(
+ *     property="name",
+ *     type="string",
+ *     example="Association",
+ *   )
+ * )
+ */
 class Organization extends Model
 {
     use HasFactory, SoftDeletes;

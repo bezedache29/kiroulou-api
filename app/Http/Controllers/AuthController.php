@@ -187,7 +187,7 @@ class AuthController extends Controller
 
         $me = $request->user();
 
-        $full_me = $me->load('address')->load('posts')->load('bikes')->load('followers')->load('followings')->load('subscriptions')->load('clubMember')->load('clubFollows');
+        $full_me = $me->load('address')->load('posts')->load('bikes')->load('followers')->load('followings')->load('subscriptions')->load('clubFollows')->load('myMembershipRequests')->load('club');
 
         // $admin = ClubMember::where('user_id', $request->user()->id)->where('is_user_admin', true)->first();
 
