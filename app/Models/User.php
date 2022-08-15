@@ -8,6 +8,7 @@ use App\Models\Address;
 use App\Models\PostUser;
 use App\Models\ClubMember;
 use App\Models\Subscription;
+use App\Models\ClubPostComment;
 use App\Models\PostUserComment;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -219,5 +220,10 @@ class User extends Authenticatable
     public function haveClub()
     {
         return auth()->user()->club_id !== NULL;
+    }
+
+    public function clubPostComments()
+    {
+        return $this->hasMany(ClubPostComment::class);
     }
 }

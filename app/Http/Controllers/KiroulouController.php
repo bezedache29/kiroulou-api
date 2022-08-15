@@ -47,6 +47,22 @@ namespace App\Http\Controllers;
  *   @OA\Schema(type="integer")
  * )
  * 
+ * @OA\Parameter(
+ *   name="club_id",
+ *   in="path",
+ *   description="ID du club",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
+ * @OA\Parameter(
+ *   name="post_id",
+ *   in="path",
+ *   description="ID du post du club",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
  * @OA\Response(
  *   response=409,
  *   response="Conflit",
