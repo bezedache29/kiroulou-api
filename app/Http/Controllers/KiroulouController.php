@@ -39,7 +39,16 @@ namespace App\Http\Controllers;
  *   securityScheme="bearer_token",
  * )
  * 
+ * @OA\Parameter(
+ *   name="id",
+ *   in="path",
+ *   description="ID de la ressource",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
  * @OA\Response(
+ *   response=409,
  *   response="Conflit",
  *   description="Conflit de ressource",
  *   @OA\JsonContent(
@@ -48,6 +57,7 @@ namespace App\Http\Controllers;
  * )
  * 
  * @OA\Response(
+ *   response=201,
  *   response="Created",
  *   description="Ressource créée",
  *   @OA\JsonContent(
@@ -56,6 +66,7 @@ namespace App\Http\Controllers;
  * ),
  * 
  * @OA\Response(
+ *   response=422,
  *   response="UnprocessableEntity",
  *   description="Ressource non traitée",
  *   @OA\JsonContent(
@@ -71,6 +82,7 @@ namespace App\Http\Controllers;
  * ),
  * 
  * @OA\Response(
+ *   response=403,
  *   response="Forbidden",
  *   description="Accès refusé à la ressource demandée",
  *   @OA\JsonContent(

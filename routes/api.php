@@ -31,5 +31,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/clubs', [ClubController::class, 'index']);
   Route::post('/clubs', [ClubController::class, 'store']);
-  Route::post('/clubs/follow', [ClubController::class, 'follow']);
+  Route::post('/clubs/{club}/followOrUnfollow', [ClubController::class, 'followOrUnfollow']);
+  Route::post('/clubs/{club}/requestToJoin', [ClubController::class, 'requestToJoin']);
+  Route::post('/clubs/{club}/acceptRequestToJoin', [ClubController::class, 'acceptRequestToJoin']);
+  Route::post('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
+
+  Route::post('/clubs/membershipRequest', [ClubController::class, 'membershipRequest']);
+  Route::post('/clubs/acceptMembershipRequest', [ClubController::class, 'acceptMembershipRequest']);
 });

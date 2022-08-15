@@ -49,36 +49,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="address",
- *     type="object",
- *     description="Adresse complète du club",
- *     example={
- *       "street_address": "1 Rue Alexandre Baley",
- *       "lat": "48.5740185",
- *       "lng": "-4.3335965",
- *       "region": "Bretagne",
- *       "department": "Finistère",
- *       "department_code": "29",
- *       "city": {
- *         "name": "Lesneven"
- *       },
- *       "zipcode": {
- *         "code": "29260"
- *       },
- *     },
- *     @OA\Property(
- *       property="street_address",
- *       type="string",
- *       description="Adresse du Club",
- *     )
+ *     description="Adresse du club",
+ *     ref="#/components/schemas/Address"
  *   ),
  *   @OA\Property(
  *     property="organization",
- *     type="object",
  *     description="Type d'organisation du club",
- *     example={
- *       "name": "Association"
- *     },
+ *     ref="#/components/schemas/Organization"
  *   ),
+ *   @OA\Property(
+ *     property="members",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/UserDetails"),
+ *   )
  * )
  */
 class Club extends Model
@@ -102,8 +85,9 @@ class Club extends Model
     protected $with = [
         'address',
         'organization',
-        // 'members',
-        'userFollows'
+        'members',
+        'userFollows',
+        'userJoinRequests'
     ];
 
     // Permet de cacher ces valeurs
@@ -125,13 +109,23 @@ class Club extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    // public function members()
+    // {
+    //     return User::where('club_id', $this->id)->get();
+    // }
+
     public function members()
     {
-        return $this->hasMany(ClubMember::class);
+        return $this->hasMany(User::class);
     }
 
     public function userFollows()
     {
         return $this->belongsToMany(User::class, 'club_follows');
+    }
+
+    public function userJoinRequests()
+    {
+        return $this->belongsToMany(User::class, 'club_join_requests');
     }
 }

@@ -24,6 +24,8 @@ class CreateUsersTable extends Migration
             $table->foreignId('address_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_push_notifications')->default(true);
             $table->boolean('is_email_notifications')->default(true);
+            $table->foreignId('club_id')->nullable()->constrained()->onDelete('cascade');
+            $table->boolean('is_club_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

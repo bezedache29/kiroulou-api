@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @OA\Schema(
+ *   schema="City",
+ *   description="Ville",
+ *   @OA\Property(
+ *     property="name",
+ *     type="string",
+ *     example="Lesneven",
+ *   )
+ * )
+ */
 class City extends Model
 {
     use HasFactory, SoftDeletes;

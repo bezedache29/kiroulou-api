@@ -23,7 +23,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *   @OA\Property(
  *     property="id",
  *     type="number",
- *     example="0",
+ *     example="1",
  *     description="Id du user",
  *   ),
  *   @OA\Property(
@@ -86,23 +86,33 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     nullable=true
  *   ),
  *   @OA\Property(
- *     property="address_id",
- *     type="number",
- *     example="1",
- *     description="Adresse du user (relation avec la table Address)",
- *     nullable=true
- *   ),
- *   @OA\Property(
  *     property="is_push_notifications",
  *     type="number",
- *     example="1",
+ *     example=1,
  *     description="Est-ce que le user souhaite recevoir des notifications push",
  *   ),
  *   @OA\Property(
  *     property="is_email_notifications",
  *     type="number",
- *     example="1",
+ *     example=1,
  *     description="Est-ce que le user souhaite recevoir des notifications email",
+ *   ),
+ *   @OA\Property(
+ *     property="club_id",
+ *     type="number",
+ *     example=1,
+ *     description="membre du club ayant l'id du club_id",
+ *   ),
+ *   @OA\Property(
+ *     property="is_club_admin",
+ *     type="number",
+ *     example=1,
+ *     description="Est-ce que le user est admin de son club",
+ *   ),
+ *   @OA\Property(
+ *     property="address",
+ *     description="address du user",
+ *     ref="#/components/schemas/Address"
  *   ),
  * )
  */
@@ -134,6 +144,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verified_at',
+        'address_id'
+    ];
+
+    protected $with = [
+        'address'
     ];
 
     /**
@@ -180,13 +196,28 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
-    public function clubMember()
+    public function club()
     {
-        return $this->hasOne(ClubMember::class);
+        return $this->belongsTo(Club::class);
     }
 
     public function clubFollows()
     {
         return $this->belongsToMany(Club::class, 'club_follows');
+    }
+
+    public function myMembershipRequests()
+    {
+        return $this->belongsToMany(Club::class, 'club_join_requests');
+    }
+
+    public function adminClub()
+    {
+        return auth()->user()->is_club_admin;
+    }
+
+    public function haveClub()
+    {
+        return auth()->user()->club_id !== NULL;
     }
 }

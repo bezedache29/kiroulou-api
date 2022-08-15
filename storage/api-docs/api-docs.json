@@ -165,7 +165,44 @@
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/Created"
+                        "description": "Club créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "club created"
+                                        },
+                                        "user_update": {
+                                            "properties": {
+                                                "is_club_admin": {
+                                                    "description": "Le user devient admin du club qu'il vient de créer",
+                                                    "type": "boolean"
+                                                },
+                                                "club_id": {
+                                                    "description": "Le user est membre du club qu'il vient de créer",
+                                                    "type": "number"
+                                                }
+                                            },
+                                            "type": "object",
+                                            "example": {
+                                                "is_club_admin": true,
+                                                "club_id": 1
+                                            }
+                                        },
+                                        "club": {
+                                            "description": "Détails du club",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Club"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "422": {
                         "description": "Déjà dans un club",
@@ -190,11 +227,174 @@
                     }
                 ]
             }
+        },
+        "/clubs/{id}/followOrUnfollow": {
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Follow club",
+                "description": "Follow un club",
+                "operationId": "ac4e24e2a9e75208ff9f136ffa5f964c",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{id}/requestToJoin": {
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Request to join club",
+                "description": "Demande d'adhésion au club",
+                "operationId": "fac8365ba54499cb124b9a6ebc9fb2aa",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "403": {
+                        "description": "Demande déjà en cours de traitement",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Votre demande est déjà en traitement pour ce club"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{id}/acceptRequestToJoin": {
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Accept user request to join club",
+                "description": "Acceptation de la demande d'adhésion d'un user au club",
+                "operationId": "faf0e172cad7f6da0002b50390f55392",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Accept la demande d'adhésion du user dans le club",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accept Membership Request"
+                                        },
+                                        "club": {
+                                            "$ref": "#/components/schemas/Club"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/Conflit"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{id}/denyRequestToJoin": {
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Deny user request to join club",
+                "description": "Refus de la demande d'adhésion d'un user au club",
+                "operationId": "03115874b39416531e8d194d44e222fd",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Refuse la demande d'adhésion du user dans le club",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Deny Membership Request"
+                                        },
+                                        "club": {
+                                            "$ref": "#/components/schemas/Club"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/Conflit"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
-            "address": {
+            "Address": {
                 "description": "Adresse simplifié",
                 "properties": {
                     "street_address": {
@@ -226,6 +426,22 @@
                         "description": "Code du département",
                         "type": "string",
                         "example": "29"
+                    },
+                    "city": {
+                        "$ref": "#/components/schemas/City"
+                    },
+                    "zipcode": {
+                        "$ref": "#/components/schemas/Zipcode"
+                    }
+                },
+                "type": "object"
+            },
+            "City": {
+                "description": "Ville",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Lesneven"
                     }
                 },
                 "type": "object"
@@ -261,35 +477,26 @@
                         "nullable": true
                     },
                     "address": {
-                        "description": "Adresse complète du club",
-                        "properties": {
-                            "street_address": {
-                                "description": "Adresse du Club",
-                                "type": "string"
-                            }
-                        },
-                        "type": "object",
-                        "example": {
-                            "street_address": "1 Rue Alexandre Baley",
-                            "lat": "48.5740185",
-                            "lng": "-4.3335965",
-                            "region": "Bretagne",
-                            "department": "Finistère",
-                            "department_code": "29",
-                            "city": {
-                                "name": "Lesneven"
-                            },
-                            "zipcode": {
-                                "code": "29260"
-                            }
-                        }
+                        "$ref": "#/components/schemas/Address"
                     },
                     "organization": {
-                        "description": "Type d'organisation du club",
-                        "type": "object",
-                        "example": {
-                            "name": "Association"
+                        "$ref": "#/components/schemas/Organization"
+                    },
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserDetails"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "Organization": {
+                "description": "Type d'organisation de club",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Association"
                     }
                 },
                 "type": "object"
@@ -300,7 +507,7 @@
                     "id": {
                         "description": "Id du user",
                         "type": "number",
-                        "example": "0"
+                        "example": "1"
                     },
                     "email": {
                         "description": "Email du user",
@@ -360,25 +567,42 @@
                                 "example": "Strueux",
                                 "nullable": true
                             },
-                            "address_id": {
-                                "description": "Adresse du user (relation avec la table Address)",
-                                "type": "number",
-                                "example": "1",
-                                "nullable": true
-                            },
                             "is_push_notifications": {
                                 "description": "Est-ce que le user souhaite recevoir des notifications push",
                                 "type": "number",
-                                "example": "1"
+                                "example": 1
                             },
                             "is_email_notifications": {
                                 "description": "Est-ce que le user souhaite recevoir des notifications email",
                                 "type": "number",
-                                "example": "1"
+                                "example": 1
+                            },
+                            "club_id": {
+                                "description": "membre du club ayant l'id du club_id",
+                                "type": "number",
+                                "example": 1
+                            },
+                            "is_club_admin": {
+                                "description": "Est-ce que le user est admin de son club",
+                                "type": "number",
+                                "example": 1
+                            },
+                            "address": {
+                                "$ref": "#/components/schemas/Address"
                             }
                         }
                     }
                 ]
+            },
+            "Zipcode": {
+                "description": "Code postal",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "example": "29260"
+                    }
+                },
+                "type": "object"
             }
         },
         "responses": {
@@ -447,6 +671,17 @@
                             "type": "object"
                         }
                     }
+                }
+            }
+        },
+        "parameters": {
+            "id": {
+                "name": "id",
+                "in": "path",
+                "description": "ID de la ressource",
+                "required": true,
+                "schema": {
+                    "type": "integer"
                 }
             }
         },
@@ -557,6 +792,29 @@
                                 "department_code": {
                                     "type": "string",
                                     "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "FollowClub": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "user_id, club_id"
+                            ],
+                            "properties": {
+                                "user_id": {
+                                    "type": "number",
+                                    "example": "1005"
+                                },
+                                "club_id": {
+                                    "type": "number",
+                                    "example": "2"
                                 }
                             },
                             "type": "object"
