@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/clubs/{club}/requestToJoin', [ClubController::class, 'requestToJoin']);
   Route::post('/clubs/{club}/acceptRequestToJoin', [ClubController::class, 'acceptRequestToJoin']);
   Route::post('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
+  Route::get('/clubs/{club}/showJoinRequests', [ClubController::class, 'showJoinRequests']);
 
   Route::post('/clubs/membershipRequest', [ClubController::class, 'membershipRequest']);
   Route::post('/clubs/acceptMembershipRequest', [ClubController::class, 'acceptMembershipRequest']);
