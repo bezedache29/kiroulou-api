@@ -25,6 +25,11 @@ namespace App\Http\Controllers;
  * )
  * 
  * @OA\Tag(
+ *     name="Users",
+ *     description="Opérations en relation avec les utilisateurs"
+ * )
+ * 
+ * @OA\Tag(
  *     name="Clubs",
  *     description="Opérations en relation avec les clubs"
  * )
@@ -58,7 +63,15 @@ namespace App\Http\Controllers;
  * @OA\Parameter(
  *   name="post_id",
  *   in="path",
- *   description="ID du post du club",
+ *   description="ID du post",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
+ * @OA\Parameter(
+ *   name="user_id",
+ *   in="path",
+ *   description="ID du user",
  *   required=true,
  *   @OA\Schema(type="integer")
  * )

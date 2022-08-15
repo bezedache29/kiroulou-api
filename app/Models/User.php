@@ -8,6 +8,7 @@ use App\Models\Address;
 use App\Models\PostUser;
 use App\Models\ClubMember;
 use App\Models\Subscription;
+use App\Models\PostUserImage;
 use App\Models\ClubPostComment;
 use App\Models\PostUserComment;
 use Laravel\Sanctum\HasApiTokens;
@@ -225,5 +226,15 @@ class User extends Authenticatable
     public function clubPostComments()
     {
         return $this->hasMany(ClubPostComment::class);
+    }
+
+    public function postUserLikes()
+    {
+        return $this->hasMany(PostUser::class);
+    }
+
+    public function postImages()
+    {
+        return $this->hasMany(PostUserImage::class);
     }
 }

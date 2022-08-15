@@ -57,9 +57,7 @@ class ClubPostController extends Controller
      *       ),
      *       @OA\Property(
      *         property="post",
-     *         type="array",
-     *         description="Détails de l'article",
-     *         @OA\Items(ref="#/components/schemas/ClubPost")
+     *         ref="#/components/schemas/ClubPost"
      *       )
      *     ),
      *   ),
@@ -109,6 +107,8 @@ class ClubPostController extends Controller
      *   summary="Create club post comment",
      *   description="Ajout d'un commentaire à un article de club",
      *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
      *   @OA\RequestBody(ref="#/components/requestBodies/AddClubPostComment"),
      *   @OA\Response(
      *     response=201,
