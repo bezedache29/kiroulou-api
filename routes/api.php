@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClubPostController;
 use App\Http\Controllers\UserPostController;
 
@@ -50,4 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/users/{user}/posts', [UserPostController::class, 'posts']);
   Route::post('/users/{user}/posts/{post}/comments', [UserPostController::class, 'storeComment']);
   Route::get('/users/{user}/posts/{post}/comments', [UserPostController::class, 'comments']);
+
+  Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
+  Route::post('/bikes', [UserController::class, 'storeBike']);
+  Route::get('/users/{user}/images', [UserController::class, 'images']);
 });

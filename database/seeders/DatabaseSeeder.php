@@ -2,16 +2,18 @@
 
 namespace Database\Seeders;
 
-use Faker\Generator;
-use Illuminate\Container\Container;
+use App\Models\Bike;
 use App\Models\City;
 use App\Models\Club;
 use App\Models\User;
+use Faker\Generator;
 use App\Models\Address;
 use App\Models\Zipcode;
+use App\Models\BikeType;
 use App\Models\Organization;
-use App\Models\SubscriptionType;
 use Illuminate\Database\Seeder;
+use App\Models\SubscriptionType;
+use Illuminate\Container\Container;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,6 +52,18 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
+
+        $bike_type_1 = BikeType::create([
+            'name' => 'VTT'
+        ]);
+
+        $bike_type_2 = BikeType::create([
+            'name' => 'Route'
+        ]);
+
+        $bike_type_3 = BikeType::create([
+            'name' => 'Gravel'
+        ]);
 
         // Organizations (club)
         $organization_1 = Organization::create([
@@ -131,7 +145,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // User test avec un token sanctum
-        User::create([
+        $user_test = User::create([
             'id' => 10005,
             'email' => 'my@email.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
@@ -141,6 +155,24 @@ class DatabaseSeeder extends Seeder
             'name' => 'api',
             'token' => hash('sha256', 'N7fp6GTjO9CJD1QIhqv0Ty1ZZbJeS3tFIbToFJZQ'),
             'abilities' => ['*'],
+        ]);
+
+        $bike_1 = Bike::create([
+            'name' => $this->faker->name(),
+            'brand' => $this->faker->name(),
+            'model' => $this->faker->name(),
+            'bike_type_id' => $bike_type_1->id,
+            'date' => $this->faker->dateTimeBetween('-30 week', '-10 week'),
+            'user_id' => $user_test->id
+        ]);
+
+        $bike_2 = Bike::create([
+            'name' => $this->faker->name(),
+            'brand' => $this->faker->name(),
+            'model' => $this->faker->name(),
+            'bike_type_id' => $bike_type_2->id,
+            'date' => $this->faker->dateTimeBetween('-30 week', '-10 week'),
+            'user_id' => $user_test->id
         ]);
     }
 }

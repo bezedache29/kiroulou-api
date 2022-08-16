@@ -72,7 +72,7 @@ class PostUser extends Model
     ];
 
     protected $with = [
-        'postUserImages',
+        // 'postUserImages',
         // 'postUserComments',
         'postUserLikes'
     ];
@@ -82,10 +82,10 @@ class PostUser extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function postUserImages()
-    {
-        return $this->hasMany(PostUserImage::class);
-    }
+    // public function postUserImages()
+    // {
+    //     return $this->hasMany(PostUserImage::class);
+    // }
 
     public function postUserComments()
     {
