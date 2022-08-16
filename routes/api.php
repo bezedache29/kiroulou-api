@@ -32,13 +32,17 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me', [AuthController::class, 'me']);
   Route::post('/disconnect', [AuthController::class, 'disconnect']);
 
-  Route::get('/clubs', [ClubController::class, 'index']);
-  Route::post('/clubs', [ClubController::class, 'store']);
+  Route::get('/clubs', [ClubController::class, 'clubs']);
+  Route::post('/clubs', [ClubController::class, 'storeClub']);
+  Route::get('/clubs/{club}/clubInformations', [ClubController::class, 'clubInformations']);
+  Route::get('/clubs/{club}/clubPosts', [ClubController::class, 'clubPosts']);
+  Route::get('/clubs/{club}/clubMembers', [ClubController::class, 'clubMembers']);
   Route::post('/clubs/{club}/followOrUnfollow', [ClubController::class, 'followOrUnfollow']);
   Route::post('/clubs/{club}/requestToJoin', [ClubController::class, 'requestToJoin']);
   Route::post('/clubs/{club}/acceptRequestToJoin', [ClubController::class, 'acceptRequestToJoin']);
   Route::post('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
   Route::get('/clubs/{club}/showJoinRequests', [ClubController::class, 'showJoinRequests']);
+  Route::post('/clubs/{club}/changeAdmin', [ClubController::class, 'changeAdmin']);
 
   Route::get('/clubs/{club}/posts', [ClubPostController::class, 'posts']);
   Route::post('/clubs/{club}/posts', [ClubPostController::class, 'storePost']);
@@ -57,4 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/users/{user}/profileImages', [UserController::class, 'profileImages']);
   Route::get('/users/{user}/allImages', [UserController::class, 'allImages']);
+  Route::get('/users/{user}/followedClubs', [UserController::class, 'followedClubs']);
+  Route::get('/users/{user}/followedUsers', [UserController::class, 'followedUsers']);
+  Route::post('/users/{user}/followOrUnfollow', [UserController::class, 'followOrUnfollow']);
 });

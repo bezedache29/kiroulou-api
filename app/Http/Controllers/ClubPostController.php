@@ -45,6 +45,7 @@ class ClubPostController extends Controller
      *   summary="Create club post",
      *   description="Ajout d'un article par un club",
      *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   @OA\RequestBody(ref="#/components/requestBodies/AddClubPost"),
      *   @OA\Response(
      *     response=201,

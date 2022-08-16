@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @OA\Schema(
  *   schema="Club",
- *   description="Club Détails",
+ *   description="Club",
  *   @OA\Property(
  *     property="id",
  *     type="number",
@@ -53,15 +53,38 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     description="Adresse du club",
  *     ref="#/components/schemas/Address"
  *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubInformations",
+ *   description="Informations du club pour la scene informations du profil",
+ *   allOf={@OA\Schema(ref="#/components/schemas/Club")},
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPosts",
+ *   description="Posts du club pour la scene articles du profil",
+ *   allOf={@OA\Schema(ref="#/components/schemas/Club")},
  *   @OA\Property(
- *     property="organization",
- *     description="Type d'organisation du club",
- *     ref="#/components/schemas/Organization"
- *   ),
+ *     property="posts",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/ClubPost")
+ *   )
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubMembers",
+ *   description="Membres et demandes adhésion du club pour la scene membres du profil",
+ *   allOf={@OA\Schema(ref="#/components/schemas/Club")},
  *   @OA\Property(
  *     property="members",
  *     type="array",
- *     @OA\Items(ref="#/components/schemas/UserDetails"),
+ *     @OA\Items(ref="#/components/schemas/UserDetails")
+ *   ),
+ *   @OA\Property(
+ *     property="user_join_requests",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/UserDetails")
  *   )
  * )
  */
@@ -85,11 +108,11 @@ class Club extends Model
 
     protected $with = [
         'address',
-        'organization',
-        'members',
-        'userFollows',
-        'userJoinRequests',
-        'posts'
+        // 'organization',
+        // 'members',
+        // 'userFollows',
+        // 'userJoinRequests',
+        // 'posts'
     ];
 
     // Permet de cacher ces valeurs

@@ -13,38 +13,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ClubController extends Controller
 {
-
-    /**
-     * @OA\Get(
-     *   tags={"Clubs"},
-     *   path="/clubs",
-     *   summary="Tous les clubs",
-     *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(
-     *     name="limit",
-     *     in="query",
-     *     required=false,
-     *     description="Le nombre de clubs à récupérer",
-     *     @OA\Schema(type="string"),
-     *   ),
-     *   @OA\Response(
-     *     response=200,
-     *     description="OK",
-     *     @OA\JsonContent(
-     *       type="array",
-     *       @OA\Items(ref="#/components/schemas/Club")
-     *     )
-     *   )
-     * )
-     */
-    public function index()
-    {
-        // $clubs = Club::paginate(1);
-        $clubs = Club::get();
-
-        return response()->json($clubs, 200);
-    }
-
     /**
      * @OA\Post(
      *   tags={"Clubs"},
@@ -101,7 +69,7 @@ class ClubController extends Controller
      *   ),
      * )
      */
-    public function store(Request $request)
+    public function storeClub(Request $request)
     {
         // On check les requests
         $validator = Validator::make(
@@ -200,6 +168,109 @@ class ClubController extends Controller
         $club = Club::find($club_created->id);
 
         return response()->json(["message" => "club created", "user_update" => $user_update, "club" => $club], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs",
+     *   summary="Tous les clubs",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     required=false,
+     *     description="Le nombre de clubs à récupérer",
+     *     @OA\Schema(type="string"),
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/Club")
+     *     )
+     *   )
+     * )
+     */
+    public function clubs()
+    {
+        // $clubs = Club::paginate(1);
+        $clubs = Club::with('userFollows')->get();
+
+        return response()->json($clubs, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/clubInformations",
+     *   summary="Club's informations",
+     *   description="Les informations du club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/ClubInformations")
+     *     )
+     *   )
+     * )
+     */
+    public function clubInformations(Club $club)
+    {
+        // $club = Club::with('members')->with('organization')->with('posts')->with('userJoinRequests')->findOrFail($club->id);
+        return response()->json($club, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/clubPosts",
+     *   summary="Club's posts",
+     *   description="Le club et ses articles",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/ClubPosts")
+     *     )
+     *   )
+     * )
+     */
+    public function clubPosts(Club $club)
+    {
+        $club = Club::with('posts')->findOrFail($club->id);
+        return response()->json($club, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/clubMembers",
+     *   summary="Club's members",
+     *   description="Le club et ses membres ainsi que les demandes d'adhésion",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/ClubMembers")
+     *     )
+     *   )
+     * )
+     */
+    public function clubMembers(Club $club)
+    {
+        $club = Club::with('members')->with('userJoinRequests')->findOrFail($club->id);
+        return response()->json($club, 200);
     }
 
     /**
@@ -330,7 +401,7 @@ class ClubController extends Controller
                 'user_id' => ['required'],
             ],
             [
-                'user_id.required' => 'Le club_id est obligatoire',
+                'user_id.required' => 'Le user_id est obligatoire',
             ]
         );
 
@@ -479,17 +550,59 @@ class ClubController extends Controller
     {
         $join_requests = DB::table('club_join_requests')->where('club_id', $club->id)->get();
 
-        return response()->json($join_requests);
+        return response()->json($join_requests, 200);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     *   path="/clubs/{club_id}/changeAdmin",
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/ChangeAdmin"),
+     *   summary="Change admin for club",
+     *   description="Change d'admin pour le club",
+     *   tags={"Clubs"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
      */
-    public function destroy($id)
+    public function changeAdmin(Request $request, Club $club)
     {
-        //
+        // On check les requests
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'user_id' => ['required'],
+            ],
+            [
+                'user_id.required' => 'Le user_id est obligatoire',
+            ]
+        );
+
+        // S'il y a une erreur dans la validation
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user = User::findOrFail($request->user_id);
+
+        // On check que le futur admin est bien dans le club
+        if ($user->club_id == $club->id) {
+            // On retire l'admin au user connecté
+            $request->user()->is_club_admin = false;
+            $request->user()->save();
+
+            // On met le user souhaité admin du club
+            $user->is_club_admin = true;
+            $user->save();
+        }
+
+        return response()->json(['message' => 'admin changed'], 201);
     }
 }
