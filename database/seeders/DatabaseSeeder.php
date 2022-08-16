@@ -10,6 +10,7 @@ use Faker\Generator;
 use App\Models\Address;
 use App\Models\Zipcode;
 use App\Models\BikeType;
+use App\Models\ImageUser;
 use App\Models\Organization;
 use Illuminate\Database\Seeder;
 use App\Models\SubscriptionType;
@@ -163,6 +164,7 @@ class DatabaseSeeder extends Seeder
             'model' => $this->faker->name(),
             'bike_type_id' => $bike_type_1->id,
             'date' => $this->faker->dateTimeBetween('-30 week', '-10 week'),
+            'image' => 'image-bike-1.png',
             'user_id' => $user_test->id
         ]);
 
@@ -172,6 +174,7 @@ class DatabaseSeeder extends Seeder
             'model' => $this->faker->name(),
             'bike_type_id' => $bike_type_2->id,
             'date' => $this->faker->dateTimeBetween('-30 week', '-10 week'),
+            'image' => 'image-bike-2.png',
             'user_id' => $user_test->id
         ]);
     }

@@ -23,6 +23,29 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="department_code", type="string", example="29"),
  *   )
  * )
+ * 
+ * @OA\RequestBody(
+ *   request="AddClubPost",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     required={"title, description, club_id"},
+ *     @OA\Property(property="title", type="string", example="Mon super titre"),
+ *     @OA\Property(property="description", type="string", example="Ma super description"),
+ *     @OA\Property(property="club_id", type="number", example=1),
+ *   )
+ * )
+ * 
+ * @OA\RequestBody(
+ *   request="AddClubPostComment",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     required={"message, user_id, club_post_id"},
+ *     @OA\Property(property="user_id", type="number", example=10005),
+ *     @OA\Property(property="club_post_id", type="number", example=1),
+ *     @OA\Property(property="message", type="string", example="Mon super commentaire"),
+ *   )
+ * )
+ * 
  */
 class ClubRequestBody
 {

@@ -42,6 +42,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="string",
  *     example=null,
  *   ),
+ *   @OA\Property(
+ *     property="deleted_at",
+ *     type="string",
+ *     example=null,
+ *   ),
+ *   @OA\Property(
+ *     property="user",
+ *     ref="#/components/schemas/UserDetails"
+ *   ),
  * )
  */
 class PostUserComment extends Model

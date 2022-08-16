@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\PostUser;
 use App\Models\PostUserLike;
 use Illuminate\Http\Request;
+use App\Models\PostUserImage;
 use App\Models\PostUserComment;
 use Illuminate\Support\Facades\Validator;
 
@@ -70,10 +71,50 @@ class UserPostController extends Controller
 
         $post = PostUser::create($data);
 
+        if ($request->image) {
+            //TODO: Enregistrement de l'image en DB
+
+            PostUserImage::create([
+                'post_user_id' => $post->id,
+                'user_id' => $request->user()->id,
+                'image' => 'image-name.png'
+            ]);
+        }
+
+        $post = PostUser::findOrFail($post->id);
+
         return response()->json([
             'message' => 'post created',
             'post' => $post
         ], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Users"},
+     *   path="/users/{user_id}/posts",
+     *   summary="All user's posts",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/PostUser"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function posts(User $user)
+    {
+        $posts = PostUser::where('user_id', $user->id)->get();
+
+        return response()->json($posts);
     }
 
     /**
@@ -133,41 +174,12 @@ class UserPostController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *   tags={"Users"},
-     *   path="/users/{user_id}/posts",
-     *   summary="All user's posts",
-     *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/user_id"),
-     *   @OA\Response(
-     *     response=200,
-     *     description="OK",
-     *     @OA\JsonContent(
-     *       type="array",
-     *       @OA\Items(ref="#/components/schemas/PostUser"),
-     *     )
-     *   ),
-     *   @OA\Response(
-     *     response=404,
-     *     ref="#/components/responses/NotFound"
-     *   )
-     * )
-     */
-    public function posts(User $user)
-    {
-        $posts = PostUser::where('user_id', $user->id)->get();
-
-        return response()->json($posts);
-    }
-
-    /**
      * @OA\Post(
      *   tags={"Users"},
-     *   path="/users/{user_id}/posts/{post_id}/comments",
+     *   path="/posts/{post_id}/comments",
      *   summary="Create user post comment",
      *   description="Ajout d'un commentaire à un article d'un user",
      *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/user_id"),
      *   @OA\Parameter(ref="#/components/parameters/post_id"),
      *   @OA\RequestBody(ref="#/components/requestBodies/AddPostUserComment"),
      *   @OA\Response(
@@ -191,7 +203,7 @@ class UserPostController extends Controller
      *   ),
      * )
      */
-    public function storeComment(Request $request, User $user, PostUser $post)
+    public function storeComment(Request $request, PostUser $post)
     {
         // On check les requests
         $validator = Validator::make(
@@ -211,12 +223,14 @@ class UserPostController extends Controller
         }
 
         $data = [
-            'user_id' => $user->id,
+            'user_id' => $request->user()->id,
             'post_user_id' => $post->id,
             'message' => $request->message
         ];
 
         $comment = PostUserComment::create($data);
+
+        $comment = PostUserComment::findOrFail($comment->id);
 
         return response()->json([
             'message' => 'comment created',
@@ -227,10 +241,9 @@ class UserPostController extends Controller
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/users/{user_id}/posts/{post_id}/comments",
+     *   path="/posts/{post_id}/comments",
      *   summary="All user's posts",
      *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/user_id"),
      *   @OA\Parameter(ref="#/components/parameters/post_id"),
      *   @OA\Response(
      *     response=200,
@@ -246,7 +259,7 @@ class UserPostController extends Controller
      *   )
      * )
      */
-    public function comments(Request $request, User $user, PostUser $post)
+    public function comments(PostUser $post)
     {
         $comments = PostUserComment::where('post_user_id', $post->id)->get();
 

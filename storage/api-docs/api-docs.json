@@ -623,43 +623,6 @@
                 ]
             }
         },
-        "/users/{user_id}/bikes": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "All user's bikes",
-                "operationId": "5b122965fbaec6ee490418137098f364",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/user_id"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Bike"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
-        },
         "/bikes": {
             "post": {
                 "tags": [
@@ -702,6 +665,117 @@
                 ]
             }
         },
+        "/users/{user_id}/bikes": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "All user's bikes",
+                "operationId": "5b122965fbaec6ee490418137098f364",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Bike"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/profileImages": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Last 5 profile images",
+                "operationId": "ad25edf7e6eb659f1d3ab4bb73131e97",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostUserImage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/allImages": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "All user's images",
+                "operationId": "a6c8709c29f29a98a84feea83a298ec3",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostUserImage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/posts": {
             "post": {
                 "tags": [
@@ -723,50 +797,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "post created"
-                                        },
-                                        "post": {
-                                            "$ref": "#/components/schemas/PostUser"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/UnprocessableEntity"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
-        },
-        "/posts/{post_id}/likeOrUnlike": {
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Like or unlike user post",
-                "description": "Aimer ou ne plus aimer un article d'un user",
-                "operationId": "15afec1bad04e74f304aab233fa07557",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/post_id"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Article d'un user créé",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "liked"
                                         },
                                         "post": {
                                             "$ref": "#/components/schemas/PostUser"
@@ -825,17 +855,58 @@
                 ]
             }
         },
-        "/users/{user_id}/posts/{post_id}/comments": {
+        "/posts/{post_id}/likeOrUnlike": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Like or unlike user post",
+                "description": "Aimer ou ne plus aimer un article d'un user",
+                "operationId": "15afec1bad04e74f304aab233fa07557",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Article d'un user créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "liked"
+                                        },
+                                        "post": {
+                                            "$ref": "#/components/schemas/PostUser"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/posts/{post_id}/comments": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "All user's posts",
-                "operationId": "55686baada32b7a68fb93e75c8661466",
+                "operationId": "69748b7e01e0cf1a0f6bcfd5e0d38d10",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/user_id"
-                    },
                     {
                         "$ref": "#/components/parameters/post_id"
                     }
@@ -870,11 +941,8 @@
                 ],
                 "summary": "Create user post comment",
                 "description": "Ajout d'un commentaire à un article d'un user",
-                "operationId": "c85baa6ecd6bca2c096e9d9f1e54c49a",
+                "operationId": "41edcd4a1dc5781d4ed1c65fe39d375d",
                 "parameters": [
-                    {
-                        "$ref": "#/components/parameters/user_id"
-                    },
                     {
                         "$ref": "#/components/parameters/post_id"
                     }
@@ -1189,7 +1257,7 @@
                             "$ref": "#/components/schemas/PostUserImage"
                         }
                     },
-                    "Post_user_likes": {
+                    "post_user_likes": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PostUserLike"
@@ -1224,24 +1292,35 @@
                     "updated_at": {
                         "type": "string",
                         "example": null
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "example": null
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserDetails"
                     }
                 },
                 "type": "object"
             },
             "PostUserImage": {
-                "description": "Image d'un post d'un user",
+                "description": "Les images d'un post d'un user",
                 "properties": {
                     "id": {
                         "type": "number",
                         "example": 1
                     },
-                    "image": {
-                        "type": "string",
-                        "example": "mon-image.png"
-                    },
-                    "user_post_id": {
+                    "post_user_id": {
                         "type": "number",
                         "example": 1
+                    },
+                    "user_id": {
+                        "type": "number",
+                        "example": 10005
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "image.png"
                     }
                 },
                 "type": "object"
@@ -1587,60 +1666,6 @@
                     }
                 }
             },
-            "AddClubPostComment": {
-                "required": true,
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "required": [
-                                "message, user_id, club_post_id"
-                            ],
-                            "properties": {
-                                "user_id": {
-                                    "type": "number",
-                                    "example": 10005
-                                },
-                                "club_post_id": {
-                                    "type": "number",
-                                    "example": 1
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "Mon super commentaire"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "AddClubPost": {
-                "required": true,
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "required": [
-                                "title, description, club_id"
-                            ],
-                            "properties": {
-                                "title": {
-                                    "type": "string",
-                                    "example": "Mon super titre"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "Ma super description"
-                                },
-                                "club_id": {
-                                    "type": "number",
-                                    "example": 1
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
             "AddClub": {
                 "required": true,
                 "content": {
@@ -1713,6 +1738,60 @@
                     }
                 }
             },
+            "AddClubPost": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "title, description, club_id"
+                            ],
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "example": "Mon super titre"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Ma super description"
+                                },
+                                "club_id": {
+                                    "type": "number",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "AddClubPostComment": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "message, user_id, club_post_id"
+                            ],
+                            "properties": {
+                                "user_id": {
+                                    "type": "number",
+                                    "example": 10005
+                                },
+                                "club_post_id": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Mon super commentaire"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
             "FollowClub": {
                 "required": true,
                 "content": {
@@ -1729,6 +1808,29 @@
                                 "club_id": {
                                     "type": "number",
                                     "example": "2"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "PostUser": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "email, password"
+                            ],
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "example": "simon-strueux@gmail.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "password12345"
                                 }
                             },
                             "type": "object"
@@ -1773,29 +1875,6 @@
                                 "message": {
                                     "type": "string",
                                     "example": "Mon super commentaire"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "PostUser": {
-                "required": true,
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "required": [
-                                "email, password"
-                            ],
-                            "properties": {
-                                "email": {
-                                    "type": "string",
-                                    "example": "simon-strueux@gmail.com"
-                                },
-                                "password": {
-                                    "type": "string",
-                                    "example": "password12345"
                                 }
                             },
                             "type": "object"

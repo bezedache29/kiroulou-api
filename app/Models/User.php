@@ -6,7 +6,7 @@ use App\Models\Bike;
 use App\Models\Club;
 use App\Models\Address;
 use App\Models\PostUser;
-use App\Models\ClubMember;
+use App\Models\ImageUser;
 use App\Models\Subscription;
 use App\Models\PostUserImage;
 use App\Models\ClubPostComment;
@@ -233,7 +233,7 @@ class User extends Authenticatable
         return $this->hasMany(PostUser::class);
     }
 
-    public function postImages()
+    public function postUserImages()
     {
         return $this->hasMany(PostUserImage::class);
     }
