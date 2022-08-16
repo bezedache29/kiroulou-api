@@ -50,7 +50,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     @OA\Items(ref="#/components/schemas/PostUserImage")
  *   ),
  *   @OA\Property(
- *     property="Post_user_likes",
+ *     property="post_user_likes",
  *     type="array",
  *     @OA\Items(ref="#/components/schemas/PostUserLike")
  *   ),
@@ -72,20 +72,15 @@ class PostUser extends Model
     ];
 
     protected $with = [
-        // 'postUserImages',
         // 'postUserComments',
-        'postUserLikes'
+        'postUserLikes',
+        'images'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    // public function postUserImages()
-    // {
-    //     return $this->hasMany(PostUserImage::class);
-    // }
 
     public function postUserComments()
     {
@@ -95,5 +90,10 @@ class PostUser extends Model
     public function postUserLikes()
     {
         return $this->hasMany(PostUserLike::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(PostUserImage::class);
     }
 }

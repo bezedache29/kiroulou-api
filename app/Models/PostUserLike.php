@@ -58,7 +58,16 @@ class PostUserLike extends Model
     ];
 
     protected $with = [
-        'user'
+        // 'user',
+        // 'userPost'
+    ];
+
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'post_user_id'
     ];
 
     public function user()

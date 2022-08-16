@@ -66,7 +66,7 @@ class ClubPost extends Model
     ];
 
     protected $with = [
-        'images',
+        // 'images',
         // 'comments'
     ];
 
@@ -75,10 +75,10 @@ class ClubPost extends Model
         return $this->belongsTo(Club::class);
     }
 
-    public function images()
-    {
-        return $this->hasMany(ClubPostImage::class);
-    }
+    // public function images()
+    // {
+    //     return $this->hasMany(ClubPostImage::class);
+    // }
 
     public function comments()
     {

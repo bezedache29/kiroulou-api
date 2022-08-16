@@ -11,21 +11,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @OA\Schema(
  *   schema="PostUserImage",
- *   description="Image d'un post d'un user",
+ *   description="Les images d'un post d'un user",
  *   @OA\Property(
  *     property="id",
  *     type="number",
  *     example=1,
  *   ),
  *   @OA\Property(
- *     property="image",
- *     type="string",
- *     example="mon-image.png",
- *   ),
- *   @OA\Property(
- *     property="user_post_id",
+ *     property="post_user_id",
  *     type="number",
  *     example=1,
+ *   ),
+ *   @OA\Property(
+ *     property="user_id",
+ *     type="number",
+ *     example=10005,
+ *   ),
+ *   @OA\Property(
+ *     property="image",
+ *     type="string",
+ *     example="image.png",
  *   ),
  * )
  */
@@ -39,8 +44,16 @@ class PostUserImage extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'image',
         'post_user_id',
+        'user_id',
+        'image'
+    ];
+
+    // Permet de cacher ces valeurs
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     public function post()

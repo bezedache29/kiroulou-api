@@ -49,10 +49,12 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
 
   Route::get('/users/{user}/posts', [UserPostController::class, 'posts']);
-  Route::post('/users/{user}/posts/{post}/comments', [UserPostController::class, 'storeComment']);
-  Route::get('/users/{user}/posts/{post}/comments', [UserPostController::class, 'comments']);
+  Route::post('/posts/{post}/comments', [UserPostController::class, 'storeComment']);
+  Route::get('/posts/{post}/comments', [UserPostController::class, 'comments']);
 
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
   Route::post('/bikes', [UserController::class, 'storeBike']);
-  Route::get('/users/{user}/images', [UserController::class, 'images']);
+
+  Route::get('/users/{user}/profileImages', [UserController::class, 'profileImages']);
+  Route::get('/users/{user}/allImages', [UserController::class, 'allImages']);
 });
