@@ -77,6 +77,62 @@ class UserPostController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *   tags={"Users"},
+     *   path="/posts/{post_id}/likeOrUnlike",
+     *   summary="Like or unlike user post",
+     *   description="Aimer ou ne plus aimer un article d'un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Article d'un user créé",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="liked"
+     *       ),
+     *       @OA\Property(
+     *         property="post",
+     *         ref="#/components/schemas/PostUser"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     * )
+     */
+    public function likeOrUnlike(Request $request, PostUser $post)
+    {
+        // Check si le post a été like par le user
+        $is_liked = PostUserLike::where('user_id', $request->user()->id)->where('post_user_id', $post->id)->first();
+
+        if ($is_liked) {
+            //unlike
+            $is_liked->delete();
+            $message = 'unliked';
+        } else {
+            PostUserLike::create([
+                'user_id' => $request->user()->id,
+                'post_user_id' => $post->id
+            ]);
+            $message = 'liked';
+        }
+
+        $post = PostUser::findOrFail($post->id);
+
+        // $likes_count = $post->postUserLikes->count();
+
+        return response()->json([
+            'message' => $message,
+            'post' => $post,
+        ], 201);
+    }
+
+    /**
      * @OA\Get(
      *   tags={"Users"},
      *   path="/users/{user_id}/posts",
@@ -195,61 +251,5 @@ class UserPostController extends Controller
         $comments = PostUserComment::where('post_user_id', $post->id)->get();
 
         return response()->json($comments, 200);
-    }
-
-    /**
-     * @OA\Post(
-     *   tags={"Users"},
-     *   path="/posts/{post_id}/likeOrUnlike",
-     *   summary="Like or unlike user post",
-     *   description="Aimer ou ne plus aimer un article d'un user",
-     *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/post_id"),
-     *   @OA\Response(
-     *     response=201,
-     *     description="Article d'un user créé",
-     *     @OA\JsonContent(
-     *       @OA\Property(
-     *         property="message",
-     *         type="string",
-     *         example="liked"
-     *       ),
-     *       @OA\Property(
-     *         property="post",
-     *         ref="#/components/schemas/PostUser"
-     *       )
-     *     ),
-     *   ),
-     *   @OA\Response(
-     *     response=422, 
-     *     ref="#/components/responses/UnprocessableEntity"
-     *   ),
-     * )
-     */
-    public function likeOrUnlike(Request $request, PostUser $post)
-    {
-        // Check si le post a été like par le user
-        $is_liked = PostUserLike::where('user_id', $request->user()->id)->where('post_user_id', $post->id)->first();
-
-        if ($is_liked) {
-            //unlike
-            $is_liked->delete();
-            $message = 'unliked';
-        } else {
-            PostUserLike::create([
-                'user_id' => $request->user()->id,
-                'post_user_id' => $post->id
-            ]);
-            $message = 'liked';
-        }
-
-        $post = PostUser::findOrFail($post->id);
-
-        // $likes_count = $post->postUserLikes->count();
-
-        return response()->json([
-            'message' => $message,
-            'post' => $post,
-        ], 201);
     }
 }

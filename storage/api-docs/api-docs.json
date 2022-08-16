@@ -623,6 +623,85 @@
                 ]
             }
         },
+        "/users/{user_id}/bikes": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "All user's bikes",
+                "operationId": "5b122965fbaec6ee490418137098f364",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Bike"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/bikes": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Add bike's user",
+                "description": "Ajouter un vélo du user connecté",
+                "operationId": "95d110a5af7e39022292b655b78ad305",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddBike"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vélo d'un user créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "bike created"
+                                        },
+                                        "bike": {
+                                            "$ref": "#/components/schemas/Bike"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/posts": {
             "post": {
                 "tags": [
@@ -644,6 +723,50 @@
                                         "message": {
                                             "type": "string",
                                             "example": "post created"
+                                        },
+                                        "post": {
+                                            "$ref": "#/components/schemas/PostUser"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/posts/{post_id}/likeOrUnlike": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Like or unlike user post",
+                "description": "Aimer ou ne plus aimer un article d'un user",
+                "operationId": "15afec1bad04e74f304aab233fa07557",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Article d'un user créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "liked"
                                         },
                                         "post": {
                                             "$ref": "#/components/schemas/PostUser"
@@ -789,50 +912,6 @@
                     }
                 ]
             }
-        },
-        "/posts/{post_id}/likeOrUnlike": {
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Like or unlike user post",
-                "description": "Aimer ou ne plus aimer un article d'un user",
-                "operationId": "15afec1bad04e74f304aab233fa07557",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/post_id"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Article d'un user créé",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "liked"
-                                        },
-                                        "post": {
-                                            "$ref": "#/components/schemas/PostUser"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/UnprocessableEntity"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
         }
     },
     "components": {
@@ -875,6 +954,55 @@
                     },
                     "zipcode": {
                         "$ref": "#/components/schemas/Zipcode"
+                    }
+                },
+                "type": "object"
+            },
+            "Bike": {
+                "description": "Vélo du user",
+                "properties": {
+                    "name": {
+                        "description": "Nom que donne le user au vélo",
+                        "type": "string",
+                        "example": "Le gravel de folie"
+                    },
+                    "brand": {
+                        "description": "Marque du vélo",
+                        "type": "string",
+                        "example": "Specialized"
+                    },
+                    "model": {
+                        "description": "Modèle de la marque",
+                        "type": "string",
+                        "example": "S-Works Turbo Creo SL EVO"
+                    },
+                    "bike_type": {
+                        "$ref": "#/components/schemas/BikeType"
+                    },
+                    "date": {
+                        "description": "Date d'achat ou de première mise en circulation",
+                        "type": "string",
+                        "example": "2022-08-15T21:30:58.000000Z"
+                    },
+                    "weight": {
+                        "description": "Poids en kilogrammes du vélo",
+                        "type": "string",
+                        "example": "11.9"
+                    },
+                    "image": {
+                        "description": "Image/Photo du vélo",
+                        "type": "string",
+                        "example": "spe.png"
+                    }
+                },
+                "type": "object"
+            },
+            "BikeType": {
+                "description": "Type de vélo",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Vélo Gravel"
                     }
                 },
                 "type": "object"
@@ -1409,6 +1537,49 @@
                                 "department_code": {
                                     "type": "string",
                                     "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "AddBike": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "name, brand, model, bike_type_id, date"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Mon Super VTT"
+                                },
+                                "brand": {
+                                    "type": "string",
+                                    "example": "Canyon"
+                                },
+                                "model": {
+                                    "type": "string",
+                                    "example": "Lux world cup cfr"
+                                },
+                                "bike_type_id": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "date": {
+                                    "type": "string",
+                                    "example": "2022-08-15 14:25:01"
+                                },
+                                "weight": {
+                                    "type": "string",
+                                    "example": "9.8"
+                                },
+                                "image": {
+                                    "type": "string",
+                                    "example": "canyon.png"
                                 }
                             },
                             "type": "object"
