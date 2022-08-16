@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Club;
 use App\Models\ClubPost;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,6 +27,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="number",
  *     example=1,
  *   ),
+ *   @OA\Property(
+ *     property="club_id",
+ *     type="number",
+ *     example=1,
+ *   ),
  * )
  */
 class ClubPostImage extends Model
@@ -39,7 +45,8 @@ class ClubPostImage extends Model
      */
     protected $fillable = [
         'image',
-        'club_post_id'
+        'club_post_id',
+        'club_id'
     ];
 
     protected $hidden = [
@@ -51,5 +58,10 @@ class ClubPostImage extends Model
     public function clubPost()
     {
         return $this->belongsTo(ClubPost::class);
+    }
+
+    public function club()
+    {
+        return $this->belongsTo(Club::class);
     }
 }

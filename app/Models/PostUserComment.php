@@ -10,6 +10,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
+ *   schema="PostUserCommentCount",
+ *   description="ID du user qui a commenté l'article",
+ *   @OA\Property(
+ *     property="user_id",
+ *     type="number",
+ *     example=10005,
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
  *   schema="PostUserComment",
  *   description="Commentaire d'un article d'un user par un user",
  *   @OA\Property(

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Club;
+use App\Models\ClubPostLike;
 use App\Models\ClubPostImage;
 use App\Models\ClubPostComment;
 use Illuminate\Database\Eloquent\Model;
@@ -10,8 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
+ * 
  * @OA\Schema(
- *   schema="ClubPost",
+ *   schema="ClubPostSimple",
  *   description="Article d'un club",
  *   @OA\Property(
  *     property="id",
@@ -49,6 +51,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     @OA\Items(ref="#/components/schemas/ClubPostImage")
  *   ),
  * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPostCounts",
+ *   description="Article d'un club avec count likes et commentaires",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostSimple")},
+ *   @OA\Property(
+ *     property="post_likes_count",
+ *     type="number",
+ *     example=36
+ *   ),
+ *   @OA\Property(
+ *     property="post_comments_count",
+ *     type="number",
+ *     example=27
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPostLikes",
+ *   description="Article d'un club avec count likes",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostSimple")},
+ *   @OA\Property(
+ *     property="post_likes_count",
+ *     type="number",
+ *     example=36
+ *   ),
+ * )
  */
 class ClubPost extends Model
 {
@@ -66,7 +95,8 @@ class ClubPost extends Model
     ];
 
     protected $with = [
-        // 'images',
+        'images',
+        // 'postlikes',
         // 'comments'
     ];
 
@@ -75,13 +105,18 @@ class ClubPost extends Model
         return $this->belongsTo(Club::class);
     }
 
-    // public function images()
-    // {
-    //     return $this->hasMany(ClubPostImage::class);
-    // }
+    public function images()
+    {
+        return $this->hasMany(ClubPostImage::class);
+    }
 
     public function comments()
     {
         return $this->hasMany(ClubPostComment::class);
+    }
+
+    public function postlikes()
+    {
+        return $this->hasMany(ClubPostLike::class);
     }
 }

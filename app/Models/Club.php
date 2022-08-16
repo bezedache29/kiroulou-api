@@ -8,6 +8,7 @@ use App\Models\ClubPost;
 use App\Models\ClubFollow;
 use App\Models\ClubMember;
 use App\Models\Organization;
+use App\Models\ClubPostImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,6 +57,63 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  * 
  * @OA\Schema(
+ *   schema="ClubWithCounts",
+ *   description="Club avec le nombre de follows, articles, membres",
+ *   @OA\Property(
+ *     property="id",
+ *     type="number",
+ *     example="1",
+ *     description="Id du user",
+ *   ),
+ *   @OA\Property(
+ *     property="name",
+ *     type="string",
+ *     example="Côte des légendes VTT",
+ *     description="Nom du club",
+ *   ),
+ *   @OA\Property(
+ *     property="shortName",
+ *     type="string",
+ *     example="CDL VTT",
+ *     description="Nom raccourci du club",
+ *   ),
+ *   @OA\Property(
+ *     property="website",
+ *     type="string",
+ *     example="http://cotedeslegendesvtt.free.fr/",
+ *     description="Site internet du club",
+ *     nullable=true
+ *   ),
+ *   @OA\Property(
+ *     property="avatar",
+ *     type="string",
+ *     example="1.png",
+ *     description="Nom de l'avatar (id du club + .png)",
+ *     nullable=true
+ *   ),
+ *   @OA\Property(
+ *     property="members_count",
+ *     type="number",
+ *     example=34,
+ *   ),
+ *   @OA\Property(
+ *     property="user_follows_count",
+ *     type="number",
+ *     example=141,
+ *   ),
+ *   @OA\Property(
+ *     property="posts_count",
+ *     type="number",
+ *     example=18,
+ *   ),
+ *   @OA\Property(
+ *     property="address",
+ *     description="Adresse du club",
+ *     ref="#/components/schemas/Address"
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
  *   schema="ClubInformations",
  *   description="Informations du club pour la scene informations du profil",
  *   allOf={@OA\Schema(ref="#/components/schemas/Club")},
@@ -68,7 +126,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   @OA\Property(
  *     property="posts",
  *     type="array",
- *     @OA\Items(ref="#/components/schemas/ClubPost")
+ *     @OA\Items(ref="#/components/schemas/ClubPostSimple")
  *   )
  * )
  * 
@@ -108,6 +166,7 @@ class Club extends Model
 
     protected $with = [
         'address',
+        // 'postImages'
         // 'organization',
         // 'members',
         // 'userFollows',
@@ -134,11 +193,6 @@ class Club extends Model
         return $this->belongsTo(Organization::class);
     }
 
-    // public function members()
-    // {
-    //     return User::where('club_id', $this->id)->get();
-    // }
-
     public function members()
     {
         return $this->hasMany(User::class);
@@ -157,5 +211,10 @@ class Club extends Model
     public function posts()
     {
         return $this->hasMany(ClubPost::class);
+    }
+
+    public function postImages()
+    {
+        return $this->hasMany(ClubPostImage::class);
     }
 }
