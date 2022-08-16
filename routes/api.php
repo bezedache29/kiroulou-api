@@ -49,15 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'comments']);
   Route::post('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'storeComment']);
 
-  Route::post('/posts', [UserPostController::class, 'storePost']);
-  Route::post('/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
+  Route::post('/users/posts', [UserPostController::class, 'storePost']);
+  Route::post('/users/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
 
   Route::get('/users/{user}/posts', [UserPostController::class, 'posts']);
-  Route::post('/posts/{post}/comments', [UserPostController::class, 'storeComment']);
-  Route::get('/posts/{post}/comments', [UserPostController::class, 'comments']);
+  Route::post('/users/posts/{post}/comments', [UserPostController::class, 'storeComment']);
+  Route::get('/users/posts/{post}/comments', [UserPostController::class, 'comments']);
 
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
-  Route::post('/bikes', [UserController::class, 'storeBike']);
+  Route::post('/users/bikes', [UserController::class, 'storeBike']);
 
   Route::get('/users/{user}/profileImages', [UserController::class, 'profileImages']);
   Route::get('/users/{user}/allImages', [UserController::class, 'allImages']);
