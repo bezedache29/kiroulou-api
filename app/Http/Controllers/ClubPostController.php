@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Club;
 use App\Models\ClubPost;
+use App\Models\ClubPostLike;
 use Illuminate\Http\Request;
+use App\Models\ClubPostImage;
 use App\Models\ClubPostComment;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,7 +24,7 @@ class ClubPostController extends Controller
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(ref="#/components/schemas/ClubPost"),
+     *       @OA\Items(ref="#/components/schemas/ClubPostCounts"),
      *     )
      *   ),
      *   @OA\Response(
@@ -33,7 +35,7 @@ class ClubPostController extends Controller
      */
     public function posts(Request $request, Club $club)
     {
-        $posts = ClubPost::where('club_id', $club->id)->get();
+        $posts = ClubPost::where('club_id', $club->id)->withCount('postlikes')->withCount('comments')->get();
 
         return response()->json($posts, 200);
     }
@@ -58,7 +60,7 @@ class ClubPostController extends Controller
      *       ),
      *       @OA\Property(
      *         property="post",
-     *         ref="#/components/schemas/ClubPost"
+     *         ref="#/components/schemas/ClubPostSimple"
      *       )
      *     ),
      *   ),
@@ -97,6 +99,17 @@ class ClubPostController extends Controller
         ];
 
         $post = ClubPost::create($data);
+
+        if ($request->image) {
+            // TODO: Ajout image en store
+            ClubPostImage::create([
+                'user_id' => $request->user()->id,
+                'club_post_id' => $post->id,
+                'image' => 'image-name.png'
+            ]);
+        }
+
+        $post = ClubPost::findOrFail($post->id);
 
         return response()->json(['message' => 'post created', 'post' => $post], 201);
     }
@@ -192,5 +205,59 @@ class ClubPostController extends Controller
         $comments = ClubPostComment::where('club_post_id', $post->id)->get();
 
         return response()->json($comments, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/posts/{post_id}/likeOrUnlike",
+     *   summary="Like or unlike club post",
+     *   description="Aimer ou ne plus aimer un article d'un club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Article d'un user créé",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="liked"
+     *       ),
+     *       @OA\Property(
+     *         property="post",
+     *         ref="#/components/schemas/ClubPostLikes"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function likeOrUnlike(Request $request, Club $club, ClubPost $post)
+    {
+        // Check si le post a été like par le user
+        $is_liked = ClubPostLike::where('user_id', $request->user()->id)->where('club_post_id', $post->id)->first();
+
+        if ($is_liked) {
+            $is_liked->delete();
+            $message = 'unliked';
+        } else {
+            ClubPostLike::create([
+                'user_id' => $request->user()->id,
+                'club_post_id' => $post->id
+            ]);
+            $message = 'liked';
+        }
+
+        $post = ClubPost::withCount('postlikes')->findOrFail($post->id);
+
+        return response()->json([
+            'message' => $message,
+            'post' => $post,
+        ], 201);
     }
 }

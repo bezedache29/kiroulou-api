@@ -101,7 +101,7 @@ class UserPostController extends Controller
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(ref="#/components/schemas/PostUser"),
+     *       @OA\Items(ref="#/components/schemas/PostUserSimple"),
      *     )
      *   ),
      *   @OA\Response(
@@ -112,9 +112,10 @@ class UserPostController extends Controller
      */
     public function posts(User $user)
     {
-        $posts = PostUser::where('user_id', $user->id)->get();
+        // On récupère les posts du user avec le nb de likes et de commentaires
+        $posts = PostUser::where('user_id', $user->id)->withCount('postUserLikes')->withCount('postUserComments')->get();
 
-        return response()->json($posts);
+        return response()->json($posts, 200);
     }
 
     /**

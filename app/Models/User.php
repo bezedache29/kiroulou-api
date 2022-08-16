@@ -7,6 +7,7 @@ use App\Models\Club;
 use App\Models\Address;
 use App\Models\PostUser;
 use App\Models\ImageUser;
+use App\Models\ClubPostLike;
 use App\Models\Subscription;
 use App\Models\PostUserImage;
 use App\Models\ClubPostComment;
@@ -236,5 +237,10 @@ class User extends Authenticatable
     public function postUserImages()
     {
         return $this->hasMany(PostUserImage::class);
+    }
+
+    public function clubPostLikes()
+    {
+        return $this->hasMany(ClubPostLike::class);
     }
 }

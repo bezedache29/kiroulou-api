@@ -3,15 +3,14 @@
 namespace App\Models;
 
 use App\Models\User;
-use App\Models\PostUser;
+use App\Models\ClubPost;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @OA\Schema(
- *   schema="PostUserLike",
- *   description="ID du user qui a like le post",
+ *   schema="ClubPostLike",
+ *   description="Id du user qui a liké l'article du club",
  *   @OA\Property(
  *     property="user_id",
  *     type="number",
@@ -20,32 +19,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  * 
  * @OA\Schema(
- *   schema="PostUserLikeDetails",
- *   description="Like ou Unlike d'un post d'un user",
+ *   schema="ClubPostLikeDetails",
+ *   description="Like ou Unlike d'un post d'un club",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostLike")},
  *   @OA\Property(
  *     property="id",
  *     type="number",
  *     example=1,
  *   ),
  *   @OA\Property(
- *     property="user_id",
+ *     property="club_post_id",
  *     type="number",
  *     example=1,
- *   ),
- *   @OA\Property(
- *     property="post_user_id",
- *     type="number",
- *     example=1,
- *   ),
- *   @OA\Property(
- *     property="created_at",
- *     type="string",
- *     example="2022-08-15T21:09:16.138Z",
- *   ),
- *   @OA\Property(
- *     property="updated_at",
- *     type="string",
- *     example=null,
  *   ),
  *   @OA\Property(
  *     property="user",
@@ -53,9 +38,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  * )
  */
-class PostUserLike extends Model
+class ClubPostLike extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -64,7 +51,7 @@ class PostUserLike extends Model
      */
     protected $fillable = [
         'user_id',
-        'post_user_id'
+        'club_post_id'
     ];
 
     protected $with = [
@@ -74,10 +61,7 @@ class PostUserLike extends Model
 
     protected $hidden = [
         'id',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'post_user_id'
+        'club_post_id'
     ];
 
     public function user()
@@ -85,8 +69,8 @@ class PostUserLike extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function userPost()
+    public function clubPost()
     {
-        return $this->belongsTo(PostUser::class);
+        return $this->belongsTo(ClubPost::class);
     }
 }

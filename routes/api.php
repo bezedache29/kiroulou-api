@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/clubs/{club}/posts', [ClubPostController::class, 'posts']);
   Route::post('/clubs/{club}/posts', [ClubPostController::class, 'storePost']);
+  Route::post('/clubs/{club}/posts/{post}/likeOrUnlike', [ClubPostController::class, 'likeOrUnlike']);
   Route::get('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'comments']);
   Route::post('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'storeComment']);
 

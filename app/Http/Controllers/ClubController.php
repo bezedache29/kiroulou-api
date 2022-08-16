@@ -189,7 +189,7 @@ class ClubController extends Controller
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(ref="#/components/schemas/Club")
+     *       @OA\Items(ref="#/components/schemas/ClubWithCounts")
      *     )
      *   )
      * )
@@ -197,7 +197,7 @@ class ClubController extends Controller
     public function clubs()
     {
         // $clubs = Club::paginate(1);
-        $clubs = Club::with('userFollows')->get();
+        $clubs = Club::withCount('members')->withCount('userFollows')->withCount('posts')->get();
 
         return response()->json($clubs, 200);
     }
