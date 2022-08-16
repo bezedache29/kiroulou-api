@@ -16,7 +16,6 @@ class CreateClubFollowsTable extends Migration
         Schema::create('club_follows', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('club_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

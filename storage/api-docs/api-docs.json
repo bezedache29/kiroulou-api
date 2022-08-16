@@ -120,7 +120,7 @@
                     "Clubs"
                 ],
                 "summary": "Tous les clubs",
-                "operationId": "866030e46cf2d577d67746695d081d1c",
+                "operationId": "6bd3c69424b5df7adb3f74b76d3f629e",
                 "parameters": [
                     {
                         "name": "limit",
@@ -159,7 +159,7 @@
                 ],
                 "summary": "Ajout Club",
                 "description": "Création d'un club",
-                "operationId": "9413538608c46edac6723799dfd1f707",
+                "operationId": "14ad7ea532d198f8fd2215e0da9511f1",
                 "requestBody": {
                     "$ref": "#/components/requestBodies/AddClub"
                 },
@@ -216,6 +216,111 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/clubInformations": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Club's informations",
+                "description": "Les informations du club",
+                "operationId": "63c1b3db67056d9071c41b4509f3fe3f",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubInformations"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/clubPosts": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Club's posts",
+                "description": "Le club et ses articles",
+                "operationId": "2383c5af104d437d62dce9dcf0b6e454",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubPosts"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/clubMembers": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Club's members",
+                "description": "Le club et ses membres ainsi que les demandes d'adhésion",
+                "operationId": "64494a1663f52e852d30c38d72aa0804",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubMembers"
+                                    }
                                 }
                             }
                         }
@@ -458,6 +563,37 @@
                 ]
             }
         },
+        "/clubs/{club_id}/changeAdmin": {
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Change admin for club",
+                "description": "Change d'admin pour le club",
+                "operationId": "b76c1afd3a67284d794456696c7b6769",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/ChangeAdmin"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/clubs/{club_id}/posts": {
             "get": {
                 "tags": [
@@ -501,6 +637,11 @@
                 "summary": "Create club post",
                 "description": "Ajout d'un article par un club",
                 "operationId": "d4fd58758e03d42acf3c6461f094dab8",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
                 "requestBody": {
                     "$ref": "#/components/requestBodies/AddClubPost"
                 },
@@ -707,7 +848,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Last 5 profile images",
+                "summary": "Last 4 profile images",
                 "operationId": "ad25edf7e6eb659f1d3ab4bb73131e97",
                 "parameters": [
                     {
@@ -764,6 +905,134 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/followedClubs": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Clubs followed by the user",
+                "description": "Les clubs suivis par le user",
+                "operationId": "61798ed1abe8c411df2e1c28c61c8d71",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "user_id": {
+                                                "description": "Id du user qui suis le club",
+                                                "type": "number",
+                                                "example": 10005
+                                            },
+                                            "club_id": {
+                                                "description": "Id du club qui est suivis",
+                                                "type": "number",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/followedUsers": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Users followed by the user",
+                "description": "Les users suivis par le user",
+                "operationId": "928dc6687e2fe075563112b5acb6fab2",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "user_follower_id": {
+                                                "description": "Id du user qui suis",
+                                                "type": "number",
+                                                "example": 10005
+                                            },
+                                            "user_followed_id": {
+                                                "description": "Id du user qui est suis",
+                                                "type": "number",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/followOrUnfollow": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Follow/Unfollow user",
+                "description": "Follow/Unfollow un user",
+                "operationId": "ba62facd65b778e2aa6c91b868cb70c6",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
@@ -1086,7 +1355,7 @@
                 "type": "object"
             },
             "Club": {
-                "description": "Club Détails",
+                "description": "Club",
                 "properties": {
                     "id": {
                         "description": "Id du user",
@@ -1117,18 +1386,61 @@
                     },
                     "address": {
                         "$ref": "#/components/schemas/Address"
-                    },
-                    "organization": {
-                        "$ref": "#/components/schemas/Organization"
-                    },
-                    "members": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/UserDetails"
-                        }
                     }
                 },
                 "type": "object"
+            },
+            "ClubInformations": {
+                "description": "Informations du club pour la scene informations du profil",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Club"
+                    }
+                ]
+            },
+            "ClubPosts": {
+                "description": "Posts du club pour la scene articles du profil",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Club"
+                    },
+                    {
+                        "properties": {
+                            "posts": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ClubPost"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "ClubMembers": {
+                "description": "Membres et demandes adhésion du club pour la scene membres du profil",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Club"
+                    },
+                    {
+                        "properties": {
+                            "members": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/UserDetails"
+                                }
+                            },
+                            "user_join_requests": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/UserDetails"
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             "ClubPost": {
                 "description": "Article d'un club",
@@ -1744,7 +2056,7 @@
                     "application/json": {
                         "schema": {
                             "required": [
-                                "title, description, club_id"
+                                "title, description"
                             ],
                             "properties": {
                                 "title": {
@@ -1754,10 +2066,6 @@
                                 "description": {
                                     "type": "string",
                                     "example": "Ma super description"
-                                },
-                                "club_id": {
-                                    "type": "number",
-                                    "example": 1
                                 }
                             },
                             "type": "object"
@@ -1785,6 +2093,25 @@
                                 "message": {
                                     "type": "string",
                                     "example": "Mon super commentaire"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "ChangeAdmin": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "user_id"
+                            ],
+                            "properties": {
+                                "user_id": {
+                                    "type": "number",
+                                    "example": 10005
                                 }
                             },
                             "type": "object"

@@ -28,10 +28,9 @@ namespace App\Models\RequestBody;
  *   request="AddClubPost",
  *   required=true,
  *   @OA\JsonContent(
- *     required={"title, description, club_id"},
+ *     required={"title, description"},
  *     @OA\Property(property="title", type="string", example="Mon super titre"),
  *     @OA\Property(property="description", type="string", example="Ma super description"),
- *     @OA\Property(property="club_id", type="number", example=1),
  *   )
  * )
  * 
@@ -43,6 +42,15 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="user_id", type="number", example=10005),
  *     @OA\Property(property="club_post_id", type="number", example=1),
  *     @OA\Property(property="message", type="string", example="Mon super commentaire"),
+ *   )
+ * )
+ * 
+ * @OA\RequestBody(
+ *   request="ChangeAdmin",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     required={"user_id"},
+ *     @OA\Property(property="user_id", type="number", example=10005),
  *   )
  * )
  * 
