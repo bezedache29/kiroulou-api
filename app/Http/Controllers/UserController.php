@@ -14,7 +14,7 @@ class UserController extends Controller
     /**
      * @OA\Post(
      *   tags={"Users"},
-     *   path="/bikes",
+     *   path="/users/bikes",
      *   summary="Add bike's user",
      *   description="Ajouter un vélo du user connecté",
      *   security={{ "bearer_token": {} }},

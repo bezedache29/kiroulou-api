@@ -15,7 +15,7 @@ class UserPostController extends Controller
     /**
      * @OA\Post(
      *   tags={"Users"},
-     *   path="/posts",
+     *   path="/users/posts",
      *   summary="Create user post",
      *   description="Ajout d'un article par un user",
      *   security={{ "bearer_token": {} }},
@@ -120,7 +120,7 @@ class UserPostController extends Controller
     /**
      * @OA\Post(
      *   tags={"Users"},
-     *   path="/posts/{post_id}/likeOrUnlike",
+     *   path="/users/posts/{post_id}/likeOrUnlike",
      *   summary="Like or unlike user post",
      *   description="Aimer ou ne plus aimer un article d'un user",
      *   security={{ "bearer_token": {} }},
@@ -176,7 +176,7 @@ class UserPostController extends Controller
     /**
      * @OA\Post(
      *   tags={"Users"},
-     *   path="/posts/{post_id}/comments",
+     *   path="/users//posts/{post_id}/comments",
      *   summary="Create user post comment",
      *   description="Ajout d'un commentaire à un article d'un user",
      *   security={{ "bearer_token": {} }},
@@ -241,7 +241,7 @@ class UserPostController extends Controller
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/posts/{post_id}/comments",
+     *   path="/users/posts/{post_id}/comments",
      *   summary="All user's posts",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/post_id"),

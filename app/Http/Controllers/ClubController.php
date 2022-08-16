@@ -17,7 +17,7 @@ class ClubController extends Controller
      * @OA\Post(
      *   tags={"Clubs"},
      *   path="/clubs",
-     *   summary="Ajout Club",
+     *   summary="Add Club",
      *   description="Création d'un club",
      *   security={{ "bearer_token": {} }},
      *   @OA\RequestBody(ref="#/components/requestBodies/AddClub"),
@@ -174,7 +174,8 @@ class ClubController extends Controller
      * @OA\Get(
      *   tags={"Clubs"},
      *   path="/clubs",
-     *   summary="Tous les clubs",
+     *   summary="All clubs",
+     *   description="Tous les clubs",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(
      *     name="limit",
@@ -277,8 +278,8 @@ class ClubController extends Controller
      * @OA\Post(
      *   path="/clubs/{club_id}/followOrUnfollow",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
-     *   summary="Follow club",
-     *   description="Follow un club",
+     *   summary="Follow/UnFollow club",
+     *   description="Follow/UnFollow un club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
      *   @OA\Response(
@@ -317,7 +318,7 @@ class ClubController extends Controller
      * @OA\Post(
      *   path="/clubs/{club_id}/requestToJoin",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
-     *   summary="Request to join club",
+     *   summary="User membership request",
      *   description="Demande d'adhésion au club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
@@ -361,7 +362,7 @@ class ClubController extends Controller
      * @OA\Post(
      *   path="/clubs/{club_id}/acceptRequestToJoin",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
-     *   summary="Accept user request to join club",
+     *   summary="Accept the user's membership request",
      *   description="Acceptation de la demande d'adhésion d'un user au club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
@@ -436,7 +437,7 @@ class ClubController extends Controller
      * @OA\Post(
      *   path="/clubs/{club_id}/denyRequestToJoin",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
-     *   summary="Deny user request to join club",
+     *   summary="Deny the user's membership request",
      *   description="Refus de la demande d'adhésion d'un user au club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
@@ -508,7 +509,7 @@ class ClubController extends Controller
      * @OA\Get(
      *   tags={"Clubs"},
      *   path="/clubs/{club_id}/showJoinRequests",
-     *   summary="Show user's requests",
+     *   summary="Show user club membership requests",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   @OA\Response(
@@ -558,7 +559,7 @@ class ClubController extends Controller
      *   path="/clubs/{club_id}/changeAdmin",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   @OA\RequestBody(ref="#/components/requestBodies/ChangeAdmin"),
-     *   summary="Change admin for club",
+     *   summary="Change club admin",
      *   description="Change d'admin pour le club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},

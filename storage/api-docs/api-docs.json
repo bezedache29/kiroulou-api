@@ -119,7 +119,8 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Tous les clubs",
+                "summary": "All clubs",
+                "description": "Tous les clubs",
                 "operationId": "6bd3c69424b5df7adb3f74b76d3f629e",
                 "parameters": [
                     {
@@ -157,7 +158,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Ajout Club",
+                "summary": "Add Club",
                 "description": "Création d'un club",
                 "operationId": "14ad7ea532d198f8fd2215e0da9511f1",
                 "requestBody": {
@@ -338,8 +339,8 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Follow club",
-                "description": "Follow un club",
+                "summary": "Follow/UnFollow club",
+                "description": "Follow/UnFollow un club",
                 "operationId": "af69a344716587613075fbb0f84ab25b",
                 "parameters": [
                     {
@@ -369,7 +370,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Request to join club",
+                "summary": "User membership request",
                 "description": "Demande d'adhésion au club",
                 "operationId": "848adbaaf99fd7b610ed94a7e19e70a1",
                 "parameters": [
@@ -413,7 +414,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Accept user request to join club",
+                "summary": "Accept the user's membership request",
                 "description": "Acceptation de la demande d'adhésion d'un user au club",
                 "operationId": "0872b4c80819300ae0644ed9745ab75a",
                 "parameters": [
@@ -463,7 +464,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Deny user request to join club",
+                "summary": "Deny the user's membership request",
                 "description": "Refus de la demande d'adhésion d'un user au club",
                 "operationId": "ca66c9a1d3862b4b8da825db0bb4b521",
                 "parameters": [
@@ -513,7 +514,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Show user's requests",
+                "summary": "Show user club membership requests",
                 "operationId": "11bcf9290d59a6633d4d3d63c273a077",
                 "parameters": [
                     {
@@ -568,7 +569,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "Change admin for club",
+                "summary": "Change club admin",
                 "description": "Change d'admin pour le club",
                 "operationId": "b76c1afd3a67284d794456696c7b6769",
                 "parameters": [
@@ -681,7 +682,7 @@
                 "tags": [
                     "Clubs"
                 ],
-                "summary": "All club posts",
+                "summary": "All club post comments",
                 "operationId": "8eae86a55a90b1b947b0c9bcb7dde8cd",
                 "parameters": [
                     {
@@ -764,14 +765,14 @@
                 ]
             }
         },
-        "/bikes": {
+        "/users/bikes": {
             "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Add bike's user",
                 "description": "Ajouter un vélo du user connecté",
-                "operationId": "95d110a5af7e39022292b655b78ad305",
+                "operationId": "cd8676e16dc73abcaa675873fb69a66d",
                 "requestBody": {
                     "$ref": "#/components/requestBodies/AddBike"
                 },
@@ -1045,14 +1046,14 @@
                 ]
             }
         },
-        "/posts": {
+        "/users/posts": {
             "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Create user post",
                 "description": "Ajout d'un article par un user",
-                "operationId": "ad2b664964bffd7d0092f1c5f414f90a",
+                "operationId": "c9638d9064495990bcf7c353a37bed95",
                 "requestBody": {
                     "$ref": "#/components/requestBodies/AddPostUser"
                 },
@@ -1124,14 +1125,14 @@
                 ]
             }
         },
-        "/posts/{post_id}/likeOrUnlike": {
+        "/users/posts/{post_id}/likeOrUnlike": {
             "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Like or unlike user post",
                 "description": "Aimer ou ne plus aimer un article d'un user",
-                "operationId": "15afec1bad04e74f304aab233fa07557",
+                "operationId": "ed2a38ddc7e5324fb592603f9dd0c774",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/post_id"
@@ -1168,49 +1169,14 @@
                 ]
             }
         },
-        "/posts/{post_id}/comments": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "All user's posts",
-                "operationId": "69748b7e01e0cf1a0f6bcfd5e0d38d10",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/post_id"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/PostUserComment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            },
+        "/users//posts/{post_id}/comments": {
             "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Create user post comment",
                 "description": "Ajout d'un commentaire à un article d'un user",
-                "operationId": "41edcd4a1dc5781d4ed1c65fe39d375d",
+                "operationId": "279087e5c95d486057b67d471581cf12",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/post_id"
@@ -1241,6 +1207,43 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/posts/{post_id}/comments": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "All user's posts",
+                "operationId": "602b9bf051d4b46118d604ce6f1ac89c",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostUserComment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [

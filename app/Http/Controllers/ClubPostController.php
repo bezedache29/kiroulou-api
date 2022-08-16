@@ -169,7 +169,7 @@ class ClubPostController extends Controller
      * @OA\Get(
      *   tags={"Clubs"},
      *   path="/clubs/{club_id}/posts/{post_id}/comments",
-     *   summary="All club posts",
+     *   summary="All club post comments",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   @OA\Parameter(ref="#/components/parameters/post_id"),
