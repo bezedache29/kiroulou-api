@@ -113,6 +113,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="Est-ce que le user est admin de son club",
  *   ),
  *   @OA\Property(
+ *     property="club_name",
+ *     type="string",
+ *     example="Côte Des Légendes VTT",
+ *     description="Nom du club, si le user est dans un club",
+ *   ),
+ *   @OA\Property(
  *     property="address",
  *     description="address du user",
  *     ref="#/components/schemas/Address"
@@ -148,11 +154,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'email_verified_at',
-        'address_id'
+        'address_id',
+        'club'
     ];
 
     protected $with = [
         'address'
+    ];
+
+    protected $appends = [
+        'club_name'
     ];
 
     /**
@@ -242,5 +253,14 @@ class User extends Authenticatable
     public function clubPostLikes()
     {
         return $this->hasMany(ClubPostLike::class);
+    }
+
+    public function getClubNameAttribute()
+    {
+        if ($this->club_id) {
+            return $this->club->name;
+        } else {
+            return null;
+        }
     }
 }

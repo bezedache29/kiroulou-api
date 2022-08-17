@@ -38,8 +38,7 @@ namespace App\Models\RequestBody;
  *   request="AddClubPostComment",
  *   required=true,
  *   @OA\JsonContent(
- *     required={"message, user_id"},
- *     @OA\Property(property="user_id", type="number", example=10005),
+ *     required={"message"},
  *     @OA\Property(property="message", type="string", example="Mon super commentaire"),
  *   )
  * )

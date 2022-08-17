@@ -14,6 +14,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   schema="Bike",
  *   description="Vélo du user",
  *   @OA\Property(
+ *     property="id",
+ *     type="number",
+ *     example=1,
+ *   ),
+ *   @OA\Property(
  *     property="name",
  *     type="string",
  *     example="Le gravel de folie",

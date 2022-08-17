@@ -7,6 +7,7 @@ use App\Models\Club;
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Zipcode;
+use App\Models\ClubPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -239,15 +240,16 @@ class ClubController extends Controller
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(ref="#/components/schemas/ClubPosts")
+     *       @OA\Items(ref="#/components/schemas/ClubPostCounts")
      *     )
      *   )
      * )
      */
     public function clubPosts(Club $club)
     {
-        $club = Club::with('posts')->findOrFail($club->id);
-        return response()->json($club, 200);
+        $posts = ClubPost::where('club_id', $club->id)->withCount('postlikes')->withCount('comments')->get();
+
+        return response()->json($posts, 200);
     }
 
     /**

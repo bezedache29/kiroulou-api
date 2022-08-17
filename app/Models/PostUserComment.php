@@ -34,8 +34,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="post_user_id",
- *     type="number",
- *     example=1,
+ *     type="string",
+ *     example="0d2991f8-132b-43fc-87f9-9bbcbf0d7877",
  *   ),
  *   @OA\Property(
  *     property="message",

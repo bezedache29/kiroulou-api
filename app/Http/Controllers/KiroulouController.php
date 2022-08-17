@@ -25,8 +25,8 @@ namespace App\Http\Controllers;
  * )
  * 
  * @OA\Tag(
- *     name="Home",
- *     description="Opérations autres"
+ *     name="Posts",
+ *     description="Opérations en relation avec les articles users & clubs"
  * )
  * 
  * @OA\Tag(
@@ -68,9 +68,9 @@ namespace App\Http\Controllers;
  * @OA\Parameter(
  *   name="post_id",
  *   in="path",
- *   description="ID du post",
+ *   description="ID du post (uuid)",
  *   required=true,
- *   @OA\Schema(type="integer")
+ *   @OA\Schema(type="string")
  * )
  * 
  * @OA\Parameter(
@@ -87,6 +87,14 @@ namespace App\Http\Controllers;
  *   description="Numéro de la page",
  *   required=true,
  *   @OA\Schema(type="integer")
+ * )
+ * 
+ * @OA\Parameter(
+ *   name="type",
+ *   in="path",
+ *   description="Type de ressource",
+ *   required=true,
+ *   @OA\Schema(type="string")
  * )
  * 
  * @OA\Response(

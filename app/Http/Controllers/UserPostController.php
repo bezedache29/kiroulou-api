@@ -30,9 +30,10 @@ class UserPostController extends Controller
      *         example="post created"
      *       ),
      *       @OA\Property(
-     *         property="post",
-     *         ref="#/components/schemas/PostUser"
-     *       )
+     *         property="post_user_id",
+     *         type="string",
+     *         example="e6c64643-6ac9-4adb-87d2-bfe121dc4580"
+     *       ),
      *     ),
      *   ),
      *   @OA\Response(
@@ -81,11 +82,11 @@ class UserPostController extends Controller
             ]);
         }
 
-        $post = PostUser::findOrFail($post->id);
+        // $post = PostUser::with('images')->findOrFail($post->id);
 
         return response()->json([
             'message' => 'post created',
-            'post' => $post
+            'post_user_id' => $post->id
         ], 201);
     }
 
@@ -101,7 +102,7 @@ class UserPostController extends Controller
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(ref="#/components/schemas/PostUserSimple"),
+     *       @OA\Items(ref="#/components/schemas/PostUserCounts"),
      *     )
      *   ),
      *   @OA\Response(
@@ -137,7 +138,7 @@ class UserPostController extends Controller
      *       ),
      *       @OA\Property(
      *         property="post",
-     *         ref="#/components/schemas/PostUser"
+     *         ref="#/components/schemas/PostUserCounts"
      *       )
      *     ),
      *   ),
@@ -164,7 +165,7 @@ class UserPostController extends Controller
             $message = 'liked';
         }
 
-        $post = PostUser::findOrFail($post->id);
+        $post = PostUser::withCount('postUserLikes')->withCount('postUserComments')->findOrFail($post->id);
 
         // $likes_count = $post->postUserLikes->count();
 
@@ -177,7 +178,7 @@ class UserPostController extends Controller
     /**
      * @OA\Post(
      *   tags={"Users"},
-     *   path="/users//posts/{post_id}/comments",
+     *   path="/users/posts/{post_id}/comments",
      *   summary="Create user post comment",
      *   description="Ajout d'un commentaire à un article d'un user",
      *   security={{ "bearer_token": {} }},

@@ -15,10 +15,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @OA\Schema(
  *   schema="ClubPostSimple",
  *   description="Article d'un club",
- *   @OA\Property(
+ *     @OA\Property(
  *     property="id",
- *     type="number",
- *     example=1,
+ *     type="string",
+ *     example="b7d15d52-0458-4a39-a59e-a7a370e7f31c",
  *   ),
  *   @OA\Property(
  *     property="title",
@@ -45,6 +45,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="string",
  *     example=null,
  *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPostWithClub",
+ *   description="Article d'un club avec le club en détails",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostSimple")},
+ *   @OA\Property(
+ *     property="club",
+ *     ref="#/components/schemas/Club"
+ *   )
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPostImages",
+ *   description="Article d'un club",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostSimple")},
  *   @OA\Property(
  *     property="images",
  *     type="array",
@@ -65,6 +81,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     property="post_comments_count",
  *     type="number",
  *     example=27
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPostClubAndCounts",
+ *   description="Article d'un club avec le club en détails",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostCounts")},
+ *   @OA\Property(
+ *     property="club",
+ *     ref="#/components/schemas/Club"
+ *   )
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="ClubPostFull",
+ *   description="Article d'un club avec count likes et commentaires et images",
+ *   allOf={@OA\Schema(ref="#/components/schemas/ClubPostClubAndCounts")},
+ *   @OA\Property(
+ *     property="images",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/ClubPostImage")
  *   ),
  * )
  * 
@@ -95,7 +132,7 @@ class ClubPost extends Model
     ];
 
     protected $with = [
-        'images',
+        // 'images',
         // 'postlikes',
         // 'comments'
     ];
@@ -115,7 +152,7 @@ class ClubPost extends Model
         return $this->hasMany(ClubPostComment::class);
     }
 
-    public function postlikes()
+    public function postLikes()
     {
         return $this->hasMany(ClubPostLike::class);
     }
