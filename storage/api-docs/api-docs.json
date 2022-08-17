@@ -285,7 +285,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ClubPosts"
+                                        "$ref": "#/components/schemas/ClubPostCounts"
                                     }
                                 }
                             }
@@ -815,11 +815,11 @@
         "/posts?page={page}": {
             "get": {
                 "tags": [
-                    "Home"
+                    "Posts"
                 ],
                 "summary": "All posts",
                 "description": "Les derniers articles des users et clubs par ordre decroissant de création paginés",
-                "operationId": "01186bf3556aa1362a683eea1b38bb92",
+                "operationId": "e4a3c976307d99432301bdbce14fa8ae",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/page"
@@ -839,7 +839,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/ClubPostCounts"
+                                                "$ref": "#/components/schemas/ClubPostClubAndCounts"
                                             }
                                         },
                                         "last_page": {
@@ -852,6 +852,44 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/posts/{post_id}/{type}/show": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Post details",
+                "description": "Les détails d'un article avec les images/photos",
+                "operationId": "fe772fabd333d8e47053af86ab74a872",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/type"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubPostFull"
                                 }
                             }
                         }
@@ -1170,8 +1208,9 @@
                                             "type": "string",
                                             "example": "post created"
                                         },
-                                        "post": {
-                                            "$ref": "#/components/schemas/PostUser"
+                                        "post_user_id": {
+                                            "type": "string",
+                                            "example": "e6c64643-6ac9-4adb-87d2-bfe121dc4580"
                                         }
                                     },
                                     "type": "object"
@@ -1210,7 +1249,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/PostUserSimple"
+                                        "$ref": "#/components/schemas/PostUserCounts"
                                     }
                                 }
                             }
@@ -1252,54 +1291,7 @@
                                             "example": "liked"
                                         },
                                         "post": {
-                                            "$ref": "#/components/schemas/PostUser"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/UnprocessableEntity"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
-        },
-        "/users//posts/{post_id}/comments": {
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Create user post comment",
-                "description": "Ajout d'un commentaire à un article d'un user",
-                "operationId": "279087e5c95d486057b67d471581cf12",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/post_id"
-                    }
-                ],
-                "requestBody": {
-                    "$ref": "#/components/requestBodies/AddPostUserComment"
-                },
-                "responses": {
-                    "201": {
-                        "description": "Commentaire d'article de user créé",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "comment created"
-                                        },
-                                        "comments": {
-                                            "$ref": "#/components/schemas/PostUserComment"
+                                            "$ref": "#/components/schemas/PostUserCounts"
                                         }
                                     },
                                     "type": "object"
@@ -1346,6 +1338,51 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user post comment",
+                "description": "Ajout d'un commentaire à un article d'un user",
+                "operationId": "c676f7433626c198ebb1f1fbdc48422e",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddPostUserComment"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commentaire d'article de user créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "comment created"
+                                        },
+                                        "comments": {
+                                            "$ref": "#/components/schemas/PostUserComment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
                     }
                 },
                 "security": [
@@ -1403,6 +1440,10 @@
             "Bike": {
                 "description": "Vélo du user",
                 "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
                     "name": {
                         "description": "Nom que donne le user au vélo",
                         "type": "string",
@@ -1599,8 +1640,8 @@
                 "description": "Article d'un club",
                 "properties": {
                     "id": {
-                        "type": "number",
-                        "example": 1
+                        "type": "string",
+                        "example": "b7d15d52-0458-4a39-a59e-a7a370e7f31c"
                     },
                     "title": {
                         "type": "string",
@@ -1621,15 +1662,44 @@
                     "updated_at": {
                         "type": "string",
                         "example": null
-                    },
-                    "images": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ClubPostImage"
-                        }
                     }
                 },
                 "type": "object"
+            },
+            "ClubPostWithClub": {
+                "description": "Article d'un club avec le club en détails",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ClubPostSimple"
+                    },
+                    {
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/Club"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ClubPostImages": {
+                "description": "Article d'un club",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ClubPostSimple"
+                    },
+                    {
+                        "properties": {
+                            "images": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ClubPostImage"
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             "ClubPostCounts": {
                 "description": "Article d'un club avec count likes et commentaires",
@@ -1647,6 +1717,41 @@
                             "post_comments_count": {
                                 "type": "number",
                                 "example": 27
+                            }
+                        }
+                    }
+                ]
+            },
+            "ClubPostClubAndCounts": {
+                "description": "Article d'un club avec le club en détails",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ClubPostCounts"
+                    },
+                    {
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/Club"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ClubPostFull": {
+                "description": "Article d'un club avec count likes et commentaires et images",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ClubPostClubAndCounts"
+                    },
+                    {
+                        "properties": {
+                            "images": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ClubPostImage"
+                                }
                             }
                         }
                     }
@@ -1692,9 +1797,20 @@
                         "type": "string",
                         "example": "2022-08-15 14:25:01"
                     },
-                    "updated_at": {
+                    "user_name": {
+                        "description": "Nom et Prénom du user ou son email si non renseigné",
                         "type": "string",
-                        "example": null
+                        "example": "Simon Strueux"
+                    },
+                    "user_club_name": {
+                        "description": "Nom du club du user ou la ville du user si non renseigné",
+                        "type": "string",
+                        "example": "Côte Des Légendes VTT"
+                    },
+                    "user_avatar_name": {
+                        "description": "Avatar du user ou celui par default si non renseigné",
+                        "type": "string",
+                        "example": "mon-avatar.png"
                     }
                 },
                 "type": "object"
@@ -1769,8 +1885,8 @@
                 "description": "Article d'un user simple avec les compteurs",
                 "properties": {
                     "id": {
-                        "type": "number",
-                        "example": 1
+                        "type": "string",
+                        "example": "b7d15d52-0458-4a39-a59e-a7a370e7f31c"
                     },
                     "title": {
                         "type": "string",
@@ -1795,26 +1911,87 @@
                     "deleted_at": {
                         "type": "string",
                         "example": null
-                    },
-                    "post_user_likes_count": {
-                        "type": "number",
-                        "example": 12
-                    },
-                    "post_user_comments_count": {
-                        "type": "number",
-                        "example": 3
-                    },
-                    "post_user_images": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/PostUserImage"
-                        }
                     }
                 },
                 "type": "object"
             },
-            "PostUser": {
-                "description": "Article d'un user",
+            "PostUserWithUser": {
+                "description": "Article d'un user avec les details du user",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PostUserSimple"
+                    },
+                    {
+                        "properties": {
+                            "user": {
+                                "$ref": "#/components/schemas/UserDetails"
+                            }
+                        }
+                    }
+                ]
+            },
+            "PostUserCounts": {
+                "description": "Article d'un user avec les compteurs de commentaires et likes",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PostUserSimple"
+                    },
+                    {
+                        "properties": {
+                            "post_user_likes_count": {
+                                "type": "number",
+                                "example": 12
+                            },
+                            "post_user_comments_count": {
+                                "type": "number",
+                                "example": 3
+                            }
+                        }
+                    }
+                ]
+            },
+            "PostUserImages": {
+                "description": "Article d'un user avec les images",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PostUserSimple"
+                    },
+                    {
+                        "properties": {
+                            "post_user_images": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PostUserImage"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "PostUserCountsAndImages": {
+                "description": "Article d'un user avec les compteurs likes et commentaires et les images",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/PostUserCounts"
+                    },
+                    {
+                        "properties": {
+                            "post_user_images": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PostUserImage"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "PostUserIsUse": {
+                "description": "A quoi il sert ?",
                 "properties": {
                     "id": {
                         "type": "number",
@@ -1883,8 +2060,8 @@
                         "example": 10005
                     },
                     "post_user_id": {
-                        "type": "number",
-                        "example": 1
+                        "type": "string",
+                        "example": "0d2991f8-132b-43fc-87f9-9bbcbf0d7877"
                     },
                     "message": {
                         "type": "string",
@@ -2055,6 +2232,11 @@
                                 "type": "number",
                                 "example": 1
                             },
+                            "club_name": {
+                                "description": "Nom du club, si le user est dans un club",
+                                "type": "string",
+                                "example": "Côte Des Légendes VTT"
+                            },
                             "address": {
                                 "$ref": "#/components/schemas/Address"
                             }
@@ -2180,10 +2362,10 @@
             "post_id": {
                 "name": "post_id",
                 "in": "path",
-                "description": "ID du post",
+                "description": "ID du post (uuid)",
                 "required": true,
                 "schema": {
-                    "type": "integer"
+                    "type": "string"
                 }
             },
             "user_id": {
@@ -2202,6 +2384,15 @@
                 "required": true,
                 "schema": {
                     "type": "integer"
+                }
+            },
+            "type": {
+                "name": "type",
+                "in": "path",
+                "description": "Type de ressource",
+                "required": true,
+                "schema": {
+                    "type": "string"
                 }
             }
         },
@@ -2391,13 +2582,9 @@
                     "application/json": {
                         "schema": {
                             "required": [
-                                "message, user_id"
+                                "message"
                             ],
                             "properties": {
-                                "user_id": {
-                                    "type": "number",
-                                    "example": 10005
-                                },
                                 "message": {
                                     "type": "string",
                                     "example": "Mon super commentaire"
@@ -2535,8 +2722,8 @@
             "description": "Opérations d'authentification"
         },
         {
-            "name": "Home",
-            "description": "Opérations autres"
+            "name": "Posts",
+            "description": "Opérations en relation avec les articles users & clubs"
         },
         {
             "name": "Users",

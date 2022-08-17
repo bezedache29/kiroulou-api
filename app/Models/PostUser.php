@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   description="Article d'un user simple avec les compteurs",
  *   @OA\Property(
  *     property="id",
- *     type="number",
- *     example=1,
+ *     type="string",
+ *     example="b7d15d52-0458-4a39-a59e-a7a370e7f31c",
  *   ),
  *   @OA\Property(
  *     property="title",
@@ -50,6 +50,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="string",
  *     example=null,
  *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="PostUserWithUser",
+ *   description="Article d'un user avec les details du user",
+ *   allOf={@OA\Schema(ref="#/components/schemas/PostUserSimple")},
+ *   @OA\Property(
+ *     property="user",
+ *     ref="#/components/schemas/UserDetails"
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="PostUserCounts",
+ *   description="Article d'un user avec les compteurs de commentaires et likes",
+ *   allOf={@OA\Schema(ref="#/components/schemas/PostUserSimple")},
  *   @OA\Property(
  *     property="post_user_likes_count",
  *     type="number",
@@ -60,7 +76,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="number",
  *     example=3
  *   ),
- *   @OA\Property(
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="PostUserImages",
+ *   description="Article d'un user avec les images",
+ *   allOf={@OA\Schema(ref="#/components/schemas/PostUserSimple")},
+ *     @OA\Property(
  *     property="post_user_images",
  *     type="array",
  *     @OA\Items(ref="#/components/schemas/PostUserImage")
@@ -68,8 +90,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * )
  * 
  * @OA\Schema(
- *   schema="PostUser",
- *   description="Article d'un user",
+ *   schema="PostUserCountsAndImages",
+ *   description="Article d'un user avec les compteurs likes et commentaires et les images",
+ *   allOf={@OA\Schema(ref="#/components/schemas/PostUserCounts")},
+ *     @OA\Property(
+ *     property="post_user_images",
+ *     type="array",
+ *     @OA\Items(ref="#/components/schemas/PostUserImage")
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="PostUserIsUse",
+ *   description="A quoi il sert ?",
  *   @OA\Property(
  *     property="id",
  *     type="number",
@@ -135,7 +168,7 @@ class PostUser extends Model
     protected $with = [
         // 'postUserComments',
         // 'postUserLikes',
-        'images'
+        // 'images'
     ];
 
     protected $hidden = [

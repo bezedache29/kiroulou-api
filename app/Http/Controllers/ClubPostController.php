@@ -172,6 +172,8 @@ class ClubPostController extends Controller
 
         $comment = ClubPostComment::create($data);
 
+        $comment = ClubPostComment::with('user')->findOrFail($comment->id);
+
         return response()->json([
             'message' => 'comment created',
             'comment' => $comment
@@ -202,7 +204,7 @@ class ClubPostController extends Controller
      */
     public function comments(Request $request, Club $club, ClubPost $post)
     {
-        $comments = ClubPostComment::where('club_post_id', $post->id)->get();
+        $comments = ClubPostComment::where('club_post_id', $post->id)->with('user')->get();
 
         return response()->json($comments, 200);
     }
@@ -253,7 +255,7 @@ class ClubPostController extends Controller
             $message = 'liked';
         }
 
-        $post = ClubPost::withCount('postlikes')->findOrFail($post->id);
+        $post = ClubPost::withCount('postLikes')->findOrFail($post->id);
 
         return response()->json([
             'message' => $message,

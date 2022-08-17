@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClubPostController;
 use App\Http\Controllers\UserPostController;
@@ -33,7 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me', [AuthController::class, 'me']);
   Route::post('/disconnect', [AuthController::class, 'disconnect']);
 
-  Route::get('/posts', [HomeController::class, 'posts']);
+  Route::get('/posts', [PostController::class, 'posts']);
+  Route::get('/posts/{post}/{type}/show', [PostController::class, 'show']);
 
   Route::get('/clubs', [ClubController::class, 'clubs']);
   Route::post('/clubs', [ClubController::class, 'storeClub']);
