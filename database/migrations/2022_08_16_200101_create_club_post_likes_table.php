@@ -16,7 +16,9 @@ class CreateClubPostLikesTable extends Migration
         Schema::create('club_post_likes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('club_post_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('club_post_id')->constrained()->onDelete('cascade');
+            $table->uuid('club_post_id');
+            $table->foreign('club_post_id')->references('id')->on('club_posts')->onDelete('cascade');
         });
     }
 

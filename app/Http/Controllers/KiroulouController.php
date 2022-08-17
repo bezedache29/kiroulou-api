@@ -25,6 +25,11 @@ namespace App\Http\Controllers;
  * )
  * 
  * @OA\Tag(
+ *     name="Home",
+ *     description="Opérations autres"
+ * )
+ * 
+ * @OA\Tag(
  *     name="Users",
  *     description="Opérations en relation avec les utilisateurs"
  * )
@@ -72,6 +77,14 @@ namespace App\Http\Controllers;
  *   name="user_id",
  *   in="path",
  *   description="ID du user",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
+ * @OA\Parameter(
+ *   name="page",
+ *   in="path",
+ *   description="Numéro de la page",
  *   required=true,
  *   @OA\Schema(type="integer")
  * )

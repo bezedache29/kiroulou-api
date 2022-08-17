@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 /**
  * @OA\Schema(
  *   schema="PostUserSimple",
@@ -118,7 +119,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class PostUser extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \App\Http\Traits\UsesUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -128,13 +129,17 @@ class PostUser extends Model
     protected $fillable = [
         'title',
         'description',
-        'user_id'
+        'user_id',
     ];
 
     protected $with = [
         // 'postUserComments',
         // 'postUserLikes',
         'images'
+    ];
+
+    protected $hidden = [
+        // 'id'
     ];
 
     public function user()

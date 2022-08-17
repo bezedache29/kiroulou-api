@@ -16,7 +16,9 @@ class CreatePostUserLikesTable extends Migration
         Schema::create('post_user_likes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('post_user_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('post_user_id')->constrained()->onDelete('cascade');
+            $table->uuid('post_user_id');
+            $table->foreign('post_user_id')->references('id')->on('post_users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -14,7 +14,7 @@ class CreatePostUsersTable extends Migration
     public function up()
     {
         Schema::create('post_users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title');
             $table->string('description');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

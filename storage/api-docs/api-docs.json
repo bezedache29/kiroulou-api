@@ -812,6 +812,61 @@
                 ]
             }
         },
+        "/posts?page={page}": {
+            "get": {
+                "tags": [
+                    "Home"
+                ],
+                "summary": "All posts",
+                "description": "Les derniers articles des users et clubs par ordre decroissant de création paginés",
+                "operationId": "01186bf3556aa1362a683eea1b38bb92",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "number",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ClubPostCounts"
+                                            }
+                                        },
+                                        "last_page": {
+                                            "type": "number",
+                                            "example": 3
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": 11
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/bikes": {
             "post": {
                 "tags": [
@@ -2139,6 +2194,15 @@
                 "schema": {
                     "type": "integer"
                 }
+            },
+            "page": {
+                "name": "page",
+                "in": "path",
+                "description": "Numéro de la page",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
             }
         },
         "requestBodies": {
@@ -2469,6 +2533,10 @@
         {
             "name": "Auth",
             "description": "Opérations d'authentification"
+        },
+        {
+            "name": "Home",
+            "description": "Opérations autres"
         },
         {
             "name": "Users",
