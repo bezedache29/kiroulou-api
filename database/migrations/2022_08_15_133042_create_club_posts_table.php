@@ -14,7 +14,7 @@ class CreateClubPostsTable extends Migration
     public function up()
     {
         Schema::create('club_posts', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title');
             $table->longText('description');
             $table->foreignId('club_id')->constrained()->onDelete('cascade');

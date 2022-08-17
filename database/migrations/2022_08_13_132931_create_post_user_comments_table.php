@@ -16,7 +16,11 @@ class CreatePostUserCommentsTable extends Migration
         Schema::create('post_user_comments', function (Blueprint $table) {
             $table->id();
             $table->longtext('message');
-            $table->foreignId('post_user_id')->constrained()->onDelete('cascade');
+            $table->uuid('post_user_id');
+            $table->foreign('post_user_id')->references('id')->on('post_users')->onDelete('cascade');
+            // $table->foreignUuid('post_user_id')->constrained()->onDelete('cascade');
+            // $table->uuid('post_user_id');
+            // $table->foreign('post_user_id')->references('id')->on('post_users')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

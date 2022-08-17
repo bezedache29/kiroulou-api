@@ -15,7 +15,9 @@ class CreatePostUserImagesTable extends Migration
     {
         Schema::create('post_user_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('post_user_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('post_user_id')->constrained()->onDelete('cascade');
+            $table->uuid('post_user_id');
+            $table->foreign('post_user_id')->references('id')->on('post_users')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('image');
             $table->timestamps();

@@ -16,7 +16,9 @@ class CreateClubPostImagesTable extends Migration
         Schema::create('club_post_images', function (Blueprint $table) {
             $table->id();
             $table->string('image');
-            $table->foreignId('club_post_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('club_post_id')->constrained()->onDelete('cascade');
+            $table->uuid('club_post_id');
+            $table->foreign('club_post_id')->references('id')->on('club_posts')->onDelete('cascade');
             $table->foreignId('club_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

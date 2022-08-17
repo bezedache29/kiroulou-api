@@ -81,7 +81,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class ClubPost extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \App\Http\Traits\UsesUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -91,7 +91,7 @@ class ClubPost extends Model
     protected $fillable = [
         'title',
         'description',
-        'club_id'
+        'club_id',
     ];
 
     protected $with = [
