@@ -7,6 +7,7 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClubPostController;
+use App\Http\Controllers\HikeVttController;
 use App\Http\Controllers\UserPostController;
 
 /*
@@ -69,4 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/users/{user}/followedClubs', [UserController::class, 'followedClubs']);
   Route::get('/users/{user}/followedUsers', [UserController::class, 'followedUsers']);
   Route::post('/users/{user}/followOrUnfollow', [UserController::class, 'followOrUnfollow']);
+
+  Route::get('/hikes/vtt', [HikeVttController::class, 'index']);
+  Route::post('/hikes/vtt', [HikeVttController::class, 'store']);
+  Route::get('/hikes/vtt/{hike_id}/show', [HikeVttController::class, 'show']);
+  Route::post('/hikes/vtt/{hike_id}/hypeOrUnhype', [HikeVttController::class, 'hypeOrUnhype']);
 });

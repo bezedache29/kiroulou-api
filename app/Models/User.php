@@ -7,6 +7,7 @@ use App\Models\Club;
 use App\Models\Address;
 use App\Models\PostUser;
 use App\Models\ImageUser;
+use App\Models\HikeVttHype;
 use App\Models\ClubPostLike;
 use App\Models\Subscription;
 use App\Models\PostUserImage;
@@ -253,6 +254,11 @@ class User extends Authenticatable
     public function clubPostLikes()
     {
         return $this->hasMany(ClubPostLike::class);
+    }
+
+    public function hikeVttHypes()
+    {
+        return $this->hasMany(HikeVttHype::class);
     }
 
     public function getClubNameAttribute()

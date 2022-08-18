@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Address;
+use App\Models\HikeVtt;
 use App\Models\ClubPost;
 use App\Models\ClubFollow;
 use App\Models\ClubMember;
+use App\Models\HikeVttImage;
 use App\Models\Organization;
 use App\Models\ClubPostImage;
 use Illuminate\Database\Eloquent\Model;
@@ -216,5 +218,15 @@ class Club extends Model
     public function postImages()
     {
         return $this->hasMany(ClubPostImage::class);
+    }
+
+    public function hikeVttImages()
+    {
+        return $this->hasMany(HikeVttImage::class);
+    }
+
+    public function hikeVtts()
+    {
+        return $this->hasMany(HikeVtt::class);
     }
 }
