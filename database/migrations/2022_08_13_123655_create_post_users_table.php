@@ -16,7 +16,7 @@ class CreatePostUsersTable extends Migration
         Schema::create('post_users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('title');
-            $table->string('description');
+            $table->longText('description');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

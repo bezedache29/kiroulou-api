@@ -8,10 +8,20 @@ use App\Models\Club;
 use App\Models\User;
 use Faker\Generator;
 use App\Models\Address;
+use App\Models\HikeVtt;
 use App\Models\Zipcode;
 use App\Models\BikeType;
+use App\Models\ClubPost;
+use App\Models\PostUser;
 use App\Models\ImageUser;
+use App\Models\ClubPostLike;
+use App\Models\HikeVttImage;
 use App\Models\Organization;
+use App\Models\PostUserLike;
+use App\Models\ClubPostImage;
+use App\Models\PostUserImage;
+use App\Models\ClubPostComment;
+use App\Models\PostUserComment;
 use Illuminate\Database\Seeder;
 use App\Models\SubscriptionType;
 use Illuminate\Container\Container;
@@ -140,19 +150,19 @@ class DatabaseSeeder extends Seeder
             'organization_id' => $organization_1->id
         ]);
 
-        User::create([
+        $user_1 = User::create([
             'email' => 'test@gmail.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]);
-        User::create([
+        $user_2 = User::create([
             'email' => 'test1@gmail.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]);
-        User::create([
+        $user_3 = User::create([
             'email' => 'test2@gmail.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]);
-        User::create([
+        $user_4 = User::create([
             'email' => 'test3@gmail.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]);
@@ -169,6 +179,8 @@ class DatabaseSeeder extends Seeder
             'token' => hash('sha256', 'N7fp6GTjO9CJD1QIhqv0Ty1ZZbJeS3tFIbToFJZQ'),
             'abilities' => ['*'],
         ]);
+
+        $user_test = User::findOrFail($user_test->id);
 
         $bike_1 = Bike::create([
             'name' => $this->faker->name(),
@@ -189,5 +201,69 @@ class DatabaseSeeder extends Seeder
             'image' => 'image-bike-2.png',
             'user_id' => $user_test->id
         ]);
+
+        PostUser::factory(5)->create([
+            'user_id' => 10005
+        ])->each(function ($post) {
+            PostUserImage::factory(rand(0, 3))->create([
+                'user_id' => 10005,
+                'post_user_id' => $post->id
+            ]);
+
+            PostUserComment::factory(rand(0, 3))->create([
+                'post_user_id' => $post->id,
+                'user_id' => rand(1, 4)
+            ]);
+
+            PostUserLike::factory(rand(0, 2))->create([
+                'user_id' => rand(1, 4),
+                'post_user_id' => $post->id
+            ]);
+        });
+
+        Club::factory(5)->create([
+            'address_id' => rand(1, 2),
+            'organization_id' => rand(1, 3)
+        ])->each(function ($club) {
+
+            ClubPost::factory(rand(1, 5))->create([
+                'club_id' => $club->id
+            ])->each(function ($post) use ($club) {
+
+                ClubPostImage::factory(rand(0, 5))->create([
+                    'club_post_id' => $post->id,
+                    'club_id' => $club->id,
+                ]);
+
+                ClubPostLike::factory(rand(0, 2))->create([
+                    'user_id' => rand(1, 4),
+                    'club_post_id' => $post->id
+                ]);
+
+                ClubPostComment::factory(rand(0, 5))->create([
+                    'user_id' => rand(1, 4),
+                    'club_post_id' => $post->id
+                ]);
+            });
+
+            HikeVtt::factory(rand(1, 3))->create([
+                'club_id' => $club->id
+            ])->each(function ($hike) use ($club) {
+                HikeVttImage::factory(rand(2, 5))->create([
+                    'club_id' => $club->id,
+                    'hike_vtt_id' => $hike->id,
+                ]);
+            });
+        });
+
+        $user_test->followings()->attach($user_1->id);
+        $user_test->followings()->attach($user_2->id);
+        $user_test->followings()->attach($user_3->id);
+        $user_test->followings()->attach($user_4->id);
+
+        $user_test->clubFollows()->attach(1);
+        $user_test->clubFollows()->attach(2);
+        $user_test->clubFollows()->attach(3);
+        $user_test->clubFollows()->attach(4);
     }
 }

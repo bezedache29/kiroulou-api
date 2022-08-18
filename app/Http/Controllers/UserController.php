@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Bike;
 use App\Models\User;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Models\PostUserImage;
 use Illuminate\Support\Facades\DB;
@@ -159,10 +161,11 @@ class UserController extends Controller
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/users/{user_id}/allImages",
+     *   path="/users/{user_id}/allImages?page={page}",
      *   summary="All user's images",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
@@ -179,7 +182,7 @@ class UserController extends Controller
      */
     public function allImages(User $user)
     {
-        $images = PostUserImage::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+        $images = PostUserImage::where('user_id', $user->id)->orderBy('id', 'DESC')->paginate(5)->items();
 
         return response()->json($images, 200);
     }
@@ -187,20 +190,18 @@ class UserController extends Controller
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/users/{user_id}/followedClubs",
+     *   path="/users/{user_id}/followedClubs?page={page}",
      *   summary="Clubs followed by the user",
      *   description="Les clubs suivis par le user",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(
-     *         @OA\Property(property="user_id", type="number", example=10005, description="Id du user qui suis le club"),
-     *         @OA\Property(property="club_id", type="number", example=1, description="Id du club qui est suivis"),
-     *       ),
+     *       @OA\Items(ref="#/components/schemas/ClubWithCounts"),
      *     )
      *   ),
      *   @OA\Response(
@@ -211,27 +212,32 @@ class UserController extends Controller
      */
     public function followedClubs(User $user)
     {
-        $clubs = DB::table('club_follows')->where('user_id', $user->id)->get();
+        // On récupère la table pivot entre user et club pour les clubFollows. On compte les membres et les posts grace aux relations dans le Club et on pagine le resultat
+        $clubs = $user->clubFollows()
+            ->withCount(['members'])
+            ->withCount(['userFollows'])
+            ->withCount(['posts'])
+            ->paginate(10)
+            ->items();
+
         return response()->json($clubs, 200);
     }
 
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/users/{user_id}/followedUsers",
+     *   path="/users/{user_id}/followedUsers?page={page}",
      *   summary="Users followed by the user",
      *   description="Les users suivis par le user",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
      *     @OA\JsonContent(
      *       type="array",
-     *       @OA\Items(
-     *         @OA\Property(property="user_follower_id", type="number", example=10005, description="Id du user qui suis"),
-     *         @OA\Property(property="user_followed_id", type="number", example=1, description="Id du user qui est suis"),
-     *       ),
+     *       @OA\Items(ref="#/components/schemas/UserDetailsCount"),
      *     )
      *   ),
      *   @OA\Response(
@@ -242,8 +248,14 @@ class UserController extends Controller
      */
     public function followedUsers(User $user)
     {
-        $clubs = DB::table('follow_users')->where('user_follower_id', $user->id)->get();
-        return response()->json($clubs, 200);
+        $users = $user->followings()
+            ->withCount(['followers'])
+            ->withCount(['posts'])
+            ->withCount(['bikes'])
+            ->paginate(10)
+            ->items();
+
+        return response()->json($users, 200);
     }
 
     /**

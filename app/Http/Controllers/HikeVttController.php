@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\HikeVtt;
 use App\Models\HikeVttHype;
 use Illuminate\Http\Request;
@@ -191,5 +192,73 @@ class HikeVttController extends Controller
             'message' => $message,
             'hike_vtt' => $hike_vtt,
         ], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/searchInDepartment",
+     *   summary="Search hikes in the department",
+     *   description="Recherche les randos vtt dans le département",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(ref="#/components/requestBodies/HikeVttDepartment"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Données récupérées",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/HikeVttAppends")
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function searchInDepartment(Request $request)
+    {
+        // On récupère les rando vtt futur
+        $hikes = HikeVtt::where('date', '>=', Carbon::now())->orderBy('date', 'ASC')->get();
+
+        // On récupère les rando du départment voulu
+        $hikes = $hikes->where('department_name', $request->department_code)->values();
+
+        return response()->json($hikes->toArray(), 200);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/searchInMonth",
+     *   summary="Search for a hike in the departament a specific month",
+     *   description="Rechercher une randonnée dans le departament un mois précis",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(ref="#/components/requestBodies/HikeVttDepartmentMonth"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Données récupérées",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/HikeVttAppends")
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function searchInMonth(Request $request)
+    {
+        $date = Carbon::createFromDate($request->year, $request->month, '01');
+
+        $hikes = HikeVtt::whereYear('date', $date->year)
+            ->whereMonth('date', $date->month)
+            ->get();
+
+        $hikes = $hikes->where('department_name', $request->department_code)->values();
+
+        return response()->json($hikes->toArray(), 200);
     }
 }

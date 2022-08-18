@@ -66,7 +66,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * 
  * @OA\Schema(
  *   schema="HikeVttClub",
- *   description="Rando vtt simplifié",
+ *   description="Rando vtt avec club",
  *   allOf={@OA\Schema(ref="#/components/schemas/HikeVttSimple")},
  *   @OA\Property(
  *     property="club",
@@ -86,6 +86,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     property="hike_vtt_trips",
  *     type="array",
  *     @OA\Items(ref="#/components/schemas/HikeVttTrip")
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="HikeVttAppends",
+ *   description="Rando vtt avec club",
+ *   allOf={@OA\Schema(ref="#/components/schemas/HikeVttSimple")},
+ *   @OA\Property(
+ *     property="club_name",
+ *     type="string",
+ *     example="Côte Des Légendes VTT"
+ *   ),
+ *   @OA\Property(
+ *     property="department_code",
+ *     type="string",
+ *     example="29"
  *   ),
  * )
  */
@@ -119,6 +135,7 @@ class HikeVtt extends Model
 
     protected $appends = [
         'club_name',
+        'department_name'
     ];
 
     protected $with = [
@@ -148,6 +165,11 @@ class HikeVtt extends Model
     public function hikeVttTrips()
     {
         return $this->hasMany(HikeVttTrip::class);
+    }
+
+    public function getDepartmentNameAttribute()
+    {
+        return $this->address->department_code;
     }
 
     public function getClubNameAttribute()
