@@ -812,6 +812,156 @@
                 ]
             }
         },
+        "/hikes/vtt": {
+            "get": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "All vtt hikes",
+                "description": "Toutes les randonnées VTT",
+                "operationId": "af6aa723d1c35ad0ed4835848a8f1188",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/HikeVttSimple"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Add Hike Vtt",
+                "description": "Création d'une randonnéee vtt",
+                "operationId": "96bde1d8ffa44f9b156e42b561f6d657",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddHikeVtt"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Club créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Hike vtt created"
+                                        },
+                                        "hike_vtt_id": {
+                                            "type": "number",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/{hike_id}/show": {
+            "get": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Hike vtt details",
+                "description": "Détails de la randonnée vtt",
+                "operationId": "8dbe719b0f39017505863000cc1bdc06",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/HikeVttClub"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/{hike_id}/hypeOrUnhype": {
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Hype or Unhype Hike Vtt",
+                "description": "S'interesser ou ne plus s'intéresser a une rando vtt",
+                "operationId": "4480775fb852ce9910a4cae3924d7b52",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Hype ou Unhype effectué",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Hyped"
+                                        },
+                                        "post": {
+                                            "$ref": "#/components/schemas/HikeVttSimple"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/posts?page={page}": {
             "get": {
                 "tags": [
@@ -1871,6 +2021,153 @@
                     }
                 ]
             },
+            "HikeVttSimple": {
+                "description": "Rando vtt simplifié",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Rando CDL VTT"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Entre la vallée de la Flèche et la vallée de l'aber Vrac'h : 7 distances proposées de 19 à 56 km"
+                    },
+                    "public_price": {
+                        "description": "Prix public",
+                        "type": "string",
+                        "example": "6"
+                    },
+                    "private_price": {
+                        "description": "Prix licencié",
+                        "type": "string",
+                        "example": "4"
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "flyer": {
+                        "type": "string",
+                        "example": "flyer-cdlvtt-2022.png"
+                    },
+                    "date": {
+                        "description": "Jour de la randonnée",
+                        "type": "string",
+                        "example": "2022-08-15 14:25:01"
+                    },
+                    "club_id": {
+                        "type": "number",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "HikeVttClub": {
+                "description": "Rando vtt simplifié",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/HikeVttSimple"
+                    },
+                    {
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/Club"
+                            },
+                            "hike_vtt_images": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/HikeVttImage"
+                                }
+                            },
+                            "hike_vtt_hypes": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/HikeVttHype"
+                                }
+                            },
+                            "hike_vtt_trips": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/HikeVttTrip"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "HikeVttHype": {
+                "description": "Les users hypes par la rando vtt",
+                "properties": {
+                    "user_id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "hike_vtt_id": {
+                        "type": "number",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "HikeVttImage": {
+                "description": "Image d'une rando vtt d'un club",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "mon-image.png"
+                    },
+                    "hike_vtt_id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "club_id": {
+                        "type": "number",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "HikeVttTrip": {
+                "description": "Parcours d'une rando vtt d'un club",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
+                    "distance": {
+                        "type": "string",
+                        "example": "54"
+                    },
+                    "height_difference": {
+                        "description": "Dénivelé positif en metre",
+                        "type": "string",
+                        "example": "700"
+                    },
+                    "difficulty": {
+                        "description": "Type de difficulté 1-facile 2-moyen 3-sportif 4-sportif+",
+                        "type": "number",
+                        "example": 4
+                    },
+                    "supplies": {
+                        "description": "Nombre de ravitaillements sur le parcours",
+                        "type": "number",
+                        "example": 2
+                    },
+                    "hike_vtt_id": {
+                        "type": "number",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "Organization": {
                 "description": "Type d'organisation de club",
                 "properties": {
@@ -2394,6 +2691,15 @@
                 "schema": {
                     "type": "string"
                 }
+            },
+            "hike_id": {
+                "name": "hike_id",
+                "in": "path",
+                "description": "ID de ressource",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
             }
         },
         "requestBodies": {
@@ -2637,6 +2943,49 @@
                     }
                 }
             },
+            "AddHikeVtt": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "name, description, public_price, address_id, date, club_id"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Ma super Rando VTT"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Ma super description de Rando VTT"
+                                },
+                                "public_price": {
+                                    "type": "string",
+                                    "example": "6"
+                                },
+                                "private_price": {
+                                    "type": "string",
+                                    "example": "4"
+                                },
+                                "address_id": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "date": {
+                                    "type": "string",
+                                    "example": "2023-02-20"
+                                },
+                                "club_id": {
+                                    "type": "number",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
             "PostUser": {
                 "required": true,
                 "content": {
@@ -2722,16 +3071,20 @@
             "description": "Opérations d'authentification"
         },
         {
-            "name": "Posts",
-            "description": "Opérations en relation avec les articles users & clubs"
-        },
-        {
             "name": "Users",
             "description": "Opérations en relation avec les utilisateurs"
         },
         {
             "name": "Clubs",
             "description": "Opérations en relation avec les clubs"
+        },
+        {
+            "name": "Posts",
+            "description": "Opérations en relation avec les articles users & clubs"
+        },
+        {
+            "name": "Hikes VTT",
+            "description": "Opérations en relation avec les randonnées VTT"
         }
     ]
 }

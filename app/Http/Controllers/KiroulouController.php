@@ -25,11 +25,6 @@ namespace App\Http\Controllers;
  * )
  * 
  * @OA\Tag(
- *     name="Posts",
- *     description="Opérations en relation avec les articles users & clubs"
- * )
- * 
- * @OA\Tag(
  *     name="Users",
  *     description="Opérations en relation avec les utilisateurs"
  * )
@@ -38,6 +33,17 @@ namespace App\Http\Controllers;
  *     name="Clubs",
  *     description="Opérations en relation avec les clubs"
  * )
+ * 
+ * @OA\Tag(
+ *     name="Posts",
+ *     description="Opérations en relation avec les articles users & clubs"
+ * )
+ * 
+ * @OA\Tag(
+ *     name="Hikes VTT",
+ *     description="Opérations en relation avec les randonnées VTT"
+ * )
+ * 
  * 
  * @OA\SecurityScheme(
  *   type="http",
@@ -95,6 +101,14 @@ namespace App\Http\Controllers;
  *   description="Type de ressource",
  *   required=true,
  *   @OA\Schema(type="string")
+ * )
+ * 
+ * @OA\Parameter(
+ *   name="hike_id",
+ *   in="path",
+ *   description="ID de ressource",
+ *   required=true,
+ *   @OA\Schema(type="integer")
  * )
  * 
  * @OA\Response(

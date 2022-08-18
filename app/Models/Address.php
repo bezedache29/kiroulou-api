@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\City;
+use App\Models\HikeVtt;
 use App\Models\Zipcode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -101,5 +102,10 @@ class Address extends Model
     public function zipcode()
     {
         return $this->belongsTo(Zipcode::class);
+    }
+
+    public function hikeVtts()
+    {
+        return $this->hasMany(HikeVtt::class);
     }
 }
