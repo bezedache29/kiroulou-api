@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="club_post_id",
- *     type="number",
- *     example=1,
+ *     type="string",
+ *     example="e8b90907-aee5-473d-962b-277de7be83fb",
  *   ),
  *   @OA\Property(
  *     property="club_id",

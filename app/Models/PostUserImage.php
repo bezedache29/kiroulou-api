@@ -19,8 +19,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="post_user_id",
- *     type="number",
- *     example=1,
+ *     type="string",
+ *     example="0c752632-4e22-4c0c-839e-c50409904049",
  *   ),
  *   @OA\Property(
  *     property="user_id",

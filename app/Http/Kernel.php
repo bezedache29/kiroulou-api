@@ -2,6 +2,12 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\IsPremium;
+use App\Http\Middleware\IsPremium1;
+use App\Http\Middleware\IsPremium2;
+use App\Http\Middleware\IsClubAdmin;
+use App\Http\Middleware\IsAdminClubOrPremium1;
+use App\Http\Middleware\IsAdminClubOrPremium2;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -63,5 +69,11 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'admin.club' => IsClubAdmin::class,
+        'premium.one' => IsPremium1::class,
+        'premium.two' => IsPremium2::class,
+        'premium' => IsPremium::class,
+        'admin.club.or.premium.one' => IsAdminClubOrPremium1::class,
+        'admin.club.or.premium.two' => IsAdminClubOrPremium2::class,
     ];
 }

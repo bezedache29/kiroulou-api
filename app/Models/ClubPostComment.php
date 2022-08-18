@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="club_post_id",
- *     type="number",
- *     example=1,
+ *     type="string",
+ *     example="37e918d3-ece7-4f45-a54d-838d951c2c8d",
  *   ),
  *   @OA\Property(
  *     property="message",
@@ -109,9 +109,11 @@ class ClubPostComment extends Model
     {
         if ($this->user->club_id) {
             return $this->user->club_name;
+        } else if ($this->user->address) {
+            return $this->user->address->city->name;
+        } else {
+            return 'Rouleur de l\'ombre';
         }
-
-        return $this->user->address->city->name;
     }
 
     // Avatar du user

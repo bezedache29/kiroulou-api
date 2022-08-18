@@ -115,45 +115,6 @@
             }
         },
         "/clubs": {
-            "get": {
-                "tags": [
-                    "Clubs"
-                ],
-                "summary": "All clubs",
-                "description": "Tous les clubs",
-                "operationId": "6bd3c69424b5df7adb3f74b76d3f629e",
-                "parameters": [
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Le nombre de clubs à récupérer",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ClubWithCounts"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Clubs"
@@ -229,6 +190,41 @@
                 ]
             }
         },
+        "/clubs?page={page}": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "All clubs",
+                "description": "Tous les clubs",
+                "operationId": "5c01cb71e1a1ced0e2acc1a9ed33a6f0",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubWithCounts"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/clubs/{club_id}/clubInformations": {
             "get": {
                 "tags": [
@@ -264,52 +260,20 @@
                 ]
             }
         },
-        "/clubs/{club_id}/clubPosts": {
-            "get": {
-                "tags": [
-                    "Clubs"
-                ],
-                "summary": "Club's posts",
-                "description": "Le club et ses articles",
-                "operationId": "2383c5af104d437d62dce9dcf0b6e454",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/club_id"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ClubPostCounts"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
-        },
-        "/clubs/{club_id}/clubMembers": {
+        "/clubs/{club_id}/clubMembers?page={page}": {
             "get": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Club's members",
                 "description": "Le club et ses membres ainsi que les demandes d'adhésion",
-                "operationId": "64494a1663f52e852d30c38d72aa0804",
+                "operationId": "ac539856f74033b53e2a3a34b340dcf4",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -318,10 +282,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ClubMembers"
-                                    }
+                                    "$ref": "#/components/schemas/ClubMembers"
                                 }
                             }
                         }
@@ -595,16 +556,113 @@
                 ]
             }
         },
-        "/clubs/{club_id}/posts": {
+        "/clubs/{club_id}/profileImages": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Last 4 profile images",
+                "operationId": "48fee010dd5a99c468399ab396a5d586",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubPostImage"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/allImages?page={page}": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "All club's images",
+                "operationId": "8418f9707e3abe2f630b476f0585e4f8",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "number",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ClubPostImage"
+                                            }
+                                        },
+                                        "last_page": {
+                                            "type": "number",
+                                            "example": 3
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": 11
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/posts?page={page}": {
             "get": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "All club posts",
-                "operationId": "5f0c20c540e9d2dfb7eeee6088ccd288",
+                "operationId": "90bf0f24c2280417d6f6e01aca432e3e",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -630,7 +688,9 @@
                         "bearer_token": []
                     }
                 ]
-            },
+            }
+        },
+        "/clubs/{club_id}/posts": {
             "post": {
                 "tags": [
                     "Clubs"
@@ -678,44 +738,6 @@
             }
         },
         "/clubs/{club_id}/posts/{post_id}/comments": {
-            "get": {
-                "tags": [
-                    "Clubs"
-                ],
-                "summary": "All club post comments",
-                "operationId": "8eae86a55a90b1b947b0c9bcb7dde8cd",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/club_id"
-                    },
-                    {
-                        "$ref": "#/components/parameters/post_id"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ClubPostComment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Clubs"
@@ -756,6 +778,49 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/posts/{post_id}/comments?page={page}": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "All club post comments",
+                "operationId": "6229ba3dc58ead857a017856d61694cd",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubPostComment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -947,6 +1012,78 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/searchInDepartment": {
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Search hikes in the department",
+                "description": "Recherche les randos vtt dans le département",
+                "operationId": "b7b4b2fbd45196f983e6597778a7faca",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/HikeVttDepartment"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Données récupérées",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/HikeVttAppends"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/searchInMonth": {
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Search for a hike in the departament a specific month",
+                "description": "Rechercher une randonnée dans le departament un mois précis",
+                "operationId": "b9549e1006db3dd17d47a9440c73fe4a",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/HikeVttDepartmentMonth"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Données récupérées",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/HikeVttAppends"
+                                    }
                                 }
                             }
                         }
@@ -1171,16 +1308,19 @@
                 ]
             }
         },
-        "/users/{user_id}/allImages": {
+        "/users/{user_id}/allImages?page={page}": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "All user's images",
-                "operationId": "a6c8709c29f29a98a84feea83a298ec3",
+                "operationId": "aab4f7499f080dab4d9b073cb2a2af2d",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/user_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -1208,17 +1348,20 @@
                 ]
             }
         },
-        "/users/{user_id}/followedClubs": {
+        "/users/{user_id}/followedClubs?page={page}": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Clubs followed by the user",
                 "description": "Les clubs suivis par le user",
-                "operationId": "61798ed1abe8c411df2e1c28c61c8d71",
+                "operationId": "2ef76fa9e6e5fb4d9a95be08a3b19dfc",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/user_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -1229,19 +1372,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "user_id": {
-                                                "description": "Id du user qui suis le club",
-                                                "type": "number",
-                                                "example": 10005
-                                            },
-                                            "club_id": {
-                                                "description": "Id du club qui est suivis",
-                                                "type": "number",
-                                                "example": 1
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/ClubWithCounts"
                                     }
                                 }
                             }
@@ -1258,17 +1389,20 @@
                 ]
             }
         },
-        "/users/{user_id}/followedUsers": {
+        "/users/{user_id}/followedUsers?page={page}": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Users followed by the user",
                 "description": "Les users suivis par le user",
-                "operationId": "928dc6687e2fe075563112b5acb6fab2",
+                "operationId": "b22ab04b1087c0c8d16b0c2d972f73f3",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/user_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -1279,19 +1413,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "user_follower_id": {
-                                                "description": "Id du user qui suis",
-                                                "type": "number",
-                                                "example": 10005
-                                            },
-                                            "user_followed_id": {
-                                                "description": "Id du user qui est suis",
-                                                "type": "number",
-                                                "example": 1
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/UserDetailsCount"
                                     }
                                 }
                             }
@@ -1379,16 +1501,19 @@
                 ]
             }
         },
-        "/users/{user_id}/posts": {
+        "/users/{user_id}/posts?page={page}": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "All user's posts",
-                "operationId": "09fc51c4b4bac3709da9a1e2d9385385",
+                "operationId": "ab33b7be953d4b79a7cc6f65f34c67d5",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/user_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -1461,41 +1586,6 @@
             }
         },
         "/users/posts/{post_id}/comments": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "All user's posts",
-                "operationId": "602b9bf051d4b46118d604ce6f1ac89c",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/post_id"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/PostUserComment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/NotFound"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Users"
@@ -1533,6 +1623,46 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/posts/{post_id}/comments?page={page}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "All user's posts",
+                "operationId": "94d8b728b19cc11a03ab58ee72347962",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostUserComment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -1663,7 +1793,7 @@
                         "type": "string",
                         "example": "Côte des légendes VTT"
                     },
-                    "shortName": {
+                    "short_name": {
                         "description": "Nom raccourci du club",
                         "type": "string",
                         "example": "CDL VTT"
@@ -1679,6 +1809,11 @@
                         "type": "string",
                         "example": "1.png",
                         "nullable": true
+                    },
+                    "hike_date": {
+                        "description": "Date de la prochaine rando à compter de la date du jour",
+                        "type": "string",
+                        "example": "2023-08-09"
                     },
                     "address": {
                         "$ref": "#/components/schemas/Address"
@@ -1688,51 +1823,28 @@
             },
             "ClubWithCounts": {
                 "description": "Club avec le nombre de follows, articles, membres",
-                "properties": {
-                    "id": {
-                        "description": "Id du user",
-                        "type": "number",
-                        "example": "1"
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Club"
                     },
-                    "name": {
-                        "description": "Nom du club",
-                        "type": "string",
-                        "example": "Côte des légendes VTT"
-                    },
-                    "shortName": {
-                        "description": "Nom raccourci du club",
-                        "type": "string",
-                        "example": "CDL VTT"
-                    },
-                    "website": {
-                        "description": "Site internet du club",
-                        "type": "string",
-                        "example": "http://cotedeslegendesvtt.free.fr/",
-                        "nullable": true
-                    },
-                    "avatar": {
-                        "description": "Nom de l'avatar (id du club + .png)",
-                        "type": "string",
-                        "example": "1.png",
-                        "nullable": true
-                    },
-                    "members_count": {
-                        "type": "number",
-                        "example": 34
-                    },
-                    "user_follows_count": {
-                        "type": "number",
-                        "example": 141
-                    },
-                    "posts_count": {
-                        "type": "number",
-                        "example": 18
-                    },
-                    "address": {
-                        "$ref": "#/components/schemas/Address"
+                    {
+                        "properties": {
+                            "members_count": {
+                                "type": "number",
+                                "example": 34
+                            },
+                            "user_follows_count": {
+                                "type": "number",
+                                "example": 141
+                            },
+                            "posts_count": {
+                                "type": "number",
+                                "example": 18
+                            }
+                        }
                     }
-                },
-                "type": "object"
+                ]
             },
             "ClubInformations": {
                 "description": "Informations du club pour la scene informations du profil",
@@ -1763,28 +1875,21 @@
             },
             "ClubMembers": {
                 "description": "Membres et demandes adhésion du club pour la scene membres du profil",
-                "type": "object",
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/Club"
+                "properties": {
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserDetails"
+                        }
                     },
-                    {
-                        "properties": {
-                            "members": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/UserDetails"
-                                }
-                            },
-                            "user_join_requests": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/UserDetails"
-                                }
-                            }
+                    "user_join_requests": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserDetails"
                         }
                     }
-                ]
+                },
+                "type": "object"
             },
             "ClubPostSimple": {
                 "description": "Article d'un club",
@@ -1936,8 +2041,8 @@
                         "example": 10005
                     },
                     "club_post_id": {
-                        "type": "number",
-                        "example": 1
+                        "type": "string",
+                        "example": "37e918d3-ece7-4f45-a54d-838d951c2c8d"
                     },
                     "message": {
                         "type": "string",
@@ -1977,8 +2082,8 @@
                         "example": "mon-image.png"
                     },
                     "club_post_id": {
-                        "type": "number",
-                        "example": 1
+                        "type": "string",
+                        "example": "e8b90907-aee5-473d-962b-277de7be83fb"
                     },
                     "club_id": {
                         "type": "number",
@@ -2066,7 +2171,7 @@
                 "type": "object"
             },
             "HikeVttClub": {
-                "description": "Rando vtt simplifié",
+                "description": "Rando vtt avec club",
                 "type": "object",
                 "allOf": [
                     {
@@ -2094,6 +2199,27 @@
                                 "items": {
                                     "$ref": "#/components/schemas/HikeVttTrip"
                                 }
+                            }
+                        }
+                    }
+                ]
+            },
+            "HikeVttAppends": {
+                "description": "Rando vtt avec club",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/HikeVttSimple"
+                    },
+                    {
+                        "properties": {
+                            "club_name": {
+                                "type": "string",
+                                "example": "Côte Des Légendes VTT"
+                            },
+                            "department_code": {
+                                "type": "string",
+                                "example": "29"
                             }
                         }
                     }
@@ -2390,8 +2516,8 @@
                         "example": 1
                     },
                     "post_user_id": {
-                        "type": "number",
-                        "example": 1
+                        "type": "string",
+                        "example": "0c752632-4e22-4c0c-839e-c50409904049"
                     },
                     "user_id": {
                         "type": "number",
@@ -2534,8 +2660,38 @@
                                 "type": "string",
                                 "example": "Côte Des Légendes VTT"
                             },
+                            "premium_name": {
+                                "description": "Nom de l'abonnement du user, s'il est abonné",
+                                "type": "string",
+                                "example": "Premium 1"
+                            },
                             "address": {
                                 "$ref": "#/components/schemas/Address"
+                            }
+                        }
+                    }
+                ]
+            },
+            "UserDetailsCount": {
+                "description": "Détails du user connecté avec les compteurs de posts - bikes - followers",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/UserDetails"
+                    },
+                    {
+                        "properties": {
+                            "bikes_count": {
+                                "type": "number",
+                                "example": 3
+                            },
+                            "posts_count": {
+                                "type": "number",
+                                "example": 12
+                            },
+                            "followers_count": {
+                                "type": "number",
+                                "example": 28
                             }
                         }
                     }
@@ -2800,7 +2956,7 @@
                                     "type": "string",
                                     "example": "Mon super club"
                                 },
-                                "shortName": {
+                                "short_name": {
                                     "description": "Diminutif du club",
                                     "type": "string",
                                     "example": "MSC"
@@ -2979,6 +3135,46 @@
                                 "club_id": {
                                     "type": "number",
                                     "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "HikeVttDepartment": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "department_code": {
+                                    "type": "string",
+                                    "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "HikeVttDepartmentMonth": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "year": {
+                                    "type": "string",
+                                    "example": "2022"
+                                },
+                                "month": {
+                                    "type": "string",
+                                    "example": "8"
+                                },
+                                "department_code": {
+                                    "type": "string",
+                                    "example": "29"
                                 }
                             },
                             "type": "object"

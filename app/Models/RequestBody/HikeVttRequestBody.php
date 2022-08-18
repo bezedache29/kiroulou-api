@@ -17,6 +17,24 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="club_id", type="number", example=1),
  *   )
  * )
+ * 
+ * @OA\RequestBody(
+ *   request="HikeVttDepartment",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     @OA\Property(property="department_code", type="string", example="29"),
+ *   )
+ * )
+ * 
+ * @OA\RequestBody(
+ *   request="HikeVttDepartmentMonth",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     @OA\Property(property="year", type="string", example="2022"),
+ *     @OA\Property(property="month", type="string", example="8"),
+ *     @OA\Property(property="department_code", type="string", example="29"),
+ *   )
+ * )
  */
 class HikeVttRequestBody
 {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Models\Bike;
 use App\Models\Club;
 use App\Models\Address;
@@ -82,7 +83,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="Prénom du user",
  *     nullable=true
  *   ),
- *   @OA\Property(
+ *     @OA\Property(
  *     property="lastname",
  *     type="string",
  *     example="Strueux",
@@ -120,9 +121,36 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="Nom du club, si le user est dans un club",
  *   ),
  *   @OA\Property(
+ *     property="premium_name",
+ *     type="string",
+ *     example="Premium 1",
+ *     description="Nom de l'abonnement du user, s'il est abonné",
+ *   ),
+ *   @OA\Property(
  *     property="address",
  *     description="address du user",
  *     ref="#/components/schemas/Address"
+ *   ),
+ * )
+ * 
+ * @OA\Schema(
+ *   schema="UserDetailsCount",
+ *   description="Détails du user connecté avec les compteurs de posts - bikes - followers",
+ *   allOf={@OA\Schema(ref="#/components/schemas/UserDetails")},
+ *   @OA\Property(
+ *     property="bikes_count",
+ *     type="number",
+ *     example=3,
+ *   ),
+ *   @OA\Property(
+ *     property="posts_count",
+ *     type="number",
+ *     example=12,
+ *   ),
+ *   @OA\Property(
+ *     property="followers_count",
+ *     type="number",
+ *     example=28,
  *   ),
  * )
  */
@@ -164,7 +192,8 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'club_name'
+        'club_name',
+        'premium_name'
     ];
 
     /**
@@ -268,5 +297,16 @@ class User extends Authenticatable
         } else {
             return null;
         }
+    }
+
+    public function getPremiumNameAttribute()
+    {
+        $sub = Subscription::where('user_id', $this->id)->where('end_at', '>=', Carbon::now())->first();
+
+        if ($sub) {
+            return $sub->subscriptionType->name;
+        }
+
+        return null;
     }
 }

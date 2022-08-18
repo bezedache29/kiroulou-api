@@ -15,10 +15,11 @@ class ClubPostController extends Controller
     /**
      * @OA\Get(
      *   tags={"Clubs"},
-     *   path="/clubs/{club_id}/posts",
+     *   path="/clubs/{club_id}/posts?page={page}",
      *   summary="All club posts",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
@@ -35,7 +36,7 @@ class ClubPostController extends Controller
      */
     public function posts(Request $request, Club $club)
     {
-        $posts = ClubPost::where('club_id', $club->id)->withCount('postlikes')->withCount('comments')->get();
+        $posts = ClubPost::where('club_id', $club->id)->withCount('postlikes')->withCount('comments')->paginate(10)->items();
 
         return response()->json($posts, 200);
     }
@@ -183,11 +184,12 @@ class ClubPostController extends Controller
     /**
      * @OA\Get(
      *   tags={"Clubs"},
-     *   path="/clubs/{club_id}/posts/{post_id}/comments",
+     *   path="/clubs/{club_id}/posts/{post_id}/comments?page={page}",
      *   summary="All club post comments",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
@@ -204,7 +206,7 @@ class ClubPostController extends Controller
      */
     public function comments(Request $request, Club $club, ClubPost $post)
     {
-        $comments = ClubPostComment::where('club_post_id', $post->id)->with('user')->get();
+        $comments = ClubPostComment::where('club_post_id', $post->id)->with('user')->paginate(10)->items();
 
         return response()->json($comments, 200);
     }

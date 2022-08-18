@@ -9,7 +9,7 @@ namespace App\Models\RequestBody;
  *   @OA\JsonContent(
  *     required={"name, street_address, city, zipcode, lat, lng, region, department, department_code, organization"},
  *     @OA\Property(property="name", type="string", example="Mon super club"),
- *     @OA\Property(property="shortName", type="string", example="MSC", description="Diminutif du club"),
+ *     @OA\Property(property="short_name", type="string", example="MSC", description="Diminutif du club"),
  *     @OA\Property(property="website", type="string", example="https://mon-super-club.com"),
  *     @OA\Property(property="avatar", type="string", example="1.png", description="Renommage de l'avatar avec id du club"),
  *     @OA\Property(property="organization", type="number", example="3", description="organization_id du type de club"),

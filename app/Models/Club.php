@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Address;
 use App\Models\HikeVtt;
@@ -32,7 +33,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     description="Nom du club",
  *   ),
  *   @OA\Property(
- *     property="shortName",
+ *     property="short_name",
  *     type="string",
  *     example="CDL VTT",
  *     description="Nom raccourci du club",
@@ -50,6 +51,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     example="1.png",
  *     description="Nom de l'avatar (id du club + .png)",
  *     nullable=true
+ *   ),
+ *   @OA\Property(
+ *     property="hike_date",
+ *     type="string",
+ *     example="2023-08-09",
+ *     description="Date de la prochaine rando à compter de la date du jour",
  *   ),
  *   @OA\Property(
  *     property="address",
@@ -61,38 +68,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @OA\Schema(
  *   schema="ClubWithCounts",
  *   description="Club avec le nombre de follows, articles, membres",
- *   @OA\Property(
- *     property="id",
- *     type="number",
- *     example="1",
- *     description="Id du user",
- *   ),
- *   @OA\Property(
- *     property="name",
- *     type="string",
- *     example="Côte des légendes VTT",
- *     description="Nom du club",
- *   ),
- *   @OA\Property(
- *     property="shortName",
- *     type="string",
- *     example="CDL VTT",
- *     description="Nom raccourci du club",
- *   ),
- *   @OA\Property(
- *     property="website",
- *     type="string",
- *     example="http://cotedeslegendesvtt.free.fr/",
- *     description="Site internet du club",
- *     nullable=true
- *   ),
- *   @OA\Property(
- *     property="avatar",
- *     type="string",
- *     example="1.png",
- *     description="Nom de l'avatar (id du club + .png)",
- *     nullable=true
- *   ),
+ *   allOf={@OA\Schema(ref="#/components/schemas/Club")},
  *   @OA\Property(
  *     property="members_count",
  *     type="number",
@@ -107,11 +83,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     property="posts_count",
  *     type="number",
  *     example=18,
- *   ),
- *   @OA\Property(
- *     property="address",
- *     description="Adresse du club",
- *     ref="#/components/schemas/Address"
  *   ),
  * )
  * 
@@ -135,7 +106,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @OA\Schema(
  *   schema="ClubMembers",
  *   description="Membres et demandes adhésion du club pour la scene membres du profil",
- *   allOf={@OA\Schema(ref="#/components/schemas/Club")},
  *   @OA\Property(
  *     property="members",
  *     type="array",
@@ -159,7 +129,7 @@ class Club extends Model
      */
     protected $fillable = [
         'name',
-        'shortName',
+        'short_name',
         'address_id',
         'website',
         'organization_id',
@@ -183,6 +153,10 @@ class Club extends Model
         'created_at',
         'updated_at',
         'deleted_at'
+    ];
+
+    protected $appends = [
+        'hike_date'
     ];
 
     public function address()
@@ -228,5 +202,15 @@ class Club extends Model
     public function hikeVtts()
     {
         return $this->hasMany(HikeVtt::class);
+    }
+
+    public function getHikeDateAttribute()
+    {
+        $hike = HikeVtt::where('club_id', $this->id)->whereYear('date', '>=', Carbon::now())->first();
+        if ($hike) {
+            return $hike->date;
+        }
+
+        return null;
     }
 }

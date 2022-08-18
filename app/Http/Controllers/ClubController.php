@@ -8,7 +8,9 @@ use App\Models\User;
 use App\Models\Address;
 use App\Models\Zipcode;
 use App\Models\ClubPost;
+use App\Models\HikeVttImage;
 use Illuminate\Http\Request;
+use App\Models\ClubPostImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -77,7 +79,7 @@ class ClubController extends Controller
             $request->all(),
             [
                 'name' => ['required', 'string'],
-                'shortName' => ['string'],
+                'short_name' => ['string'],
                 'street_address' => ['required', 'string'],
                 'lat' => ['required'],
                 'lng' => ['required'],
@@ -174,17 +176,11 @@ class ClubController extends Controller
     /**
      * @OA\Get(
      *   tags={"Clubs"},
-     *   path="/clubs",
+     *   path="/clubs?page={page}",
      *   summary="All clubs",
      *   description="Tous les clubs",
      *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(
-     *     name="limit",
-     *     in="query",
-     *     required=false,
-     *     description="Le nombre de clubs à récupérer",
-     *     @OA\Schema(type="string"),
-     *   ),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
@@ -197,8 +193,7 @@ class ClubController extends Controller
      */
     public function clubs()
     {
-        // $clubs = Club::paginate(1);
-        $clubs = Club::withCount('members')->withCount('userFollows')->withCount('posts')->get();
+        $clubs = Club::withCount('members')->withCount('userFollows')->withCount('posts')->paginate(10)->items();
 
         return response()->json($clubs, 200);
     }
@@ -230,50 +225,30 @@ class ClubController extends Controller
     /**
      * @OA\Get(
      *   tags={"Clubs"},
-     *   path="/clubs/{club_id}/clubPosts",
-     *   summary="Club's posts",
-     *   description="Le club et ses articles",
-     *   security={{ "bearer_token": {} }},
-     *   @OA\Parameter(ref="#/components/parameters/club_id"),
-     *   @OA\Response(
-     *     response=200,
-     *     description="OK",
-     *     @OA\JsonContent(
-     *       type="array",
-     *       @OA\Items(ref="#/components/schemas/ClubPostCounts")
-     *     )
-     *   )
-     * )
-     */
-    public function clubPosts(Club $club)
-    {
-        $posts = ClubPost::where('club_id', $club->id)->withCount('postlikes')->withCount('comments')->get();
-
-        return response()->json($posts, 200);
-    }
-
-    /**
-     * @OA\Get(
-     *   tags={"Clubs"},
-     *   path="/clubs/{club_id}/clubMembers",
+     *   path="/clubs/{club_id}/clubMembers?page={page}",
      *   summary="Club's members",
      *   description="Le club et ses membres ainsi que les demandes d'adhésion",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
-     *     @OA\JsonContent(
-     *       type="array",
-     *       @OA\Items(ref="#/components/schemas/ClubMembers")
-     *     )
+     *     @OA\JsonContent(ref="#/components/schemas/ClubMembers")
      *   )
      * )
      */
     public function clubMembers(Club $club)
     {
         $club = Club::with('members')->with('userJoinRequests')->findOrFail($club->id);
-        return response()->json($club, 200);
+        $members = $club->members->paginate(10)->items();
+
+        $user_join_requests = $club->userJoinRequests;
+
+        return response()->json([
+            'members' => $members,
+            'user_joint_requests' => $user_join_requests
+        ], 200);
     }
 
     /**
@@ -607,5 +582,94 @@ class ClubController extends Controller
         }
 
         return response()->json(['message' => 'admin changed'], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/profileImages",
+     *   summary="Last 4 profile images",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/ClubPostImage"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function profileImages(Club $club)
+    {
+        // On récupère les images des articles du club ainsi que les images des rando vtt
+        $club_post_images = ClubPostImage::where('club_id', $club->id)->orderBy('created_at', 'DESC')->get();
+        $club_hike_images = HikeVttImage::where('club_id', $club->id)->orderBy('created_at', 'DESC')->get();
+
+        // On merge les 2 collections
+        $images = collect($club_post_images)->merge($club_hike_images)->sortByDesc('created_at')->values();
+        $images = $images->toArray();
+
+        // On récupère les 4 premières images pour les afficher dans le profile du club
+        $images = array_slice($images, 0, 4);
+
+        return response()->json($images, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/allImages?page={page}",
+     *   summary="All club's images",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="current_page",
+     *         type="number",
+     *         example=1,
+     *       ),
+     *       @OA\Property(
+     *         property="data",
+     *         type="array",
+     *         @OA\Items(ref="#/components/schemas/ClubPostImage")
+     *       ),
+     *       @OA\Property(
+     *         property="last_page",
+     *         type="number",
+     *         example=3,
+     *       ),
+     *       @OA\Property(
+     *         property="total",
+     *         type="number",
+     *         example=11,
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function allImages(Club $club)
+    {
+        // On récupère les images des articles du club ainsi que les images des rando vtt
+        $club_post_images = ClubPostImage::where('club_id', $club->id)->orderBy('created_at', 'DESC')->get();
+        $club_hike_images = HikeVttImage::where('club_id', $club->id)->orderBy('created_at', 'DESC')->get();
+
+        // On merge les 2 collections
+        $images = collect($club_post_images)->merge($club_hike_images)->sortByDesc('created_at')->values()->paginate(5);
+
+        return response()->json($images->toArray(), 200);
     }
 }

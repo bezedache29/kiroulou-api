@@ -93,10 +93,11 @@ class UserPostController extends Controller
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/users/{user_id}/posts",
+     *   path="/users/{user_id}/posts?page={page}",
      *   summary="All user's posts",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
@@ -114,7 +115,11 @@ class UserPostController extends Controller
     public function posts(User $user)
     {
         // On récupère les posts du user avec le nb de likes et de commentaires
-        $posts = PostUser::where('user_id', $user->id)->withCount('postUserLikes')->withCount('postUserComments')->get();
+        $posts = PostUser::where('user_id', $user->id)
+            ->withCount('postUserLikes')
+            ->withCount('postUserComments')
+            ->paginate(10)
+            ->items();
 
         return response()->json($posts, 200);
     }
@@ -243,10 +248,11 @@ class UserPostController extends Controller
     /**
      * @OA\Get(
      *   tags={"Users"},
-     *   path="/users/posts/{post_id}/comments",
+     *   path="/users/posts/{post_id}/comments?page={page}",
      *   summary="All user's posts",
      *   security={{ "bearer_token": {} }},
      *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Parameter(ref="#/components/parameters/page"),
      *   @OA\Response(
      *     response=200,
      *     description="OK",
@@ -263,7 +269,7 @@ class UserPostController extends Controller
      */
     public function comments(PostUser $post)
     {
-        $comments = PostUserComment::where('post_user_id', $post->id)->get();
+        $comments = PostUserComment::where('post_user_id', $post->id)->paginate(10)->items();
 
         return response()->json($comments, 200);
     }
