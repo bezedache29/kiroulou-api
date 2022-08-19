@@ -6,10 +6,9 @@ use App\Models\User;
 use App\Models\PostUser;
 use App\Models\ClubMember;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreAuthRequest;
 
 class AuthController extends Controller
 {
@@ -34,32 +33,8 @@ class AuthController extends Controller
      *   )
      * )
      */
-    public function register(Request $request)
+    public function register(StoreAuthRequest $request)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'email' => ['required', 'email', 'unique:App\Models\User,email'],
-                'password' => ['required', 'string'],
-            ],
-            [
-                'email.required' => 'L\'adresse email est obligatoire',
-                'email.email' => 'L\'adresse email doit être une adresse email valide',
-                'email.unique' => 'Un compte avec cette adresse email existe déjà',
-                'password.required' => 'Le mot de passe est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans le check
-        if ($validator->fails()) {
-            if ($validator->errors()->first() == 'Un compte avec cette adresse email existe déjà') {
-                return response()->json(["message" => $validator->errors()->first()], 409);
-            }
-
-            return response()->json($validator->errors(), 422);
-        }
-
         // Hash du password
         $password_hashed = Hash::make($request->password);
 
@@ -116,27 +91,8 @@ class AuthController extends Controller
      *   )
      * )
      */
-    public function login(Request $request)
+    public function login(StoreAuthRequest $request)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-            ],
-            [
-                'email.required' => 'L\'adresse email est obligatoire',
-                'email.email' => 'L\'adresse email doit être une adresse email valide',
-                'password.required' => 'Le mot de passe est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans le check
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         // Check si l'email et le Pwd correspondent
         // Return null si pas trouvé
         $user = User::where('email', $request->email)->first();

@@ -1225,6 +1225,9 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -1269,6 +1272,77 @@
                         "bearer_token": []
                     }
                 ]
+            }
+        },
+        "/users/bikes/{bike_id}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user bike",
+                "description": "Modifier un vélo du user connecté",
+                "operationId": "f42ff85841219a1826a4817b42526a0e",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddBike"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vélo du user modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "bike updated"
+                                        },
+                                        "bike": {
+                                            "$ref": "#/components/schemas/Bike"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete bike",
+                "operationId": "c175cba555ef27170494e863649e590a",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/bike_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
             }
         },
         "/users/{user_id}/profileImages": {
@@ -2791,6 +2865,22 @@
                         }
                     }
                 }
+            },
+            "Unauthorized": {
+                "description": "Accès non autorisé",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Unauthorized"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
             }
         },
         "parameters": {
@@ -2850,6 +2940,15 @@
             },
             "hike_id": {
                 "name": "hike_id",
+                "in": "path",
+                "description": "ID de ressource",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "bike_id": {
+                "name": "bike_id",
                 "in": "path",
                 "description": "ID de ressource",
                 "required": true,

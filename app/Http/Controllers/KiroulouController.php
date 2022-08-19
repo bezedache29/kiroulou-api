@@ -111,6 +111,14 @@ namespace App\Http\Controllers;
  *   @OA\Schema(type="integer")
  * )
  * 
+ * @OA\Parameter(
+ *   name="bike_id",
+ *   in="path",
+ *   description="ID de ressource",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
  * @OA\Response(
  *   response=409,
  *   response="Conflit",
@@ -160,6 +168,15 @@ namespace App\Http\Controllers;
  *   description="Ressource introuvable",
  *   @OA\JsonContent(
  *     @OA\Property(property="message", type="string", example="Resource not found")
+ *   )
+ * ),
+ * 
+ * @OA\Response(
+ *   response=401,
+ *   response="Unauthorized",
+ *   description="Accès non autorisé",
+ *   @OA\JsonContent(
+ *     @OA\Property(property="message", type="string", example="Unauthorized")
  *   )
  * ),
  */

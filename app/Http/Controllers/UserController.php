@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBikeRequest;
+use App\Http\Requests\StorePostUserRequest;
 use Carbon\Carbon;
 use App\Models\Bike;
 use App\Models\User;
@@ -40,47 +42,17 @@ class UserController extends Controller
      *     response=422, 
      *     ref="#/components/responses/UnprocessableEntity"
      *   ),
+     *   
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
      * )
      */
-    public function storeBike(Request $request)
+    public function storeBike(StoreBikeRequest $request)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => ['required', 'string'],
-                'brand' => ['required', 'string'],
-                'model' => ['required', 'string'],
-                'bike_type_id' => ['required'],
-                'date' => ['date'],
-                'weight' => ['string'],
-            ],
-            [
-                'name.required' => 'Le nom est obligatoire',
-                'name.string' => 'Le nom doit être une chaîne de caractères',
-                'brand.required' => 'La marque est obligatoire',
-                'brand.string' => 'La marque doit être une chaîne de caractères',
-                'model.required' => 'Le modèle est obligatoire',
-                'model.string' => 'Le modèle doit être une chaîne de caractères',
-                'bike_type_id.required' => 'Le type est obligatoire',
-                'date.date' => 'La date doit être une date valide',
-                'weight.string' => 'Le poids doit être une chaîne de caractères',
-            ]
-        );
-
-        // S'il y a une erreur dans le check
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = [
-            'name' => $request->name,
-            'brand' => $request->brand,
-            'model' => $request->model,
-            'bike_type_id' => $request->bike_type_id,
-            'date' => $request->date,
-            'user_id' => $request->user()->id
-        ];
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
 
         if ($request->weight) {
             $data['weight'] = $request->weight;
@@ -123,11 +95,102 @@ class UserController extends Controller
      *   )
      * )
      */
-    public function bikes(Request $request, User $user)
+    public function bikes(User $user)
     {
         $bikes = Bike::where('user_id', $user->id)->get();
 
         return response()->json($bikes, 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Users"},
+     *   path="/users/bikes/{bike_id}",
+     *   summary="Update user bike",
+     *   description="Modifier un vélo du user connecté",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddBike"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/bike_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Vélo du user modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="bike updated"
+     *       ),
+     *       @OA\Property(
+     *         property="bike",
+     *         ref="#/components/schemas/Bike"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function updateBike(StoreBikeRequest $request, Bike $bike)
+    {
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
+
+        if ($request->weight) {
+            $data['weight'] = $request->weight;
+        }
+
+        if ($request->image) {
+            //TODO: Enregistrement de l'image dans le storage
+
+            $data['image'] = 'image-name.png';
+        }
+
+        $bike->update($data);
+
+        return response()->json([
+            'message' => 'Bike updated',
+            'bike' => $bike
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Users"},
+     *   path="/users/bikes/{bike_id}",
+     *   summary="Delete bike",
+     *   @OA\Parameter(ref="#/components/parameters/bike_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Bike deleted",
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthorized",
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Not Found",
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function deleteBike(Bike $bike)
+    {
+        $bike->delete();
+
+        return response()->json(['message' => 'bike deleted'], 201);
     }
 
     /**
