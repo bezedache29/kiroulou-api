@@ -118,6 +118,7 @@ class ClubController extends Controller
         }
 
         if ($request->avatar) {
+            //TODO Stockage Avatar
             $club = array_merge($club, ["avatar" => $request->avatar]);
         }
 
@@ -133,7 +134,11 @@ class ClubController extends Controller
         // On récupère toutes les infos du club pour le retourner
         $club = Club::find($club_created->id);
 
-        return response()->json(["message" => "club created", "user_update" => $user_update, "club" => $club], 201);
+        return response()->json([
+            "message" => "club created",
+            "user_update" => $user_update,
+            "club" => $club
+        ], 201);
     }
 
     /**
@@ -183,6 +188,118 @@ class ClubController extends Controller
     {
         // $club = Club::with('members')->with('organization')->with('posts')->with('userJoinRequests')->findOrFail($club->id);
         return response()->json($club, 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}",
+     *   summary="Update Club",
+     *   description="Modification d'un club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddClub"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Club modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="club updated"
+     *       ),
+     *       @OA\Property(
+     *         property="club",
+     *         type="array",
+     *         description="Détails du club",
+     *         @OA\Items(ref="#/components/schemas/Club")
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function updateClub(StoreClubRequest $request, Club $club)
+    {
+        $city = City::where('name', $request->city)->first();
+        if (!$city) {
+            $city = City::create([
+                'name' => $request->city
+            ]);
+        }
+        $zipcode = Zipcode::where('code', $request->zipcode)->first();
+        if (!$zipcode) {
+            $zipcode = Zipcode::create([
+                'code' => $request->zipcode
+            ]);
+        }
+
+        $is_address_exist = Address::where('street_address', $request->street_address)
+            ->where('zipcode_id', $zipcode->id)
+            ->where('city_id', $city->id)
+            ->first();
+
+        if (!$is_address_exist) {
+            $create_address = [
+                'street_address' => $request->street_address,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+                'region' => $request->region,
+                'department' => $request->department,
+                'department_code' => $request->department_code,
+                'city_id' => $city->id,
+                'zipcode_id' => $zipcode->id,
+            ];
+
+            $address = Address::create($create_address);
+        } else {
+            $address = $is_address_exist;
+        }
+
+        $club_data = [
+            'name' => $request->name,
+            'address_id' => $address->id,
+            'organization_id' => $request->organization,
+        ];
+
+        if (is_null($request->website)) {
+            $club_data = array_merge($club_data, ['website' => null]);
+        } else {
+            $club_data = array_merge($club_data, ['website' => $request->website]);
+        }
+
+        if (is_null($request->short_name)) {
+            $club_data = array_merge($club_data, ['short_name' => null]);
+        } else {
+            $club_data = array_merge($club_data, ['short_name' => $request->short_name]);
+        }
+
+        if ($request->avatar) {
+            //TODO Si plus d'avatar, remttre celui par default
+            //TODO Stockage Avatar
+            $club_data = array_merge($club_data, ["avatar" => $request->avatar]);
+        }
+
+        $club->update($club_data);
+
+        // On récupère toutes les infos du club pour le retourner
+        $club = Club::find($club->id);
+
+        return response()->json([
+            "message" => "club updated",
+            "club" => $club
+        ], 201);
     }
 
     /**
@@ -586,5 +703,34 @@ class ClubController extends Controller
         $images = collect($club_post_images)->merge($club_hike_images)->sortByDesc('created_at')->values()->paginate(5);
 
         return response()->json($images->toArray(), 200);
+    }
+
+    /**
+     * @OA\Delete(
+     *   path="/deleteImagePost/{image_id}",
+     *   @OA\Parameter(ref="#/components/parameters/image_id"),
+     *   summary="Delete a club post image",
+     *   description="Supprime une image d'un article de club",
+     *   tags={"Clubs"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function deleteImagePost(int $image_id)
+    {
+        ClubPostImage::where('id', $image_id)->delete();
+
+        return response()->json(['message' => 'image deleted'], 201);
     }
 }

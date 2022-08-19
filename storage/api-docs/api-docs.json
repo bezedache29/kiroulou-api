@@ -260,6 +260,63 @@
                 ]
             }
         },
+        "/clubs/{club_id}": {
+            "put": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Update Club",
+                "description": "Modification d'un club",
+                "operationId": "4fafbb3c67073a1eb184a8e069bb523a",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddClub"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Club modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "club updated"
+                                        },
+                                        "club": {
+                                            "description": "Détails du club",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Club"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/clubs/{club_id}/clubMembers?page={page}": {
             "get": {
                 "tags": [
@@ -650,6 +707,37 @@
                 ]
             }
         },
+        "/deleteImagePost/{image_id}": {
+            "delete": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Delete a club post image",
+                "description": "Supprime une image d'un article de club",
+                "operationId": "1738019e6445d36faee77723a805b98a",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/image_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/clubs/{club_id}/posts?page={page}": {
             "get": {
                 "tags": [
@@ -728,6 +816,94 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/posts/{post_id}": {
+            "put": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Update club post",
+                "description": "Modification d'un article par un club",
+                "operationId": "b805a339a1cdeaf5a1a1964c1ec3cc8a",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddClubPost"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Article d'un club modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "post updated"
+                                        },
+                                        "post": {
+                                            "$ref": "#/components/schemas/ClubPostSimple"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Delete club post",
+                "description": "Suppression d'un article par un club",
+                "operationId": "737cd72443a0c0db8fbfd2ac8e2f5609",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -821,6 +997,88 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/comments/{comment_id}": {
+            "put": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Update club post comment",
+                "description": "Modification d'un commentaire à un article de club",
+                "operationId": "3756af1f39fd4b0b7358673c130bea36",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/comment_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddClubPostComment"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commentaire d'article de club modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "comment updated"
+                                        },
+                                        "comments": {
+                                            "$ref": "#/components/schemas/ClubPostComment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Delete club post comment",
+                "description": "Suppression d'un commentaire à un article de club",
+                "operationId": "9b2c0bc6dfb71e2b7053899c2df5c79b",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/comment_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -948,14 +1206,14 @@
                 ]
             }
         },
-        "/hikes/vtt/{hike_id}/show": {
+        "/hikes/vtt/{hike_id}": {
             "get": {
                 "tags": [
                     "Hikes VTT"
                 ],
                 "summary": "Hike vtt details",
                 "description": "Détails de la randonnée vtt",
-                "operationId": "8dbe719b0f39017505863000cc1bdc06",
+                "operationId": "fead10d6e0fc678f8ecf15b12f6a272c",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/hike_id"
@@ -974,6 +1232,156 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Update Hike Vtt",
+                "description": "Modification d'une randonnéee vtt",
+                "operationId": "51eeda70c136c2732a161fbbf8f1deee",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddHikeVtt"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Club modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Hike vtt updated"
+                                        },
+                                        "hike_vtt_id": {
+                                            "type": "number",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Delete Hike Vtt",
+                "description": "Suppression d'une randonnéee vtt",
+                "operationId": "6fcd830064c009bae6f7271b7b56d1b1",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/{hike_id}/changeDate": {
+            "put": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Update date Hike Vtt",
+                "description": "Modification de la date d'une randonnéee vtt",
+                "operationId": "8f8ca8dcf8e7195ef9028d746e3e5bd9",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "date"
+                                ],
+                                "properties": {
+                                    "date": {
+                                        "type": "string",
+                                        "example": "2022-12-20"
+                                    }
+                                },
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Club modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Hike vtt updated"
+                                        },
+                                        "hike_vtt_id": {
+                                            "type": "number",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -1615,6 +2023,89 @@
                 ]
             }
         },
+        "/users/posts/{post_id}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user post",
+                "description": "Modification d'un article par un user",
+                "operationId": "d62a00701740a9f14e7c3b9e19901ed6",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddPostUser"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Article d'un user modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "post updated"
+                                        },
+                                        "post_user_id": {
+                                            "type": "string",
+                                            "example": "e6c64643-6ac9-4adb-87d2-bfe121dc4580"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user post",
+                "description": "Suppression d'un article par un user",
+                "operationId": "706f3478d843c6505180f6c1fd4b9bb9",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/posts/{post_id}/likeOrUnlike": {
             "post": {
                 "tags": [
@@ -1737,6 +2228,88 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/posts/comments/{comment_id}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user post comment",
+                "description": "Modification d'un commentaire à un article d'un user",
+                "operationId": "b3906c47bb2e3cb61c7a44578ad4d81d",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/comment_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AddPostUserComment"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commentaire d'article de user modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "comment updated"
+                                        },
+                                        "comments": {
+                                            "$ref": "#/components/schemas/PostUserComment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user post comment",
+                "description": "Suppression d'un commentaire à un article d'un user",
+                "operationId": "233c72e98fd7bcd31de6f27562c50aa7",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/comment_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -2290,6 +2863,10 @@
                             "club_name": {
                                 "type": "string",
                                 "example": "Côte Des Légendes VTT"
+                            },
+                            "club_avatar": {
+                                "type": "string",
+                                "example": "club-avatar.png"
                             },
                             "department_code": {
                                 "type": "string",
@@ -2955,6 +3532,24 @@
                 "schema": {
                     "type": "integer"
                 }
+            },
+            "comment_id": {
+                "name": "comment_id",
+                "in": "path",
+                "description": "ID de ressource",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "image_id": {
+                "name": "image_id",
+                "in": "path",
+                "description": "ID de ressource",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
             }
         },
         "requestBodies": {
@@ -3223,17 +3818,43 @@
                                     "type": "string",
                                     "example": "4"
                                 },
-                                "address_id": {
-                                    "type": "number",
-                                    "example": 1
-                                },
                                 "date": {
                                     "type": "string",
                                     "example": "2023-02-20"
                                 },
-                                "club_id": {
-                                    "type": "number",
-                                    "example": 1
+                                "street_address": {
+                                    "type": "string",
+                                    "example": "Ma super rue"
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "example": "Nantes"
+                                },
+                                "zipcode": {
+                                    "type": "string",
+                                    "example": "44000"
+                                },
+                                "lat": {
+                                    "description": "Lattitude GPS",
+                                    "type": "string",
+                                    "example": "48.5740185"
+                                },
+                                "lng": {
+                                    "description": "Longitude GPS",
+                                    "type": "string",
+                                    "example": "-4.3335965"
+                                },
+                                "region": {
+                                    "type": "string",
+                                    "example": "Bretagne"
+                                },
+                                "department": {
+                                    "type": "string",
+                                    "example": "Finistère"
+                                },
+                                "department_code": {
+                                    "type": "string",
+                                    "example": "29"
                                 }
                             },
                             "type": "object"
