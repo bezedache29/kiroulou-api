@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreHikeVttRequest;
+use App\Http\Requests\StoreHikeVttDateRequest;
 use Carbon\Carbon;
+use App\Models\City;
+use App\Models\Address;
 use App\Models\HikeVtt;
+use App\Models\Zipcode;
 use App\Models\HikeVttHype;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreHikeVttRequest;
 
 class HikeVttController extends Controller
 {
@@ -67,13 +71,63 @@ class HikeVttController extends Controller
      */
     public function store(StoreHikeVttRequest $request)
     {
-        $data = $request->all();
+        $city = City::where('name', $request->city)->first();
+        if (!$city) {
+            $city = City::create([
+                'name' => $request->city
+            ]);
+        }
+        $zipcode = Zipcode::where('code', $request->zipcode)->first();
+        if (!$zipcode) {
+            $zipcode = Zipcode::create([
+                'code' => $request->zipcode
+            ]);
+        }
 
-        if ($request->flyer) {
-            // !TODO : Ajout flyer en storage
+        $is_address_exist = Address::where('street_address', $request->street_address)
+            ->where('zipcode_id', $zipcode->id)
+            ->where('city_id', $city->id)
+            ->first();
 
-            $flyer = 'flyer-name.png';
-            $data['flyer'] = $flyer;
+        if (!$is_address_exist) {
+            $create_address = [
+                'street_address' => $request->street_address,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+                'region' => $request->region,
+                'department' => $request->department,
+                'department_code' => $request->department_code,
+                'city_id' => $city->id,
+                'zipcode_id' => $zipcode->id,
+            ];
+
+            $address = Address::create($create_address);
+        } else {
+            $address = $is_address_exist;
+        }
+
+        // !TODO : Ajout flyer en storage
+        $flyer = 'flyer-name.png';
+
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'public_price' => $request->public_price,
+            'date' => $request->date,
+            'flyer' => $flyer,
+            'address_id' => $address->id,
+            'club_id' => $request->user()->club_id
+        ];
+
+        if ($request->private_price) {
+            $data['private_price'] = $request->private_price;
+        }
+
+        if ($request->trips) {
+            foreach ($request->trips as $trip) {
+                // HikeVttTrip::create([])
+                //TODO Voir ce que le front nous envoie pour traiter la demande
+            }
         }
 
         $hike = HikeVtt::create($data);
@@ -87,7 +141,7 @@ class HikeVttController extends Controller
     /**
      * @OA\Get(
      *   tags={"Hikes VTT"},
-     *   path="/hikes/vtt/{hike_id}/show",
+     *   path="/hikes/vtt/{hike_id}",
      *   summary="Hike vtt details",
      *   description="Détails de la randonnée vtt",
      *   security={{ "bearer_token": {} }},
@@ -105,9 +159,204 @@ class HikeVttController extends Controller
     public function show(Int $hike_id)
     {
         // Permet de rendre le club visible alors qu'il est dans le hidden de HikeVtt
-        $hike_vtt = HikeVtt::with('hikeVttImages')->with('hikeVttHypes')->with('hikeVttTrips')->findOrFail($hike_id)->makeVisible('club');
+        $hike_vtt = HikeVtt::with('hikeVttImages')->withCount('hikeVttHypes')->with('hikeVttHypes')->with('hikeVttTrips')->findOrFail($hike_id)->makeVisible('club');
 
         return response()->json($hike_vtt, 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/{hike_id}",
+     *   summary="Update Hike Vtt",
+     *   description="Modification d'une randonnéee vtt",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/hike_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddHikeVtt"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Club modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="Hike vtt updated"
+     *       ),
+     *       @OA\Property(
+     *         property="hike_vtt_id",
+     *         type="number",
+     *         example=1
+     *       ),
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function update(StoreHikeVttRequest $request, Int $hike_id)
+    {
+        $hike = HikeVtt::findOrFail($hike_id);
+
+        $city = City::where('name', $request->city)->first();
+        if (!$city) {
+            $city = City::create([
+                'name' => $request->city
+            ]);
+        }
+        $zipcode = Zipcode::where('code', $request->zipcode)->first();
+        if (!$zipcode) {
+            $zipcode = Zipcode::create([
+                'code' => $request->zipcode
+            ]);
+        }
+
+        $is_address_exist = Address::where('street_address', $request->street_address)
+            ->where('zipcode_id', $zipcode->id)
+            ->where('city_id', $city->id)
+            ->first();
+
+        if (!$is_address_exist) {
+            $create_address = [
+                'street_address' => $request->street_address,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+                'region' => $request->region,
+                'department' => $request->department,
+                'department_code' => $request->department_code,
+                'city_id' => $city->id,
+                'zipcode_id' => $zipcode->id,
+            ];
+
+            $address = Address::create($create_address);
+        } else {
+            $address = $is_address_exist;
+        }
+
+        // !TODO : Ajout flyer en storage
+        $flyer = 'flyer-name.png';
+
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'public_price' => $request->public_price,
+            'date' => $request->date,
+            'flyer' => $flyer,
+            'address_id' => $address->id,
+            'club_id' => $request->user()->club_id
+        ];
+
+        if ($request->private_price) {
+            $data['private_price'] = $request->private_price;
+        }
+
+        if ($request->trips) {
+            foreach ($request->trips as $trip) {
+                // HikeVttTrip::create([])
+                //TODO Voir ce que le front nous envoie pour traiter la demande
+            }
+        }
+
+        $hike->update($data);
+
+        return response()->json([
+            'message' => 'hike updated',
+            'hike_vtt_id' => $hike->id
+        ], 201);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/{hike_id}/changeDate",
+     *   summary="Update date Hike Vtt",
+     *   description="Modification de la date d'une randonnéee vtt",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/hike_id"),
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       type="string",
+     *       required={"date"},
+     *       @OA\Property(property="date", type="string", example="2022-12-20")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Club modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="Hike vtt updated"
+     *       ),
+     *       @OA\Property(
+     *         property="hike_vtt_id",
+     *         type="number",
+     *         example=1
+     *       ),
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function changeDate(StoreHikeVttDateRequest $request, Int $hike_id)
+    {
+        $hike = HikeVtt::findOrFail($hike_id);
+        $hike->update($request->all());
+
+        return response()->json([
+            'message' => 'hike updated',
+            'hike_vtt_id' => $hike->id
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/{hike_id}",
+     *   summary="Delete Hike Vtt",
+     *   description="Suppression d'une randonnéee vtt",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/hike_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function delete(Int $hike_id)
+    {
+        HikeVtt::where('id', $hike_id)->delete();
+
+        return response()->json(['message' => 'hike deleted'], 201);
     }
 
     /**

@@ -104,6 +104,97 @@ class UserPostController extends Controller
     }
 
     /**
+     * @OA\Put(
+     *   tags={"Users"},
+     *   path="/users/posts/{post_id}",
+     *   summary="Update user post",
+     *   description="Modification d'un article par un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddPostUser"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Article d'un user modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="post updated"
+     *       ),
+     *       @OA\Property(
+     *         property="post_user_id",
+     *         type="string",
+     *         example="e6c64643-6ac9-4adb-87d2-bfe121dc4580"
+     *       ),
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function updatePost(StorePostUserRequest $request, PostUser $post)
+    {
+        $post->update($request->all());
+
+        if ($request->image) {
+            //TODO: On check si les images sont les mêmes
+            //TODO: Enregistrement de l'image en DB
+
+            // PostUserImage::create([
+            //     'post_user_id' => $post->id,
+            //     'user_id' => $request->user()->id,
+            //     'image' => 'image-name.png'
+            // ]);
+        }
+
+        // $post = PostUser::with('images')->findOrFail($post->id);
+
+        return response()->json([
+            'message' => 'post updated',
+            'post_user_id' => $post->id
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Users"},
+     *   path="/users/posts/{post_id}",
+     *   summary="Delete user post",
+     *   description="Suppression d'un article par un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function deletePost(PostUser $post)
+    {
+        $post->delete();
+
+        return response()->json(['message' => 'post deleted'], 201);
+    }
+
+    /**
      * @OA\Post(
      *   tags={"Users"},
      *   path="/users/posts/{post_id}/likeOrUnlike",
@@ -234,5 +325,84 @@ class UserPostController extends Controller
         $comments = PostUserComment::where('post_user_id', $post->id)->paginate(10)->items();
 
         return response()->json($comments, 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Users"},
+     *   path="/users/posts/comments/{comment_id}",
+     *   summary="Update user post comment",
+     *   description="Modification d'un commentaire à un article d'un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/comment_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddPostUserComment"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Commentaire d'article de user modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="comment updated"
+     *       ),
+     *       @OA\Property(
+     *         property="comments",
+     *         ref="#/components/schemas/PostUserComment"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function updateComment(StorePostUserCommentRequest $request, PostUser $post, PostUserComment $comment)
+    {
+        $comment->update($request->all());
+
+        $comment = PostUserComment::findOrFail($comment->id);
+
+        return response()->json([
+            'message' => 'comment updated',
+            'comment' => $comment
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Users"},
+     *   path="/users/posts/comments/{comment_id}",
+     *   summary="Delete user post comment",
+     *   description="Suppression d'un commentaire à un article d'un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/comment_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function deleteComment(PostUserComment $comment)
+    {
+        $comment->delete();
+
+        return response()->json(['message' => 'comment deleted'], 201);
     }
 }

@@ -12,9 +12,15 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="description", type="string", example="Ma super description de Rando VTT"),
  *     @OA\Property(property="public_price", type="string", example="6"),
  *     @OA\Property(property="private_price", type="string", example="4"),
- *     @OA\Property(property="address_id", type="number", example=1),
  *     @OA\Property(property="date", type="string", example="2023-02-20"),
- *     @OA\Property(property="club_id", type="number", example=1),
+ *     @OA\Property(property="street_address", type="string", example="Ma super rue"),
+ *     @OA\Property(property="city", type="string", example="Nantes"),
+ *     @OA\Property(property="zipcode", type="string", example="44000"),
+ *     @OA\Property(property="lat", type="string", example="48.5740185", description="Lattitude GPS"),
+ *     @OA\Property(property="lng", type="string", example="-4.3335965", description="Longitude GPS"),
+ *     @OA\Property(property="region", type="string", example="Bretagne"),
+ *     @OA\Property(property="department", type="string", example="Finistère"),
+ *     @OA\Property(property="department_code", type="string", example="29"),
  *   )
  * )
  * 

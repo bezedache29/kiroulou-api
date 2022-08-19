@@ -119,6 +119,22 @@ namespace App\Http\Controllers;
  *   @OA\Schema(type="integer")
  * )
  * 
+ * @OA\Parameter(
+ *   name="comment_id",
+ *   in="path",
+ *   description="ID de ressource",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
+ * @OA\Parameter(
+ *   name="image_id",
+ *   in="path",
+ *   description="ID de ressource",
+ *   required=true,
+ *   @OA\Schema(type="integer")
+ * )
+ * 
  * @OA\Response(
  *   response=409,
  *   response="Conflit",

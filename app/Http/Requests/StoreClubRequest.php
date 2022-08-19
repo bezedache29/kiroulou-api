@@ -27,7 +27,7 @@ class StoreClubRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'short_name' => ['string'],
+            'short_name' => ['string', 'nullable'],
             'street_address' => ['required', 'string'],
             'lat' => ['required'],
             'lng' => ['required'],
@@ -36,7 +36,7 @@ class StoreClubRequest extends FormRequest
             'department_code' => ['required'],
             'city' => ['required', 'string'],
             'zipcode' => ['required', 'string'],
-            'website' => ['string'],
+            'website' => ['string', 'nullable'],
             'organization' => ['required'],
             'avatar' => ['string'],
         ];

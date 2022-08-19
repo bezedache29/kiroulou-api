@@ -99,6 +99,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     example="Côte Des Légendes VTT"
  *   ),
  *   @OA\Property(
+ *     property="club_avatar",
+ *     type="string",
+ *     example="club-avatar.png"
+ *   ),
+ *   @OA\Property(
  *     property="department_code",
  *     type="string",
  *     example="29"
@@ -135,6 +140,7 @@ class HikeVtt extends Model
 
     protected $appends = [
         'club_name',
+        'club_avatar',
         'department_name'
     ];
 
@@ -175,5 +181,10 @@ class HikeVtt extends Model
     public function getClubNameAttribute()
     {
         return $this->club->name;
+    }
+
+    public function getClubAvatarAttribute()
+    {
+        return $this->club->avatar;
     }
 }

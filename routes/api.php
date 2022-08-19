@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
   // CLUBS
   Route::get('/clubs', [ClubController::class, 'clubs']);
   Route::post('/clubs', [ClubController::class, 'storeClub']);
+  Route::delete('/deleteImagePost/{image_id}', [ClubController::class, 'deleteImagePost']);
+  Route::put('/clubs/{club}', [ClubController::class, 'updateClub']);
   Route::get('/clubs/{club}/clubInformations', [ClubController::class, 'clubInformations']);
   Route::post('/clubs/{club}/followOrUnfollow', [ClubController::class, 'followOrUnfollow']);
   Route::post('/clubs/{club}/requestToJoin', [ClubController::class, 'requestToJoin']);
@@ -52,17 +54,25 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/clubs/{club}/allImages', [ClubController::class, 'allImages']);
 
   Route::get('/clubs/{club}/posts', [ClubPostController::class, 'posts']);
+  Route::put('/clubs/{club}/posts/{post}', [ClubPostController::class, 'updatePost']);
+  Route::delete('/clubs/{club}/posts/{post}', [ClubPostController::class, 'deletePost']);
   Route::post('/clubs/{club}/posts/{post}/likeOrUnlike', [ClubPostController::class, 'likeOrUnlike']);
   Route::get('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'comments']);
   Route::post('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'storeComment']);
+  Route::put('/comments/{comment}', [ClubPostController::class, 'updateComment']);
+  Route::delete('/comments/{comment}', [ClubPostController::class, 'deleteComment']);
 
 
   // USERS
   Route::post('/users/posts', [UserPostController::class, 'storePost']);
+  Route::put('/users/posts/{post}', [UserPostController::class, 'updatePost']);
+  Route::delete('/users/posts/{post}', [UserPostController::class, 'deletePost']);
   Route::post('/users/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
   Route::get('/users/{user}/posts', [UserPostController::class, 'posts']);
   Route::post('/users/posts/{post}/comments', [UserPostController::class, 'storeComment']);
   Route::get('/users/posts/{post}/comments', [UserPostController::class, 'comments']);
+  Route::put('/users/posts/comments/{comment}', [UserPostController::class, 'updateComment']);
+  Route::delete('/users/posts/comments/{comment}', [UserPostController::class, 'deleteComment']);
 
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
   Route::post('/users/bikes', [UserController::class, 'storeBike']);
@@ -79,7 +89,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
   // HIKES VTT
   Route::get('/hikes/vtt', [HikeVttController::class, 'index']);
-  Route::get('/hikes/vtt/{hike_id}/show', [HikeVttController::class, 'show']);
+  Route::get('/hikes/vtt/{hike_id}', [HikeVttController::class, 'show']);
+  Route::put('/hikes/vtt/{hike_id}', [HikeVttController::class, 'update']);
+  Route::delete('/hikes/vtt/{hike_id}', [HikeVttController::class, 'delete']);
   Route::post('/hikes/vtt/{hike_id}/hypeOrUnhype', [HikeVttController::class, 'hypeOrUnhype']);
 
 

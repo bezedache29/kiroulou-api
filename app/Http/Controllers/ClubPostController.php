@@ -95,6 +95,99 @@ class ClubPostController extends Controller
     }
 
     /**
+     * @OA\Put(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/posts/{post_id}",
+     *   summary="Update club post",
+     *   description="Modification d'un article par un club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddClubPost"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Article d'un club modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="post updated"
+     *       ),
+     *       @OA\Property(
+     *         property="post",
+     *         ref="#/components/schemas/ClubPostSimple"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function updatePost(StoreClubPostRequest $request, Club $club, ClubPost $post)
+    {
+        $data = $request->all();
+
+        $post->update($data);
+
+        if ($request->image) {
+            //TODO Check si les images on été changé
+            // TODO: Ajout image en store
+            // ClubPostImage::create([
+            //     'user_id' => $request->user()->id,
+            //     'club_post_id' => $post->id,
+            //     'image' => 'image-name.png'
+            // ]);
+        }
+
+        $post = ClubPost::findOrFail($post->id);
+
+        return response()->json([
+            'message' => 'post updated',
+            'post' => $post
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/posts/{post_id}",
+     *   summary="Delete club post",
+     *   description="Suppression d'un article par un club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function deletePost(Club $club, ClubPost $post)
+    {
+        $post->delete();
+
+        return response()->json(['message' => 'post deleted'], 201);
+    }
+
+    /**
      * @OA\Post(
      *   tags={"Clubs"},
      *   path="/clubs/{club_id}/posts/{post_id}/comments",
@@ -171,6 +264,85 @@ class ClubPostController extends Controller
         $comments = ClubPostComment::where('club_post_id', $post->id)->with('user')->paginate(10)->items();
 
         return response()->json($comments, 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Clubs"},
+     *   path="/comments/{comment_id}",
+     *   summary="Update club post comment",
+     *   description="Modification d'un commentaire à un article de club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/comment_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/AddClubPostComment"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Commentaire d'article de club modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="comment updated"
+     *       ),
+     *       @OA\Property(
+     *         property="comments",
+     *         ref="#/components/schemas/ClubPostComment"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function updateComment(StoreClubPostCommentRequest $request, ClubPostComment $comment)
+    {
+        $comment->update($request->all());
+
+        $comment = ClubPostComment::with('user')->findOrFail($comment->id);
+
+        return response()->json([
+            'message' => 'comment updated',
+            'comment' => $comment
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Clubs"},
+     *   path="/comments/{comment_id}",
+     *   summary="Delete club post comment",
+     *   description="Suppression d'un commentaire à un article de club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/comment_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function deleteComment(ClubPostComment $comment)
+    {
+        $comment->delete();
+
+        return response()->json(['message' => 'comment deleted'], 201);
     }
 
     /**
