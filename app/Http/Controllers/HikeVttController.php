@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreHikeVttRequest;
 use Carbon\Carbon;
 use App\Models\HikeVtt;
 use App\Models\HikeVttHype;
@@ -64,40 +65,8 @@ class HikeVttController extends Controller
      *   ),
      * )
      */
-    public function store(Request $request)
+    public function store(StoreHikeVttRequest $request)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => ['required', 'string'],
-                'description' => ['required', 'string'],
-                'public_price' => ['required', 'string'],
-                'private_price' => ['string'],
-                'date' => ['required', 'date'],
-                'club_id' => ['required', 'exists:clubs,id'],
-                'address_id' => ['required', 'exists:addresses,id'],
-            ],
-            [
-                'name.required' => 'Le nom est obligatoire',
-                'name.string' => 'Le nom doit être une chaine de caractères',
-                'description.required' => 'La description est obligatoire',
-                'description.string' => 'La description doit être une chaine de caractères',
-                'public_price.required' => 'Le prix public est obligatoire',
-                'public_price.string' => 'Le prix public doit être une chaine de caractères',
-                'private_price.string' => 'Le prix licencié doit être une chaine de caractères',
-                'date.required' => 'La date est obligatoire',
-                'date.date' => 'La date doit être une date valide',
-                'club_id.required' => 'L\'id du club est obligatoire',
-                'address_id.required' => 'L\'id de l\'adresse est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         $data = $request->all();
 
         if ($request->flyer) {

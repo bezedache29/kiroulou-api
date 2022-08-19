@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostUserCommentRequest;
+use App\Http\Requests\StorePostUserRequest;
 use App\Models\User;
 use App\Models\PostUser;
 use App\Models\PostUserLike;
@@ -42,33 +44,10 @@ class UserPostController extends Controller
      *   ),
      * )
      */
-    public function storePost(Request $request)
+    public function storePost(StorePostUserRequest $request)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'title' => ['required', 'string'],
-                'description' => ['required', 'string'],
-            ],
-            [
-                'title.required' => 'Le titre est obligatoire',
-                'title.string' => 'Le titre doit être une chaine de caractères',
-                'description.required' => 'La description est obligatoire',
-                'description.string' => 'La description doit être une chaine de caractères',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = [
-            'title' => $request->title,
-            'description' => $request->description,
-            'user_id' => $request->user()->id
-        ];
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
 
         $post = PostUser::create($data);
 
@@ -210,25 +189,8 @@ class UserPostController extends Controller
      *   ),
      * )
      */
-    public function storeComment(Request $request, PostUser $post)
+    public function storeComment(StorePostUserCommentRequest $request, PostUser $post)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'message' => ['required', 'string'],
-            ],
-            [
-                'message.required' => 'Le message est obligatoire',
-                'message.string' => 'Le message doit être une chaine de caractères',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         $data = [
             'user_id' => $request->user()->id,
             'post_user_id' => $post->id,

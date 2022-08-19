@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClubRequest;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\City;
 use App\Models\Club;
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Zipcode;
-use App\Models\ClubPost;
 use App\Models\HikeVttImage;
 use Illuminate\Http\Request;
 use App\Models\ClubPostImage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class ClubController extends Controller
 {
@@ -72,45 +72,8 @@ class ClubController extends Controller
      *   ),
      * )
      */
-    public function storeClub(Request $request)
+    public function storeClub(StoreClubRequest $request)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => ['required', 'string'],
-                'short_name' => ['string'],
-                'street_address' => ['required', 'string'],
-                'lat' => ['required'],
-                'lng' => ['required'],
-                'region' => ['required'],
-                'department' => ['required'],
-                'department_code' => ['required'],
-                'city' => ['required', 'string'],
-                'zipcode' => ['required', 'string'],
-                'website' => ['string'],
-                'organization' => ['required'],
-                'avatar' => ['string'],
-            ],
-            [
-                'name.required' => 'Le nom est obligatoire',
-                'street_address.required' => 'L\'adresse est obligatoire',
-                'city.required' => 'L\'adresse est obligatoire',
-                'zipcode.required' => 'L\'adresse est obligatoire',
-                'lat.required' => 'L\'adresse est obligatoire',
-                'lng.required' => 'L\'adresse est obligatoire',
-                'region.required' => 'L\'adresse est obligatoire',
-                'department.required' => 'L\'adresse est obligatoire',
-                'department_code.required' => 'L\'adresse est obligatoire',
-                'organization.required' => 'L\'organisation est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         // On check que le user n'est pas déjà dans un club
         $is_on_club = $request->user()->haveClub();
 
@@ -370,24 +333,8 @@ class ClubController extends Controller
      *   )
      * )
      */
-    public function acceptRequestToJoin(Request $request, Club $club)
+    public function acceptRequestToJoin(StoreUserRequest $request, Club $club)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'user_id' => ['required'],
-            ],
-            [
-                'user_id.required' => 'Le user_id est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         // On check que le user n'est pas déjà dans un club
         $is_already_in_club = User::where('id', $request->user_id)->where('club_id', '!=', NULL)->first();
 
@@ -445,24 +392,8 @@ class ClubController extends Controller
      *   )
      * )
      */
-    public function denyRequestToJoin(Request $request, Club $club)
+    public function denyRequestToJoin(StoreUserRequest $request, Club $club)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'user_id' => ['required'],
-            ],
-            [
-                'user_id.required' => 'Le club_id est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         // On check que le user n'est pas déjà dans un club
         $is_already_in_club = User::where('id', $request->user_id)->where('club_id', '!=', NULL)->first();
 
@@ -524,7 +455,7 @@ class ClubController extends Controller
      *   )
      * )
      */
-    public function showJoinRequests(Request $request, Club $club)
+    public function showJoinRequests(Club $club)
     {
         $join_requests = DB::table('club_join_requests')->where('club_id', $club->id)->get();
 
@@ -550,24 +481,8 @@ class ClubController extends Controller
      *   )
      * )
      */
-    public function changeAdmin(Request $request, Club $club)
+    public function changeAdmin(StoreUserRequest $request, Club $club)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'user_id' => ['required'],
-            ],
-            [
-                'user_id.required' => 'Le user_id est obligatoire',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         $user = User::findOrFail($request->user_id);
 
         // On check que le futur admin est bien dans le club

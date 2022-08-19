@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClubPostCommentRequest;
+use App\Http\Requests\StoreClubPostRequest;
 use App\Models\Club;
 use App\Models\ClubPost;
 use App\Models\ClubPostLike;
@@ -71,33 +73,10 @@ class ClubPostController extends Controller
      *   ),
      * )
      */
-    public function storePost(Request $request, Club $club)
+    public function storePost(StoreClubPostRequest $request, Club $club)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'title' => ['required', 'string'],
-                'description' => ['required', 'string'],
-            ],
-            [
-                'title.required' => 'Le titre est obligatoire',
-                'title.string' => 'Le titre doit être une chaine de caractères',
-                'description.required' => 'La description est obligatoire',
-                'description.string' => 'La description doit être une chaine de caractères',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = [
-            'title' => $request->title,
-            'description' => $request->description,
-            'club_id' => $club->id
-        ];
+        $data = $request->all();
+        $data['club_id'] = $club->id;
 
         $post = ClubPost::create($data);
 
@@ -146,25 +125,8 @@ class ClubPostController extends Controller
      *   ),
      * )
      */
-    public function storeComment(Request $request, Club $club, ClubPost $post)
+    public function storeComment(StoreClubPostCommentRequest $request, Club $club, ClubPost $post)
     {
-        // On check les requests
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'message' => ['required', 'string'],
-            ],
-            [
-                'message.required' => 'Le message est obligatoire',
-                'message.string' => 'Le message doit être une chaine de caractères',
-            ]
-        );
-
-        // S'il y a une erreur dans la validation
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         $data = [
             'user_id' => $request->user()->id,
             'club_post_id' => $post->id,
