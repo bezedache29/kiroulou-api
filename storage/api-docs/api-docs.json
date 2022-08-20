@@ -114,6 +114,135 @@
                 ]
             }
         },
+        "/forgot": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Send email for forgot password",
+                "description": "Envoie d'un email pour mot de passe oublié",
+                "operationId": "03aca08208571c2a43bcdeebb40304ae",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                }
+            }
+        },
+        "/verifyResetPassword": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Check token for reset password",
+                "description": "Check le token recu par mail pour le changement de mot de passe",
+                "operationId": "72618524fde2e3d8683c36066ad7046b",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "token"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": "8154"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                }
+            }
+        },
+        "/resetPassword": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset user password",
+                "description": "Change le mot de passe de l'utilisateur",
+                "operationId": "230bc834c9570fac1748f943adbd42a3",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "password",
+                                    "confirm_password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": "8154"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    },
+                                    "confirm_password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                }
+            }
+        },
         "/clubs": {
             "post": {
                 "tags": [

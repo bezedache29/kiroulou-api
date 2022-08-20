@@ -1,15 +1,16 @@
 <?php
 
+use App\Models\HikeVtt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ClubPostController;
 use App\Http\Controllers\HikeVttController;
+use App\Http\Controllers\ClubPostController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\UserPostController;
-use App\Models\HikeVtt;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,9 @@ Route::get('/login', [AuthController::class, 'unauthenticated'])->name('login');
 
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/forgot', [AuthController::class, 'forgot']);
+Route::post('/verifyResetPassword', [AuthController::class, 'verifyResetPassword']);
+Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me', [AuthController::class, 'me']);
