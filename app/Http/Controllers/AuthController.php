@@ -6,9 +6,14 @@ use App\Models\User;
 use App\Models\PostUser;
 use App\Models\ClubMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreAuthRequest;
+use App\Http\Requests\CheckTokenRequest;
+use App\Http\Requests\StoreNewPasswordRequest;
+use App\Http\Requests\StoreForgotPasswordRequest;
+use App\Notifications\ForgotPasswordNotification;
 
 class AuthController extends Controller
 {
@@ -149,6 +154,131 @@ class AuthController extends Controller
         // $admin = ClubMember::where('user_id', $request->user()->id)->where('is_user_admin', true)->first();
 
         return response()->json($full_me);
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/forgot",
+     *   summary="Send email for forgot password",
+     *   description="Envoie d'un email pour mot de passe oublié",
+     *   tags={"Auth"},
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       required={"email"},
+     *       @OA\Property(
+     *         property="email",
+     *         type="string",
+     *         example="test@gmail.com",
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   )
+     * )
+     */
+    public function forgot(StoreForgotPasswordRequest $request)
+    {
+        $email = $request->email;
+        $token = rand(1000, 9999);
+
+        // On supprime tous les token reliant cette adresse email de la DB
+        DB::table('password_resets')->where('email', $email)->delete();
+
+        // On enregistre le token pour cette adresse mail
+        DB::table('password_resets')->insert([
+            'email' => $email,
+            'token' => $token
+        ]);
+
+        $user = User::where('email', $email)->first();
+
+        // On envoie un mail au user avec le token
+        $user->notify(new ForgotPasswordNotification($token));
+
+        return response()->json(['message' => 'email send'], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/verifyResetPassword",
+     *   summary="Check token for reset password",
+     *   description="Check le token recu par mail pour le changement de mot de passe",
+     *   tags={"Auth"},
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       required={"email", "token"},
+     *       @OA\Property(property="email", type="string", example="test@gmail.com"),
+     *       @OA\Property(property="token", type="string", example="8154"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function verifyResetPassword(CheckTokenRequest $request)
+    {
+        $passwordRequest = DB::table('password_resets')->where('token', $request->token)->first();
+
+        $user = User::where('email', $passwordRequest->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'user does not exist'], 404);
+        }
+
+        return response()->json(['message' => 'token verified'], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   path="/resetPassword",
+     *   summary="Reset user password",
+     *   description="Change le mot de passe de l'utilisateur",
+     *   tags={"Auth"},
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       required={"password", "confirm_password"},
+     *       @OA\Property(property="email", type="string", example="test@gmail.com"),
+     *       @OA\Property(property="token", type="string", example="8154"),
+     *       @OA\Property(property="password", type="string", example="password"),
+     *       @OA\Property(property="confirm_password", type="string", example="password"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     * )
+     */
+    public function resetPassword(StoreNewPasswordRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_resets')->where('token', $request->token)->where('email', $request->email)->delete();
+
+        return response()->json(['message' => 'password reseted'], 201);
     }
 
     public function unauthenticated()
