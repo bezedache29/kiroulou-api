@@ -235,6 +235,10 @@ class AuthController extends Controller
     {
         $passwordRequest = DB::table('password_resets')->where('token', $request->token)->first();
 
+        if (!$passwordRequest) {
+            return response()->json(['message' => 'token not found'], 404);
+        }
+
         $user = User::where('email', $passwordRequest->email)->first();
 
         if (!$user) {
