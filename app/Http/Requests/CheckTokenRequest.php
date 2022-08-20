@@ -34,7 +34,7 @@ class CheckTokenRequest extends FormRequest
         return [
             'email.required' => 'L\'adresse email est obligatoire',
             'email.email' => 'L\'adresse email doit être un email valide',
-            'token.required' => 'Le token est obligatoire',
+            'token.required' => 'Le code est obligatoire',
         ];
     }
 }
