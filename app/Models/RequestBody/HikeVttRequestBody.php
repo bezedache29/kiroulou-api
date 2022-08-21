@@ -41,6 +41,17 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="department_code", type="string", example="29"),
  *   )
  * )
+ * 
+ * @OA\RequestBody(
+ *   request="HikeVttAddTrip",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     @OA\Property(property="distance", type="string", example="35"),
+ *     @OA\Property(property="height_difference", type="string", example="280", description="dénivelé positif"),
+ *     @OA\Property(property="difficulty", type="number", example=1),
+ *     @OA\Property(property="supplies", type="string", example=1, description="Nombre de ravitaillements sur le parcours"),
+ *   )
+ * )
  */
 class HikeVttRequestBody
 {

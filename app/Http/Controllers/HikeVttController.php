@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreHikeVttDateRequest;
 use Carbon\Carbon;
 use App\Models\City;
 use App\Models\Address;
 use App\Models\HikeVtt;
 use App\Models\Zipcode;
 use App\Models\HikeVttHype;
+use App\Models\HikeVttTrip;
+use App\Models\HikeVttImage;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreTripRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreHikeVttRequest;
+use App\Http\Requests\StoreHikeVttDateRequest;
 
 class HikeVttController extends Controller
 {
@@ -478,5 +481,112 @@ class HikeVttController extends Controller
         $hikes = $hikes->where('department_name', $request->department_code)->values();
 
         return response()->json($hikes->toArray(), 200);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/{hike_id}/storeTrip",
+     *   summary="Store hike's vtt trip",
+     *   description="Ajout un circuit a une randonnée vtt",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/hike_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/HikeVttAddTrip"),
+     *     @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function storeTrip(StoreTripRequest $request, Int $hike_id)
+    {
+        $data = $request->all();
+        $data['hike_vtt_id'] = $hike_id;
+        HikeVttTrip::create($data);
+
+        return response()->json(['message' => 'trip created'], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/{hike_id}/storeImage",
+     *   summary="Flyer or images to storage",
+     *   description="Ajoute un flyer ou des images au stockage du serveur",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/hike_id"),
+     *     @OA\RequestBody(
+     *       required=true,
+     *       @OA\MediaType(
+     *         mediaType="multipart/form-data",
+     *         @OA\Schema(
+     *           @OA\Property(property="title", type="string", description="Type & Extension du fichier", example="images-jpg"),
+     *           @OA\Property(
+     *             property="flyer",
+     *             type="file",
+     *             description="Fichier de l'image",
+     *             example="file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+     *           ),
+     *         ),
+     *       ),
+     *     ),
+     *     @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function storeImage(Request $request, Int $hike_id)
+    {
+        // On explode le title request pour récupérer l'extension du fichier et le type d'image a uploader (flyer ou images)
+        $type_and_extension = explode("-", $request->title);
+
+        // On renomme l'image avce l'extension passé dans le title
+        $image_name = $hike_id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $type_and_extension[1];
+
+        // Emplacement de stockage de l'image
+        $store = 'images/clubs/' . $request->user()->club_id . '/hikes/' . $hike_id . '/' . $type_and_extension[0];
+
+        // Suivant le type on stock l'image ou le flyer
+        // On ajoute dans la DB image ou on update la hikevtt
+        if ($type_and_extension[0] == 'image') {
+            // On store l'image a l'endroit voulu, avec son nouveau nom
+            $request->image->storeAs($store, $image_name);
+
+            HikeVttImage::create([
+                'image' => $store . '/' . $image_name,
+                'hike_vtt_id' => $hike_id,
+                'club_id' => $request->user()->club_id
+            ]);
+        } else {
+            // On store l'image a l'endroit voulu, avec son nouveau nom
+            $request->flyer->storeAs($store, $image_name);
+
+            HikeVtt::where('id', $hike_id)->update([
+                'flyer' => $store . '/' . $image_name
+            ]);
+        }
+
+        return response()->json('OK', 201);
     }
 }

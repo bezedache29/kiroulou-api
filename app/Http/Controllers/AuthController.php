@@ -187,8 +187,17 @@ class AuthController extends Controller
         $email = $request->email;
         $token = rand(1000, 9999);
 
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return response()->json(['message' => 'user does not exist'], 404);
+        }
+
         // On supprime tous les token reliant cette adresse email de la DB
-        DB::table('password_resets')->where('email', $email)->delete();
+        $attempts = DB::table('password_resets')->where('email', $email)->count();
+
+        if ($attempts >= 5) {
+            DB::table('password_resets')->where('email', $email)->delete();
+        }
 
         // On enregistre le token pour cette adresse mail
         DB::table('password_resets')->insert([
@@ -280,7 +289,7 @@ class AuthController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        DB::table('password_resets')->where('token', $request->token)->where('email', $request->email)->delete();
+        DB::table('password_resets')->where('email', $request->email)->delete();
 
         return response()->json(['message' => 'password reseted'], 201);
     }
