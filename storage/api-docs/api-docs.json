@@ -1636,6 +1636,96 @@
                 ]
             }
         },
+        "/hikes/vtt/{hike_id}/storeTrip": {
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Store hike's vtt trip",
+                "description": "Ajout un circuit a une randonnée vtt",
+                "operationId": "45eeafde89469213ad29ee99e511e928",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/HikeVttAddTrip"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/{hike_id}/storeImage": {
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Flyer or images to storage",
+                "description": "Ajoute un flyer ou des images au stockage du serveur",
+                "operationId": "62cf4f40bdd1f0c99565107c511ee0e7",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Type & Extension du fichier",
+                                        "type": "string",
+                                        "example": "images-jpg"
+                                    },
+                                    "flyer": {
+                                        "description": "Fichier de l'image",
+                                        "type": "file",
+                                        "example": "file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/posts?page={page}": {
             "get": {
                 "tags": [
@@ -4024,6 +4114,36 @@
                                 "department_code": {
                                     "type": "string",
                                     "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "HikeVttAddTrip": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "distance": {
+                                    "type": "string",
+                                    "example": "35"
+                                },
+                                "height_difference": {
+                                    "description": "dénivelé positif",
+                                    "type": "string",
+                                    "example": "280"
+                                },
+                                "difficulty": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "supplies": {
+                                    "description": "Nombre de ravitaillements sur le parcours",
+                                    "type": "string",
+                                    "example": 1
                                 }
                             },
                             "type": "object"
