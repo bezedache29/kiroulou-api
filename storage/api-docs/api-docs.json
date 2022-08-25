@@ -1726,6 +1726,310 @@
                 ]
             }
         },
+        "/subscriptions/plans": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "All subs plans",
+                "description": "Les plans d'abonnement",
+                "operationId": "f5d812598a73d71a6e5d8d60c61bd262",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "id du prix",
+                                                "type": "string",
+                                                "example": "price_1LZjEKGofnt4tufZaVgerppF"
+                                            },
+                                            "active": {
+                                                "description": "plan actif ou non",
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "amount": {
+                                                "description": "prix en centimes",
+                                                "type": "number",
+                                                "example": 499
+                                            },
+                                            "nickname": {
+                                                "description": "Nom du plan",
+                                                "type": "string",
+                                                "example": "Premium 2"
+                                            },
+                                            "product": {
+                                                "description": "id du produit du plan",
+                                                "type": "string",
+                                                "example": "prod_MIJlTw1G77xNbZ"
+                                            },
+                                            "interval": {
+                                                "description": "Durée du sub avant prochain debit",
+                                                "type": "string",
+                                                "example": "month"
+                                            },
+                                            "currency": {
+                                                "description": "Devise du plan",
+                                                "type": "string",
+                                                "example": "eur"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/subscriptions/subscribe": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Create and get sub payment intent",
+                "description": "Cré et récupère l'intention de payment sub depuis stripe du user",
+                "operationId": "07e714372694864ac84487ce4dca4f0e",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "price_id"
+                                ],
+                                "properties": {
+                                    "price_id": {
+                                        "type": "string",
+                                        "example": "price_1LZjCyGofnt4tufZ9NWGMSIF"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "subscriptionId": {
+                                            "type": "string",
+                                            "example": "sub_1Labl7Gofnt4tufZx612e5vZ"
+                                        },
+                                        "clientSecret": {
+                                            "type": "string",
+                                            "example": "pi_3LafxdGofnt4tufZ1dSWNIAV_secret_KvNoMg4ye3WFrBWka9IDZ632J"
+                                        },
+                                        "ephemeralKey": {
+                                            "type": "string",
+                                            "example": "ek_test_YWNjdF8xTFZBekpHb2ZudDR0dWZaLFJjQk5jQnhTVVpQNVhZY2lKY1JqbERudnJkSDN5dGw_00ol5BnsEL"
+                                        },
+                                        "customer": {
+                                            "type": "string",
+                                            "example": "cus_MJEDCDFb8Wot43"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/subscriptions/cancel": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Cancel sub",
+                "description": "Annulation de l'abonnement du user connecté",
+                "operationId": "ba6f30c075498b91fa97b7f3b6520cc0",
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "403": {
+                        "description": "Déjà annulé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "already canceled"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/subscriptions/check": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "check subs",
+                "description": "Check si le user connecté est abonné et retourne l'id du sub",
+                "operationId": "4bc1f47736b0deefca3f902767a3cd1d",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "name"
+                                    ],
+                                    "type": "string"
+                                },
+                                "example": "sub_1Labl7Gofnt4tufZx612e5vZ"
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "403": {
+                        "description": "Déjà annulé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "already canceled"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/subscriptions/deleteFails": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Delete sub incomplet",
+                "description": "Supprime les intentions de sub non complétés",
+                "operationId": "ab87689b19d8d0df699ad522cbde38e9",
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/subscriptions/delete": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Cancel sub",
+                "description": "Anulle l'abonnement actuel du user",
+                "operationId": "dd2fa271f4c80b20b812038113bbc889",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "subscription_id"
+                                ],
+                                "properties": {
+                                    "subscription_id": {
+                                        "type": "string",
+                                        "example": "sub_1Labl7Gofnt4tufZx612e5vZ"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/posts?page={page}": {
             "get": {
                 "tags": [
@@ -4250,6 +4554,10 @@
         {
             "name": "Hikes VTT",
             "description": "Opérations en relation avec les randonnées VTT"
+        },
+        {
+            "name": "Payments",
+            "description": "Opérations en relation avec les paiements stripe"
         }
     ]
 }
