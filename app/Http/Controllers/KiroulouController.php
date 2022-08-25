@@ -44,6 +44,11 @@ namespace App\Http\Controllers;
  *     description="Opérations en relation avec les randonnées VTT"
  * )
  * 
+ * @OA\Tag(
+ *     name="Payments",
+ *     description="Opérations en relation avec les paiements stripe"
+ * )
+ * 
  * 
  * @OA\SecurityScheme(
  *   type="http",

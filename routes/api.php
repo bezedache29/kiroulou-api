@@ -53,14 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
   // SUBSCRIPTIONS
 
   route::get('/subscriptions/plans', [PaymentController::class, 'plans']);
-  route::get('/subscriptions/types', [PaymentController::class, 'types']);
-  route::post('/subscriptions/subscribe', [PaymentController::class, 'subscribe']);
   route::post('/subscriptions/create', [PaymentController::class, 'create']);
   route::post('/subscriptions/cancel', [PaymentController::class, 'cancel']);
-  route::get('/subscriptions/subscription', [PaymentController::class, 'subscription']);
   route::get('/subscriptions/check', [PaymentController::class, 'check']);
-  route::post('/subscriptions/delete', [PaymentController::class, 'deleteSubscription']);
   route::post('/subscriptions/deleteFails', [PaymentController::class, 'deleteFailsSubs']);
+  route::post('/subscriptions/delete', [PaymentController::class, 'deleteSubscription']);
+  route::post('/subscriptions/subscribe', [PaymentController::class, 'subscribe']);
 
   route::get('/invoices', [PaymentController::class, 'invoices']);
 
