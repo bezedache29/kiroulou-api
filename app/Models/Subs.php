@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Subscription extends Model
+class Subs extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -19,8 +19,14 @@ class Subscription extends Model
      */
     protected $fillable = [
         'user_id',
-        'stripe_id',
+        'stripe_subscription_id',
         'subscription_type_id',
+        'start_at',
+        'end_at',
+        'cancel_at_perdiod_end',
+        'status',
+        'latest_invoice_id',
+        'default_payment_method_id',
     ];
 
     protected $with = [
@@ -35,5 +41,10 @@ class Subscription extends Model
     public function subscriptionType()
     {
         return $this->belongsTo(SubscriptionType::class);
+    }
+
+    public function getSubscriptionTypeName()
+    {
+        return $this->subscriptionType->name;
     }
 }

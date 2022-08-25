@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_email_notifications')->default(true);
             $table->foreignId('club_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_club_admin')->default(false);
+            $table->string('stripe_customer_id')->default(0)->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -10,6 +10,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\HikeVttController;
 use App\Http\Controllers\ClubPostController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\UserPostController;
 
 /*
@@ -35,10 +37,32 @@ Route::post('/forgot', [AuthController::class, 'forgot']);
 Route::post('/verifyResetPassword', [AuthController::class, 'verifyResetPassword']);
 Route::post('/resetPassword', [AuthController::class, 'resetPassword']);
 
+// route::post('/checkout', [UserController::class, 'checkout']);
+route::post('/create-payment-intent', [StripeController::class, 'paymentIntent']);
+
+
+// Pour ADMIN Stripe
+route::post('/payment/product', [PaymentController::class, 'product']);
+route::post('/payment/product/{product_id}/price', [PaymentController::class, 'price']);
+
+
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me', [AuthController::class, 'me']);
   Route::post('/disconnect', [AuthController::class, 'disconnect']);
 
+  // SUBSCRIPTIONS
+
+  route::get('/subscriptions/plans', [PaymentController::class, 'plans']);
+  route::get('/subscriptions/types', [PaymentController::class, 'types']);
+  route::post('/subscriptions/subscribe', [PaymentController::class, 'subscribe']);
+  route::post('/subscriptions/create', [PaymentController::class, 'create']);
+  route::post('/subscriptions/cancel', [PaymentController::class, 'cancel']);
+  route::get('/subscriptions/subscription', [PaymentController::class, 'subscription']);
+  route::get('/subscriptions/check', [PaymentController::class, 'check']);
+  route::post('/subscriptions/delete', [PaymentController::class, 'deleteSubscription']);
+  route::post('/subscriptions/deleteFails', [PaymentController::class, 'deleteFailsSubs']);
+
+  route::get('/invoices', [PaymentController::class, 'invoices']);
 
   // POSTS
   Route::get('/posts', [PostController::class, 'posts']);

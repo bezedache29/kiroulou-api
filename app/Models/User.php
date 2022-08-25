@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use App\Models\Bike;
 use App\Models\Club;
+use App\Models\Subs;
 use App\Models\Address;
 use App\Models\PostUser;
 use App\Models\ImageUser;
@@ -193,7 +194,9 @@ class User extends Authenticatable
 
     protected $appends = [
         'club_name',
-        'premium_name'
+        'premium_name',
+        'premium',
+        'premium_actif'
     ];
 
     /**
@@ -235,9 +238,9 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'follow_users', 'user_follower_id', 'user_followed_id');
     }
 
-    public function subscriptions()
+    public function subs()
     {
-        return $this->hasMany(Subscription::class);
+        return $this->hasMany(Subs::class);
     }
 
     public function club()
@@ -301,12 +304,80 @@ class User extends Authenticatable
 
     public function getPremiumNameAttribute()
     {
-        $sub = Subscription::where('user_id', $this->id)->where('end_at', '>=', Carbon::now())->first();
+        $stripe_customer = $this->stripeCustomer();
 
-        if ($sub) {
-            return $sub->subscriptionType->name;
+        if (!is_null($stripe_customer)) {
+            if (!empty($stripe_customer->subscriptions->data)) {
+                if (count($stripe_customer->subscriptions->data) > 1) {
+                    foreach ($stripe_customer->subscriptions->data as $sub) {
+                        if ($sub->cancel_at_period_end && $sub->status == 'active' && $sub->plan->nickname == 'Premium 2') {
+                            // On priorise Premium 2 jusqu'a la fin de son abonnement, dans le cas d'un autre abonnement a Premium 1
+                            return $sub->plan->nickname;
+                        }
+                    }
+
+                    return $stripe_customer->subscriptions->data[0]->plan->nickname;
+                }
+
+                return $stripe_customer->subscriptions->data[0]->plan->nickname;
+            }
+
+            return null;
         }
 
         return null;
+    }
+
+    public function getPremiumAttribute()
+    {
+        $stripe_customer = $this->stripeCustomer();
+
+        if (is_null($stripe_customer)) {
+            return 'inactive';
+        }
+
+        if (!empty($stripe_customer->subscriptions->data)) {
+            return $stripe_customer->subscriptions->data[0]->status;
+        }
+
+        return 'inactive';
+    }
+
+    public function getPremiumActifAttribute()
+    {
+        $stripe_customer = $this->stripeCustomer();
+
+        if (!is_null($stripe_customer)) {
+            if (!empty($stripe_customer->subscriptions->data)) {
+                if (count($stripe_customer->subscriptions->data) > 1) {
+                    foreach ($stripe_customer->subscriptions->data as $sub) {
+                        if (!$sub->cancel_at_period_end && $sub->status == 'active') {
+                            return $sub->plan->nickname;
+                        }
+                    }
+
+                    return $stripe_customer->subscriptions->data[0]->plan->nickname;
+                }
+
+                return $stripe_customer->subscriptions->data[0]->plan->nickname;
+            }
+
+            return null;
+        }
+
+        return null;
+    }
+
+    // Permet de récupérer le user stripe s'il existe
+    public function stripeCustomer()
+    {
+        if ($this->stripe_customer_id == "0") {
+            return null;
+        }
+
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
+        $stripe_customer = $stripe->customers->retrieve($this->stripe_customer_id, ['expand' => ['subscriptions']]);
+
+        return $stripe_customer;
     }
 }

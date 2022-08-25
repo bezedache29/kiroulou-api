@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Http\Controllers\PaymentController;
 use App\Models\Bike;
 use App\Models\City;
 use App\Models\Club;
@@ -34,6 +35,8 @@ class DatabaseSeeder extends Seeder
      * @var \Faker\Generator
      */
     protected $faker;
+    // protected $premium3;
+    // protected $description3;
 
     /**
      * Create a new seeder instance.
@@ -43,6 +46,8 @@ class DatabaseSeeder extends Seeder
     public function __construct()
     {
         $this->faker = $this->withFaker();
+        // $this->premium3 = 'Premium 3';
+        // $this->description3 = 'Sub Premium de tier 3';
     }
 
     /**
@@ -63,6 +68,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
+
+        // $payment= new PaymentController();
 
         $bike_type_1 = BikeType::create([
             'name' => 'VTT'
@@ -89,11 +96,15 @@ class DatabaseSeeder extends Seeder
 
         // Type de subs
         $sub_type_1 = SubscriptionType::create([
-            'name' => 'Premium 1'
+            'name' => 'Premium 1',
+            'stripe_product_id' => 'prod_MIJkg5X0wnpHb6',
+            'stripe_price_id' => 'price_1LZjCyGofnt4tufZ9NWGMSIF'
         ]);
 
         $sub_type_2 = SubscriptionType::create([
-            'name' => 'Premium 2'
+            'name' => 'Premium 2',
+            'stripe_product_id' => 'prod_MIJlTw1G77xNbZ',
+            'stripe_price_id' => 'price_1LZjEKGofnt4tufZaVgerppF'
         ]);
 
 
