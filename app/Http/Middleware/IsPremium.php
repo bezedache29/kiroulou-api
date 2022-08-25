@@ -3,8 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Carbon\Carbon;
-use App\Models\Subscription;
 use Illuminate\Http\Request;
 
 class IsPremium
@@ -18,10 +16,20 @@ class IsPremium
      */
     public function handle(Request $request, Closure $next)
     {
-        $sub = Subscription::where('user_id', $request->user()->id)->where('end_at', '>=', Carbon::now())->first();
+        if ($request->user()->stripe_customer_id != "0") {
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
+            $stripe_customer = $stripe->customers->retrieve($request->user()->stripe_customer_id, ['expand' => ['subscriptions']]);
+            if (!empty($stripe_customer->subscriptions->data)) {
+                $status = $stripe_customer->subscriptions->data[0]->status;
 
-        if ($sub) {
-            return $next($request);
+                if ($status == 'active') {
+                    return $next($request);
+                }
+
+                return response()->json(['message' => 'Accès refusé à la ressource demandée'], 403);
+            }
+
+            return response()->json(['message' => 'Accès refusé à la ressource demandée'], 403);
         }
 
         return response()->json(['message' => 'Accès refusé à la ressource demandée'], 403);

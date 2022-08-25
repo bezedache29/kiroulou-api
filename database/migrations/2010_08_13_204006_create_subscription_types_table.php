@@ -16,6 +16,8 @@ class CreateSubscriptionTypesTable extends Migration
         Schema::create('subscription_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('stripe_product_id')->nullable();
+            $table->string('stripe_price_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

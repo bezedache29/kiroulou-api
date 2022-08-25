@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreBikeRequest;
-use App\Http\Requests\StorePostUserRequest;
 use Carbon\Carbon;
+use Stripe\Stripe;
 use App\Models\Bike;
 use App\Models\User;
+use Stripe\Customer;
+use Stripe\EphemeralKey;
+use Stripe\PaymentIntent;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Models\PostUserImage;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreBikeRequest;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StorePostUserRequest;
 
 class UserController extends Controller
 {
