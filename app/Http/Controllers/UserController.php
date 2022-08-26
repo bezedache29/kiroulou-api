@@ -367,4 +367,43 @@ class UserController extends Controller
 
         return response()->json(["message" => $action], 201);
     }
+
+    /**
+     * @OA\Get(
+     *   path="/users/{user_id}/isUserFollowed",
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   summary="Is user follow a user ?",
+     *   description="Est-ce qu'un user follow le user ?",
+     *   tags={"Users"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="followed")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function isUserFollowed(Request $request, User $user)
+    {
+        $user = DB::table('follow_users')
+            ->where('user_follower_id', $request->user()->id)
+            ->where('user_followed_id', $user->id)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'unfollow'], 404);
+        }
+
+        return response()->json(['message' => 'followed'], 200);
+    }
 }

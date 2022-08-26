@@ -18,6 +18,7 @@ class CreateClubPostsTable extends Migration
             $table->string('title');
             $table->longText('description');
             $table->foreignId('club_id')->constrained()->onDelete('cascade');
+            $table->foreignId('hike_vtt_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

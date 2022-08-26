@@ -251,6 +251,39 @@ class UserPostController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *   tags={"Users"},
+     *   path="/users/posts/{post_id}/isPostLiked",
+     *   summary="User like post ?",
+     *   description="Permet de savoir si un utilisateur a liké l'article",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function isPostLiked(Request $request, PostUser $post)
+    {
+        $post = PostUserLike::where('user_id', $request->user()->id)->where('post_user_id', $post->id)->first();
+
+        if (!$post) {
+            return response()->json(['message' => 'unlike'], 404);
+        }
+
+        return response()->json(['message' => 'like'], 200);
+    }
+
+    /**
      * @OA\Post(
      *   tags={"Users"},
      *   path="/users/posts/{post_id}/comments",
@@ -322,7 +355,10 @@ class UserPostController extends Controller
      */
     public function comments(PostUser $post)
     {
-        $comments = PostUserComment::where('post_user_id', $post->id)->paginate(10)->items();
+        $comments = PostUserComment::where('post_user_id', $post->id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10)
+            ->items();
 
         return response()->json($comments, 200);
     }
@@ -365,7 +401,7 @@ class UserPostController extends Controller
      *   ),
      * )
      */
-    public function updateComment(StorePostUserCommentRequest $request, PostUser $post, PostUserComment $comment)
+    public function updateComment(StorePostUserCommentRequest $request, PostUserComment $comment)
     {
         $comment->update($request->all());
 

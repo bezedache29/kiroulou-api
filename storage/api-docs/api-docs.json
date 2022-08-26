@@ -1264,6 +1264,40 @@
                 ]
             }
         },
+        "/clubs/{club_id}/posts/{post_id}/isPostLiked": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "User like post ?",
+                "description": "Permet de savoir si un utilisateur a liké l'article",
+                "operationId": "1d02ba83ce6c875312840a151df11b98",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/hikes/vtt": {
             "get": {
                 "tags": [
@@ -2463,6 +2497,50 @@
                 ]
             }
         },
+        "/users/{user_id}/isUserFollowed": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Is user follow a user ?",
+                "description": "Est-ce qu'un user follow le user ?",
+                "operationId": "2bba1b6ffd123ffb6ee00851857e3475",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "followed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/posts": {
             "post": {
                 "tags": [
@@ -2664,6 +2742,37 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/posts/{post_id}/isPostLiked": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User like post ?",
+                "description": "Permet de savoir si un utilisateur a liké l'article",
+                "operationId": "16470865d904569ebab93e362888e23c",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/post_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -3080,6 +3189,10 @@
                         "type": "number",
                         "example": 1
                     },
+                    "hike_vtt_id": {
+                        "type": "number",
+                        "example": 1
+                    },
                     "created_at": {
                         "type": "string",
                         "example": "2022-08-15 14:25:01"
@@ -3158,6 +3271,9 @@
                         "properties": {
                             "club": {
                                 "$ref": "#/components/schemas/Club"
+                            },
+                            "hike_vtt": {
+                                "$ref": "#/components/schemas/HikeVttAppends"
                             }
                         }
                     }
@@ -3678,6 +3794,21 @@
                     },
                     "user": {
                         "$ref": "#/components/schemas/UserDetails"
+                    },
+                    "user_name": {
+                        "description": "Nom et Prénom du user ou son email si non renseigné",
+                        "type": "string",
+                        "example": "Simon Strueux"
+                    },
+                    "user_club_name": {
+                        "description": "Nom du club du user ou la ville du user si non renseigné",
+                        "type": "string",
+                        "example": "Côte Des Légendes VTT"
+                    },
+                    "user_avatar_name": {
+                        "description": "Avatar du user ou celui par default si non renseigné",
+                        "type": "string",
+                        "example": "mon-avatar.png"
                     }
                 },
                 "type": "object"
@@ -4248,6 +4379,10 @@
                                 "description": {
                                     "type": "string",
                                     "example": "Ma super description"
+                                },
+                                "hike_vtt_id": {
+                                    "type": "number",
+                                    "example": 1
                                 }
                             },
                             "type": "object"

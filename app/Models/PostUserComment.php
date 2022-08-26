@@ -61,6 +61,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     property="user",
  *     ref="#/components/schemas/UserDetails"
  *   ),
+ *   @OA\Property(
+ *     property="user_name",
+ *     type="string",
+ *     example="Simon Strueux",
+ *     description="Nom et Prénom du user ou son email si non renseigné"
+ *   ),
+ *   @OA\Property(
+ *     property="user_club_name",
+ *     type="string",
+ *     example="Côte Des Légendes VTT",
+ *     description="Nom du club du user ou la ville du user si non renseigné"
+ *   ),
+ *   @OA\Property(
+ *     property="user_avatar_name",
+ *     type="string",
+ *     example="mon-avatar.png",
+ *     description="Avatar du user ou celui par default si non renseigné"
+ *   ),
  * )
  */
 class PostUserComment extends Model
@@ -79,7 +97,17 @@ class PostUserComment extends Model
     ];
 
     protected $with = [
+        // 'user'
+    ];
+
+    protected $hidden = [
         'user'
+    ];
+
+    protected $appends = [
+        'user_name',
+        'user_club_name',
+        'user_avatar_name'
     ];
 
     public function post()
@@ -90,5 +118,33 @@ class PostUserComment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Nom & Prenom du user qui comment ou son Email si non renseigné
+    public function getUserNameAttribute()
+    {
+        if ($this->user->firstname) {
+            return $this->user->firstname . ' ' . $this->user->lastname;
+        }
+
+        return $this->user->email;
+    }
+
+    // Nom du club du user qui comment ou la ville du user si non renseigné
+    public function getUserClubNameAttribute()
+    {
+        if ($this->user->club_id) {
+            return $this->user->club_name;
+        } else if ($this->user->address) {
+            return $this->user->address->city->name;
+        } else {
+            return 'Rouleur de l\'ombre';
+        }
+    }
+
+    // Avatar du user
+    public function getUserAvatarNameAttribute()
+    {
+        return $this->user->avatar;
     }
 }
