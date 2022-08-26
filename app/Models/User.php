@@ -298,7 +298,7 @@ class User extends Authenticatable
         if ($this->club_id) {
             return $this->club->name;
         } else {
-            return null;
+            return 'Rouleur de l\'ombre';
         }
     }
 

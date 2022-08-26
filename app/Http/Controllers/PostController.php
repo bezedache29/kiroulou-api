@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ClubPost;
 use App\Models\PostUser;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostController extends Controller
 {
@@ -58,16 +60,18 @@ class PostController extends Controller
             ->get();
 
         // On récupère les 20 derniers posts des clubs
-        $clubs_posts = ClubPost::with('club')->withCount('postlikes')
+        $clubs_posts = ClubPost::with('club')->with('hikeVtt')->withCount('postlikes')
             ->withCount('comments')
             ->orderBy('created_at', 'DESC')
             ->limit(20)
             ->get();
 
         // On merge les 2 collections avec une pagination
-        $posts = collect($clubs_posts)->merge($users_posts)->sortByDesc('created_at')->values()->paginate(5);
+        // Mettre values en dernier sinon il n'y a que la page 1 qui renvoie un tableau
+        // Voit AppServiceProvider pour faire fonctionner le paginate sur un tableau
+        $posts = collect($clubs_posts)->merge($users_posts)->sortByDesc('created_at')->paginate(5)->values();
 
-        return response()->json($posts->toArray(), 200);
+        return response()->json(['posts' => $posts->toArray()], 200);
     }
 
     /**

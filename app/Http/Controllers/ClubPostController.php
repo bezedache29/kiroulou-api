@@ -261,7 +261,11 @@ class ClubPostController extends Controller
      */
     public function comments(Request $request, Club $club, ClubPost $post)
     {
-        $comments = ClubPostComment::where('club_post_id', $post->id)->with('user')->paginate(10)->items();
+        $comments = ClubPostComment::where('club_post_id', $post->id)
+            ->with('user')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10)
+            ->items();
 
         return response()->json($comments, 200);
     }
@@ -397,5 +401,39 @@ class ClubPostController extends Controller
             'message' => $message,
             'post' => $post,
         ], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/posts/{post_id}/isPostLiked",
+     *   summary="User like post ?",
+     *   description="Permet de savoir si un utilisateur a liké l'article",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   @OA\Parameter(ref="#/components/parameters/post_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function isPostLiked(Request $request, Club $club, ClubPost $post)
+    {
+        $post = ClubPostLike::where('user_id', $request->user()->id)->where('club_post_id', $post->id)->first();
+
+        if (!$post) {
+            return response()->json(['message' => 'unlike'], 404);
+        }
+
+        return response()->json(['message' => 'like'], 200);
     }
 }

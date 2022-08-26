@@ -83,6 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('/clubs/{club}/posts/{post}', [ClubPostController::class, 'updatePost']);
   Route::delete('/clubs/{club}/posts/{post}', [ClubPostController::class, 'deletePost']);
   Route::post('/clubs/{club}/posts/{post}/likeOrUnlike', [ClubPostController::class, 'likeOrUnlike']);
+  Route::get('/clubs/{club}/posts/{post}/isPostLiked', [ClubPostController::class, 'isPostLiked']);
   Route::get('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'comments']);
   Route::post('/clubs/{club}/posts/{post}/comments', [ClubPostController::class, 'storeComment']);
   Route::put('/comments/{comment}', [ClubPostController::class, 'updateComment']);
@@ -94,6 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('/users/posts/{post}', [UserPostController::class, 'updatePost']);
   Route::delete('/users/posts/{post}', [UserPostController::class, 'deletePost']);
   Route::post('/users/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
+  Route::get('/users/posts/{post}/isPostLiked', [UserPostController::class, 'isPostLiked']);
   Route::get('/users/{user}/posts', [UserPostController::class, 'posts']);
   Route::post('/users/posts/{post}/comments', [UserPostController::class, 'storeComment']);
   Route::get('/users/posts/{post}/comments', [UserPostController::class, 'comments']);
@@ -110,6 +112,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/users/{user}/followedClubs', [UserController::class, 'followedClubs']);
   Route::get('/users/{user}/followedUsers', [UserController::class, 'followedUsers']);
+  Route::get('/users/{user}/isUserFollowed', [UserController::class, 'isUserFollowed']);
   Route::post('/users/{user}/followOrUnfollow', [UserController::class, 'followOrUnfollow']);
 
 

@@ -237,33 +237,35 @@ class DatabaseSeeder extends Seeder
             'organization_id' => rand(1, 3)
         ])->each(function ($club) {
 
-            ClubPost::factory(rand(1, 5))->create([
-                'club_id' => $club->id
-            ])->each(function ($post) use ($club) {
-
-                ClubPostImage::factory(rand(0, 5))->create([
-                    'club_post_id' => $post->id,
-                    'club_id' => $club->id,
-                ]);
-
-                ClubPostLike::factory(rand(0, 2))->create([
-                    'user_id' => rand(1, 4),
-                    'club_post_id' => $post->id
-                ]);
-
-                ClubPostComment::factory(rand(0, 5))->create([
-                    'user_id' => rand(1, 4),
-                    'club_post_id' => $post->id
-                ]);
-            });
-
             HikeVtt::factory(rand(1, 3))->create([
                 'club_id' => $club->id
             ])->each(function ($hike) use ($club) {
+
                 HikeVttImage::factory(rand(2, 5))->create([
                     'club_id' => $club->id,
                     'hike_vtt_id' => $hike->id,
                 ]);
+
+                ClubPost::factory(1)->create([
+                    'club_id' => $club->id,
+                    'hike_vtt_id' => $hike->id
+                ])->each(function ($post) use ($club) {
+
+                    ClubPostImage::factory(rand(0, 5))->create([
+                        'club_post_id' => $post->id,
+                        'club_id' => $club->id,
+                    ]);
+
+                    ClubPostLike::factory(rand(0, 2))->create([
+                        'user_id' => rand(1, 4),
+                        'club_post_id' => $post->id
+                    ]);
+
+                    ClubPostComment::factory(rand(0, 5))->create([
+                        'user_id' => rand(1, 4),
+                        'club_post_id' => $post->id
+                    ]);
+                });
             });
         });
 

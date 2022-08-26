@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Club;
 use App\Models\Address;
+use App\Models\ClubPost;
 use App\Models\HikeVttHype;
 use App\Models\HikeVttTrip;
 use App\Models\HikeVttImage;
@@ -127,7 +128,7 @@ class HikeVtt extends Model
         'address_id',
         'flyer',
         'date',
-        'club_id'
+        'club_id',
     ];
 
     // Permet de cacher ces valeurs
@@ -186,5 +187,10 @@ class HikeVtt extends Model
     public function getClubAvatarAttribute()
     {
         return $this->club->avatar;
+    }
+
+    public function post()
+    {
+        return $this->hasOne(ClubPost::class);
     }
 }

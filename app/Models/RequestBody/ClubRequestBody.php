@@ -31,6 +31,7 @@ namespace App\Models\RequestBody;
  *     required={"title, description"},
  *     @OA\Property(property="title", type="string", example="Mon super titre"),
  *     @OA\Property(property="description", type="string", example="Ma super description"),
+ *     @OA\Property(property="hike_vtt_id", type="number", example=1),
  *   )
  * )
  * 

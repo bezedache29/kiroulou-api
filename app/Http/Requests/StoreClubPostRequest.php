@@ -28,6 +28,7 @@ class StoreClubPostRequest extends FormRequest
         return [
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
+            'hike_vtt_id' => ['required', 'exists:hikes_vtt,id']
         ];
     }
 
@@ -38,6 +39,8 @@ class StoreClubPostRequest extends FormRequest
             'title.string' => 'Le titre doit être une chaine de caractères',
             'description.required' => 'La description est obligatoire',
             'description.string' => 'La description doit être une chaine de caractères',
+            'hike_vtt_id.required' => 'L\'id de la rando est obligatoire',
+            'hike_vtt_id.exists' => 'L\'id de la rando n\'existe pas',
         ];
     }
 

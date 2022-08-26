@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Club;
+use App\Models\HikeVtt;
 use App\Models\ClubPostLike;
 use App\Models\ClubPostImage;
 use App\Models\ClubPostComment;
@@ -32,6 +33,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="club_id",
+ *     type="number",
+ *     example=1,
+ *   ),
+ *   @OA\Property(
+ *     property="hike_vtt_id",
  *     type="number",
  *     example=1,
  *   ),
@@ -91,6 +97,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   @OA\Property(
  *     property="club",
  *     ref="#/components/schemas/Club"
+ *   ),
+ *   @OA\Property(
+ *     property="hike_vtt",
+ *     ref="#/components/schemas/HikeVttAppends"
  *   )
  * )
  * 
@@ -129,12 +139,14 @@ class ClubPost extends Model
         'title',
         'description',
         'club_id',
+        'hike_vtt_id'
     ];
 
     protected $with = [
         // 'images',
         // 'postlikes',
         // 'comments'
+        // 'club'
     ];
 
     public function club()
@@ -155,5 +167,10 @@ class ClubPost extends Model
     public function postLikes()
     {
         return $this->hasMany(ClubPostLike::class);
+    }
+
+    public function hikeVtt()
+    {
+        return $this->belongsTo(HikeVtt::class);
     }
 }
