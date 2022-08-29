@@ -178,8 +178,8 @@ class ClubController extends Controller
      *     response=200,
      *     description="OK",
      *     @OA\JsonContent(
-     *       type="array",
-     *       @OA\Items(ref="#/components/schemas/ClubInformations")
+     *       type="object",
+     *       ref="#/components/schemas/ClubWithCounts"
      *     )
      *   )
      * )
@@ -187,6 +187,7 @@ class ClubController extends Controller
     public function clubInformations(Club $club)
     {
         // $club = Club::with('members')->with('organization')->with('posts')->with('userJoinRequests')->findOrFail($club->id);
+        $club = Club::withCount('members')->withCount('userFollows')->withCount('posts')->findOrFail($club->id);
         return response()->json($club, 200);
     }
 
@@ -331,6 +332,20 @@ class ClubController extends Controller
         ], 200);
     }
 
+    public function expelMember(Club $club, User $user)
+    {
+        User::where('id', $user->id)->update(['club_id' => null]);
+
+        $club = Club::withCount('members')->withCount('userFollows')->withCount('posts')->findOrFail($club->id);
+
+        $members = $this->clubMembers($club);
+
+        return response()->json([
+            'club' => $club,
+            'members' => $members
+        ], 201);
+    }
+
     /**
      * @OA\Post(
      *   path="/clubs/{club_id}/followOrUnfollow",
@@ -423,16 +438,42 @@ class ClubController extends Controller
      *   description="Acceptation de la demande d'adhésion d'un user au club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       required={"user_id"},
+     *       @OA\Property(property="user_id", type="number", example=1),
+     *     )
+     *   ),
      *   @OA\Response(
      *     response=201,
      *     description="Accept la demande d'adhésion du user dans le club",
      *     @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Accept Membership Request"),
      *       @OA\Property(
-     *         property="club",
-     *         type="object",
-     *         description="Détails du club",
-     *         ref="#/components/schemas/Club"
+     *         property="join_requests",
+     *         type="array",
+     *         @OA\Items(
+     *           @OA\Property(
+     *             property="user_id",
+     *             type="number",
+     *             example=10005
+     *           ),
+     *           @OA\Property(
+     *             property="club_id",
+     *             type="number",
+     *             example=1
+     *           ),
+     *           @OA\Property(
+     *             property="created_at",
+     *             type="string",
+     *             example="2022-08-15 14:25:01"
+     *           ),
+     *           @OA\Property(
+     *             property="updated_at",
+     *             type="string",
+     *             example=null
+     *           ),
+     *         )
      *       )
      *     )
      *   ),
@@ -456,48 +497,75 @@ class ClubController extends Controller
         $is_already_in_club = User::where('id', $request->user_id)->where('club_id', '!=', NULL)->first();
 
         if ($is_already_in_club) {
+            DB::table('club_join_requests')->where('user_id', $request->user_id)->delete();
+
             return response()->json(["message" => "L'utilisateur est déjà membre dans un club"], 409);
         }
 
         // On met à jour le user avec le club id
         User::where('id', $request->user_id)->update(['club_id' => $club->id]);
 
-        // On supprime toutes les autres demande du use qui sont en attente dans la table club_join_requests
+        // On supprime toutes les autres demande du user qui sont en attente dans la table club_join_requests
         DB::table('club_join_requests')->where('user_id', $request->user_id)->delete();
 
+        // On récupère la table à jour
+        $join_requests = DB::table('club_join_requests')->where('club_id', $club->id)->get();
+
         // On récupère le club à jour
-        $club = Club::find($club->id);
+        // $club = Club::find($club->id);
 
         return response()->json([
             "message" => "Accept Membership Request",
-            "club" => $club
+            "join_requests" => $join_requests
         ], 201);
     }
 
     /**
-     * @OA\Post(
+     * @OA\Delete(
      *   path="/clubs/{club_id}/denyRequestToJoin",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   summary="Deny the user's membership request",
      *   description="Refus de la demande d'adhésion d'un user au club",
      *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       required={"user_id"},
+     *       @OA\Property(property="user_id", type="number", example=1),
+     *     )
+     *   ),
      *   @OA\Response(
      *     response=201,
      *     description="Refuse la demande d'adhésion du user dans le club",
      *     @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Deny Membership Request"),
      *       @OA\Property(
-     *         property="club",
-     *         type="object",
-     *         description="Détails du club",
-     *         ref="#/components/schemas/Club"
+     *         property="join_requests",
+     *         type="array",
+     *         @OA\Items(
+     *           @OA\Property(
+     *             property="user_id",
+     *             type="number",
+     *             example=10005
+     *           ),
+     *           @OA\Property(
+     *             property="club_id",
+     *             type="number",
+     *             example=1
+     *           ),
+     *           @OA\Property(
+     *             property="created_at",
+     *             type="string",
+     *             example="2022-08-15 14:25:01"
+     *           ),
+     *           @OA\Property(
+     *             property="updated_at",
+     *             type="string",
+     *             example=null
+     *           ),
+     *         )
      *       )
      *     )
-     *   ),
-     *     @OA\Response(
-     *     response=409,
-     *     ref="#/components/responses/Conflit"
      *   ),
      *   @OA\Response(
      *     response=422,
@@ -511,22 +579,18 @@ class ClubController extends Controller
      */
     public function denyRequestToJoin(StoreUserRequest $request, Club $club)
     {
-        // On check que le user n'est pas déjà dans un club
-        $is_already_in_club = User::where('id', $request->user_id)->where('club_id', '!=', NULL)->first();
-
-        if ($is_already_in_club) {
-            return response()->json(["message" => "L'utilisateur est déjà membre dans un club"], 409);
-        }
-
         // On supprime la demande du user qui est en attente dans la table club_join_requests pour le club
         DB::table('club_join_requests')->where('user_id', $request->user_id)->where('club_id', $club->id)->delete();
 
+        // On récupère la table à jour
+        $join_requests = DB::table('club_join_requests')->where('club_id', $club->id)->get();
+
         // On récupère le club à jour
-        $club = Club::find($club->id);
+        // $club = Club::find($club->id);
 
         return response()->json([
             "message" => "Deny Membership Request",
-            "club" => $club
+            "join_requests" => $join_requests
         ], 201);
     }
 

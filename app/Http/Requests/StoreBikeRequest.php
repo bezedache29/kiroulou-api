@@ -30,9 +30,9 @@ class StoreBikeRequest extends FormRequest
             'name' => ['required', 'string'],
             'brand' => ['required', 'string'],
             'model' => ['required', 'string'],
-            'bike_type_id' => ['required'],
+            'bike_type_id' => ['required', 'exists:bike_types,id'],
             'date' => ['date'],
-            'weight' => ['string'],
+            'weight' => ['string', 'nullable'],
         ];
     }
 

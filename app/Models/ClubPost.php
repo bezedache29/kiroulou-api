@@ -149,6 +149,11 @@ class ClubPost extends Model
         // 'club'
     ];
 
+    protected $appends = [
+        'club_name',
+        'club_avatar'
+    ];
+
     public function club()
     {
         return $this->belongsTo(Club::class);
@@ -172,5 +177,15 @@ class ClubPost extends Model
     public function hikeVtt()
     {
         return $this->belongsTo(HikeVtt::class);
+    }
+
+    public function getClubNameAttribute()
+    {
+        return $this->club->name;
+    }
+
+    public function getClubAvatarAttribute()
+    {
+        return $this->club->avatar;
     }
 }

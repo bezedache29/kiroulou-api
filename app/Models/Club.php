@@ -156,7 +156,7 @@ class Club extends Model
     ];
 
     protected $appends = [
-        'hike_date'
+        'next_hike',
     ];
 
     public function address()
@@ -204,11 +204,11 @@ class Club extends Model
         return $this->hasMany(HikeVtt::class);
     }
 
-    public function getHikeDateAttribute()
+    public function getNextHikeAttribute()
     {
         $hike = HikeVtt::where('club_id', $this->id)->whereYear('date', '>=', Carbon::now())->first();
         if ($hike) {
-            return $hike->date;
+            return $hike;
         }
 
         return null;

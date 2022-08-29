@@ -373,10 +373,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ClubInformations"
-                                    }
+                                    "$ref": "#/components/schemas/ClubWithCounts"
                                 }
                             }
                         }
@@ -569,6 +566,24 @@
                         "$ref": "#/components/parameters/club_id"
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "number",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "Accept la demande d'adhésion du user dans le club",
@@ -580,8 +595,29 @@
                                             "type": "string",
                                             "example": "Accept Membership Request"
                                         },
-                                        "club": {
-                                            "$ref": "#/components/schemas/Club"
+                                        "join_requests": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "user_id": {
+                                                        "type": "number",
+                                                        "example": 10005
+                                                    },
+                                                    "club_id": {
+                                                        "type": "number",
+                                                        "example": 1
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2022-08-15 14:25:01"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": null
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -607,18 +643,36 @@
             }
         },
         "/clubs/{club_id}/denyRequestToJoin": {
-            "post": {
+            "delete": {
                 "tags": [
                     "Clubs"
                 ],
                 "summary": "Deny the user's membership request",
                 "description": "Refus de la demande d'adhésion d'un user au club",
-                "operationId": "ca66c9a1d3862b4b8da825db0bb4b521",
+                "operationId": "262da8dc9ed9fcd590107ed7b8196bf4",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/club_id"
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "number",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "201": {
                         "description": "Refuse la demande d'adhésion du user dans le club",
@@ -630,17 +684,35 @@
                                             "type": "string",
                                             "example": "Deny Membership Request"
                                         },
-                                        "club": {
-                                            "$ref": "#/components/schemas/Club"
+                                        "join_requests": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "user_id": {
+                                                        "type": "number",
+                                                        "example": 10005
+                                                    },
+                                                    "club_id": {
+                                                        "type": "number",
+                                                        "example": 1
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2022-08-15 14:25:01"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": null
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
-                    },
-                    "409": {
-                        "$ref": "#/components/responses/Conflit"
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
@@ -2157,6 +2229,47 @@
                 ]
             }
         },
+        "/users/{user_id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "user informations",
+                "description": "Information d'un user",
+                "operationId": "e9f9fced25e0cdd6b796cba993b30d9c",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserDetailsCount"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/bikes": {
             "post": {
                 "tags": [
@@ -2230,6 +2343,42 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/bikes/types": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Bike's types",
+                "description": "Les types de vélo",
+                "operationId": "38be98a956827d18c9eba43b5ded58ff",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BikeType"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -2532,6 +2681,45 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/leaveClub": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User leave club",
+                "description": "Quitter un club",
+                "operationId": "0b518b74ec4038e057576a672d52d1bd",
+                "responses": {
+                    "201": {
+                        "description": "left club",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "left club"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetailsCount"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -3729,6 +3917,11 @@
                     "updated_at": {
                         "type": "string",
                         "example": null
+                    },
+                    "user_name": {
+                        "description": "Nom et Prénom du user ou son email si non renseigné",
+                        "type": "string",
+                        "example": "Simon Strueux"
                     },
                     "post_user_images": {
                         "type": "array",

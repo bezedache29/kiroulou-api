@@ -92,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   // USERS
   Route::post('/users/posts', [UserPostController::class, 'storePost']);
+  Route::post('/users/posts/{post}/storeImage', [UserPostController::class, 'storeImage']);
   Route::put('/users/posts/{post}', [UserPostController::class, 'updatePost']);
   Route::delete('/users/posts/{post}', [UserPostController::class, 'deletePost']);
   Route::post('/users/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
@@ -102,8 +103,12 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('/users/posts/comments/{comment}', [UserPostController::class, 'updateComment']);
   Route::delete('/users/posts/comments/{comment}', [UserPostController::class, 'deleteComment']);
 
+  Route::get('/users/{user}', [UserController::class, 'user']);
+
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
   Route::post('/users/bikes', [UserController::class, 'storeBike']);
+  Route::get('/users/bikes/types', [UserController::class, 'bikeTypes']);
+  Route::post('/users/bikes/{bike}/storeImageBike', [UserController::class, 'storeImageBike']);
   Route::put('/users/bikes/{bike}', [UserController::class, 'updateBike']);
   Route::delete('/users/bikes/{bike}', [UserController::class, 'deleteBike']);
 
@@ -115,6 +120,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/users/{user}/isUserFollowed', [UserController::class, 'isUserFollowed']);
   Route::post('/users/{user}/followOrUnfollow', [UserController::class, 'followOrUnfollow']);
 
+  Route::put('/users/leaveClub', [UserController::class, 'leaveClub']);
+
 
   // HIKES VTT
   Route::get('/hikes/vtt', [HikeVttController::class, 'index']);
@@ -125,7 +132,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::middleware('admin.club')->group(function () {
     Route::post('/clubs/{club}/acceptRequestToJoin', [ClubController::class, 'acceptRequestToJoin']);
-    Route::post('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
+    Route::delete('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
     Route::get('/clubs/{club}/showJoinRequests', [ClubController::class, 'showJoinRequests']);
     Route::post('/clubs/{club}/changeAdmin', [ClubController::class, 'changeAdmin']);
 
@@ -133,13 +140,20 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/hikes/vtt', [HikeVttController::class, 'store']);
 
+    Route::put('/hikes/vtt/{hike_id}/changeDate', [HikeVttController::class, 'changeDate']);
+
     Route::post('/hikes/vtt/{hike_id}/storeFlyer', [HikeVttController::class, 'storeFlyer']);
     Route::post('/hikes/vtt/{hike_id}/storeImage', [HikeVttController::class, 'storeImage']);
 
     Route::post('/hikes/vtt/{hike_id}/storeTrip', [HikeVttController::class, 'storeTrip']);
   });
 
-  Route::middleware('admin.club.or.premium.one')->get('/clubs/{club}/clubMembers', [ClubController::class, 'clubMembers']);
+  // middleware admin.club.or.premium.one
+  Route::get('/clubs/{club}/clubMembers', [ClubController::class, 'clubMembers']);
+  // Route::middleware('admin.club.or.premium.one')->get('/clubs/{club}/clubMembers', [ClubController::class, 'clubMembers']);
+
+  // middleware admin.club
+  Route::put('/clubs/{club}/users/{user}/expelMember', [ClubController::class, 'expelMember']);
 
   Route::middleware('premium')->group(function () {
     Route::post('/hikes/vtt/searchInDepartment', [HikeVttController::class, 'searchInDepartment']);
