@@ -359,6 +359,10 @@ class ClubController extends Controller
      *     ref="#/components/responses/Created"
      *   ),
      *   @OA\Response(
+     *     response=202,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
      *     response=422,
      *     ref="#/components/responses/UnprocessableEntity"
      *   ),
@@ -377,13 +381,51 @@ class ClubController extends Controller
         // Sinon on entre le user et le club dans la DB
         if ($is_follow) {
             $request->user()->clubFollows()->wherePivot('club_id', $club->id)->detach();
-            $action = 'UnFollow';
+            return response()->json(["message" => 'Unfollow'], 202);
         } else {
             $request->user()->clubFollows()->attach($club->id);
-            $action = 'Follow';
         }
 
-        return response()->json(["message" => $action], 201);
+        return response()->json(["message" => 'Follow'], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/clubs/{club_id}/isClubFollowed",
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *   summary="Is user follow a club ?",
+     *   description="Est-ce que le user follow le club ?",
+     *   tags={"Users"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="followed")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function isClubFollowed(Request $request, Club $club)
+    {
+        $follow = DB::table('club_follows')
+            ->where('user_id', $request->user()->id)
+            ->where('club_id', $club->id)
+            ->first();
+
+        if (!$follow) {
+            return response()->json(['message' => 'unfollow'], 404);
+        }
+
+        return response()->json(['message' => 'followed'], 200);
     }
 
     /**

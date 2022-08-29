@@ -423,6 +423,10 @@ class UserController extends Controller
      *     ref="#/components/responses/Created"
      *   ),
      *   @OA\Response(
+     *     response=202,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
      *     response=404,
      *     ref="#/components/responses/NotFound"
      *   )
