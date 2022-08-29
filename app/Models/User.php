@@ -185,11 +185,11 @@ class User extends Authenticatable
         'remember_token',
         'email_verified_at',
         'address_id',
+        'club'
     ];
 
     protected $with = [
-        'address',
-        'club'
+        'address'
     ];
 
     protected $appends = [
@@ -197,7 +197,8 @@ class User extends Authenticatable
         'premium_name',
         'premium',
         'premium_actif',
-        'user_join_requests_count'
+        'user_join_requests_count',
+        'followers_count'
     ];
 
     /**
@@ -389,5 +390,10 @@ class User extends Authenticatable
         }
 
         return null;
+    }
+
+    public function getFollowersCountAttribute()
+    {
+        return $this->followers()->count();
     }
 }

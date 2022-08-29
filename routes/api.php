@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('/clubs/{club}', [ClubController::class, 'updateClub']);
   Route::get('/clubs/{club}/clubInformations', [ClubController::class, 'clubInformations']);
   Route::post('/clubs/{club}/followOrUnfollow', [ClubController::class, 'followOrUnfollow']);
+  Route::get('/clubs/{club}/isClubFollowed', [ClubController::class, 'isClubFollowed']);
   Route::post('/clubs/{club}/requestToJoin', [ClubController::class, 'requestToJoin']);
 
   Route::get('/clubs/{club}/profileImages', [ClubController::class, 'profileImages']);
