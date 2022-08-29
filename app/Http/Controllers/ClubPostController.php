@@ -38,7 +38,12 @@ class ClubPostController extends Controller
      */
     public function posts(Request $request, Club $club)
     {
-        $posts = ClubPost::where('club_id', $club->id)->withCount('postlikes')->withCount('comments')->paginate(10)->items();
+        $posts = ClubPost::where('club_id', $club->id)
+            // ->with('club')
+            ->withCount('postlikes')
+            ->withCount('comments')
+            ->paginate(10)
+            ->items();
 
         return response()->json($posts, 200);
     }

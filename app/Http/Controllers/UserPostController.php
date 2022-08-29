@@ -51,18 +51,6 @@ class UserPostController extends Controller
 
         $post = PostUser::create($data);
 
-        if ($request->image) {
-            //TODO: Enregistrement de l'image en DB
-
-            PostUserImage::create([
-                'post_user_id' => $post->id,
-                'user_id' => $request->user()->id,
-                'image' => 'image-name.png'
-            ]);
-        }
-
-        // $post = PostUser::with('images')->findOrFail($post->id);
-
         return response()->json([
             'message' => 'post created',
             'post_user_id' => $post->id
@@ -440,5 +428,24 @@ class UserPostController extends Controller
         $comment->delete();
 
         return response()->json(['message' => 'comment deleted'], 201);
+    }
+
+    public function storeImage(Request $request, PostUser $post)
+    {
+        // On renomme l'image avec l'extension passé dans le title
+        $image_name = $post->id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $request->title;
+
+        // Emplacement de stockage de l'image
+        $store = 'images/users/' . $request->user()->id . '/posts/' . $post->id . '/images';
+
+        $request->image->storeAs($store, $image_name);
+
+        PostUserImage::create([
+            'post_user_id' => $post->id,
+            'user_id' => $request->user()->id,
+            'image' => $store . '/' . $image_name
+        ]);
+
+        return response()->json(['message' => 'image uploaded'], 201);
     }
 }

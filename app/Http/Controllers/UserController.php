@@ -7,6 +7,7 @@ use Stripe\Stripe;
 use App\Models\Bike;
 use App\Models\User;
 use Stripe\Customer;
+use App\Models\BikeType;
 use Stripe\EphemeralKey;
 use Stripe\PaymentIntent;
 use App\Models\Subscription;
@@ -19,6 +20,39 @@ use App\Http\Requests\StorePostUserRequest;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Get(
+     *   tags={"Users"},
+     *   path="/users/{user_id}",
+     *   summary="user informations",
+     *   description="Information d'un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/UserDetailsCount"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=403,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function user(Request $request, User $user)
+    {
+        $user = User::findOrFail($user->id);
+
+        return response()->json($user, 200);
+    }
+
     /**
      * @OA\Post(
      *   tags={"Users"},
@@ -78,6 +112,25 @@ class UserController extends Controller
         ], 201);
     }
 
+    public function storeImageBike(Request $request, int $bike_id)
+    {
+        // TODO Check pour delete l'ancienne image si elle existe
+
+        // On renomme l'image avec l'extension passé dans le title
+        $image_name = $bike_id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $request->title;
+
+        // Emplacement de stockage de l'image
+        $store = 'images/users/' . $request->user()->id . '/bikes/' . $bike_id . '/images';
+
+        $request->image->storeAs($store, $image_name);
+
+        $image = $store . '/' . $image_name;
+
+        Bike::where('id', $bike_id)->update(['image' => $image], 201);
+
+        return response()->json(['message' => 'image uploaded'], 201);
+    }
+
     /**
      * @OA\Get(
      *   tags={"Users"},
@@ -104,6 +157,38 @@ class UserController extends Controller
         $bikes = Bike::where('user_id', $user->id)->get();
 
         return response()->json($bikes, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Users"},
+     *   path="/users/bikes/types",
+     *   summary="Bike's types",
+     *   description="Les types de vélo",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/BikeType"),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=403,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function bikeTypes()
+    {
+        $types = BikeType::all();
+
+        return response()->json($types, 200);
     }
 
     /**
@@ -359,13 +444,13 @@ class UserController extends Controller
                 ->wherePivot('user_follower_id', $request->user()->id)
                 ->wherePivot('user_followed_id', $user->id)
                 ->detach();
-            $action = 'UnFollow';
-        } else {
-            $request->user()->followings()->attach($user->id);
-            $action = 'Follow';
+
+            return response()->json(["message" => 'UnFollow'], 202);
         }
 
-        return response()->json(["message" => $action], 201);
+        $request->user()->followings()->attach($user->id);
+
+        return response()->json(["message" => 'Follow'], 201);
     }
 
     /**
@@ -405,5 +490,41 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'followed'], 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   path="/users/leaveClub",
+     *   summary="User leave club",
+     *   description="Quitter un club",
+     *   tags={"Users"},
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=201,
+     *     description="left club",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="left club"),
+     *       @OA\Property(
+     *         property="user",
+     *         ref="#/components/schemas/UserDetailsCount"
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function leaveClub(Request $request)
+    {
+        User::where('id', $request->user()->id)->update(['club_id' => null]);
+
+        $user = User::with('address')->findOrFail($request->user()->id);
+
+        return response()->json([
+            'message' => 'left club',
+            'user' => $user
+        ], 201);
     }
 }

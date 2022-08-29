@@ -134,6 +134,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     example=null,
  *   ),
  *   @OA\Property(
+ *     property="user_name",
+ *     type="string",
+ *     example="Simon Strueux",
+ *     description="Nom et Prénom du user ou son email si non renseigné"
+ *   ),
+ *   @OA\Property(
  *     property="post_user_images",
  *     type="array",
  *     @OA\Items(ref="#/components/schemas/PostUserImage")
@@ -175,6 +181,10 @@ class PostUser extends Model
         // 'id'
     ];
 
+    protected $appends = [
+        'user_name',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -193,5 +203,14 @@ class PostUser extends Model
     public function images()
     {
         return $this->hasMany(PostUserImage::class);
+    }
+
+    public function getUserNameAttribute()
+    {
+        if ($this->user->firstname) {
+            return $this->user->firstname . ' ' . $this->user->lastname;
+        }
+
+        return $this->user->email;
     }
 }
