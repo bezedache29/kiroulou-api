@@ -185,18 +185,19 @@ class User extends Authenticatable
         'remember_token',
         'email_verified_at',
         'address_id',
-        'club'
     ];
 
     protected $with = [
-        'address'
+        'address',
+        'club'
     ];
 
     protected $appends = [
         'club_name',
         'premium_name',
         'premium',
-        'premium_actif'
+        'premium_actif',
+        'user_join_requests_count'
     ];
 
     /**
@@ -379,5 +380,14 @@ class User extends Authenticatable
         $stripe_customer = $stripe->customers->retrieve($this->stripe_customer_id, ['expand' => ['subscriptions']]);
 
         return $stripe_customer;
+    }
+
+    public function getUserJoinRequestsCountAttribute()
+    {
+        if ($this->club_id && $this->is_club_admin) {
+            return $this->club->user_join_requests_count;
+        }
+
+        return null;
     }
 }

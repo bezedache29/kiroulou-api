@@ -157,6 +157,7 @@ class Club extends Model
 
     protected $appends = [
         'next_hike',
+        'user_join_requests_count'
     ];
 
     public function address()
@@ -212,5 +213,10 @@ class Club extends Model
         }
 
         return null;
+    }
+
+    public function getUserJoinRequestsCountAttribute()
+    {
+        return $this->userJoinRequests()->count();
     }
 }
