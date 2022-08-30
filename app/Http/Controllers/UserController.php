@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Stripe\Stripe;
 use App\Models\Bike;
+use App\Models\City;
 use App\Models\User;
 use Stripe\Customer;
+use App\Models\Address;
+use App\Models\Zipcode;
 use App\Models\BikeType;
 use Stripe\EphemeralKey;
 use Stripe\PaymentIntent;
@@ -17,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreBikeRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StorePostUserRequest;
+use App\Http\Requests\StoreUserUpdateRequest;
 
 class UserController extends Controller
 {
@@ -51,6 +56,84 @@ class UserController extends Controller
         $user = User::findOrFail($user->id);
 
         return response()->json($user, 200);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Users"},
+     *   path="/users/{user_id}/update",
+     *   summary="Update User",
+     *   description="Modification d'un user",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/UpdateUser"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Utilisateur modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="user updated"
+     *       ),
+     *       @OA\Property(
+     *         property="user",
+     *         ref="#/components/schemas/UserDetails"
+     *       ),
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function userUpdate(StoreUserUpdateRequest $request, User $user)
+    {
+        User::where('id', $user->id)->update([
+            'email' => $request->email,
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'address_id' => $request->address_id
+        ]);
+
+        $user = User::with('address')->findOrFail($user->id);
+
+        return response()->json([
+            'message' => 'user updated',
+            'user' => $user
+        ], 201);
+    }
+
+    public function storeAvatar(Request $request, User $user)
+    {
+        // On split l'ancienne image et l'extension de la nouvelle image
+        $old_image_and_extension = explode("|", $request->title);
+
+        // On check et delete l'ancienne image si elle existe
+        if (Storage::exists($old_image_and_extension[0])) {
+            Storage::delete($old_image_and_extension[0]);
+        }
+
+        // On renomme l'image avec l'extension passé dans le title
+        $image_name = $user->id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $old_image_and_extension[1];
+
+        // Emplacement de stockage de l'image
+        $store = 'images/users/' . $user->id . '/avatars';
+
+        $request->image->storeAs($store, $image_name);
+
+        User::where('id', $user->id)->update(['avatar' => $store . '/' . $image_name]);
+
+        return response()->json(['message' => 'avatar uploaded'], 201);
     }
 
     /**
@@ -401,7 +484,6 @@ class UserController extends Controller
     public function followedUsers(User $user)
     {
         $users = $user->followings()
-            ->withCount(['followers'])
             ->withCount(['posts'])
             ->withCount(['bikes'])
             ->paginate(10)

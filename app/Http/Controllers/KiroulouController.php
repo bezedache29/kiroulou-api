@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CheckAddressRequest;
+use App\Http\Requests\StoreAddressRequest;
+use App\Models\City;
+use App\Models\Address;
+use App\Models\Zipcode;
+use Illuminate\Http\Request;
+
 /**
  * @OA\Info(
  *   version="0.0.1",
@@ -47,6 +54,11 @@ namespace App\Http\Controllers;
  * @OA\Tag(
  *     name="Payments",
  *     description="Opérations en relation avec les paiements stripe"
+ * )
+ * 
+ * @OA\Tag(
+ *     name="Divers",
+ *     description="Opérations diverses"
  * )
  * 
  * 
@@ -201,6 +213,123 @@ namespace App\Http\Controllers;
  *   )
  * ),
  */
-class KiroulouController
+class KiroulouController extends Controller
 {
+    /**
+     * @OA\Post(
+     *   tags={"Divers"},
+     *   path="/addresses/isAlreadyExist",
+     *   summary="Check if address already exist",
+     *   description="Regarde si une adresse similaire existe déjà",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(ref="#/components/requestBodies/CheckAddress"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Address créé",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="isAlreadyExist",
+     *         ref="#/components/schemas/Address"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function isAlreadyExist(CheckAddressRequest $request)
+    {
+        $city = City::where('name', $request->city)->first();
+        $zipcode = Zipcode::where('code', $request->zipcode)->first();
+
+        if (!$city || !$zipcode) {
+            return response()->json(['isAlreadyExist' => false], 404);
+        }
+
+        $address = Address::where('street_address', $request->street_address)
+            ->where('city_id', $city->id)
+            ->where('zipcode_id', $zipcode->id)
+            ->first();
+
+        if (!$address) {
+            return response()->json(['isAlreadyExist' => false], 404);
+        }
+
+        return response()->json(['isAlreadyExist' => $address], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Divers"},
+     *   path="/addresses/create",
+     *   summary="Create new address",
+     *   description="Création d'une nouvelle adresse",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(ref="#/components/requestBodies/NewAddress"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Adresse créé",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="address created"
+     *       ),
+     *       @OA\Property(
+     *         property="address",
+     *         ref="#/components/schemas/Address"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function createAddress(StoreAddressRequest $request)
+    {
+        $city = City::where('name', $request->city)->first();
+        if (!$city) {
+            $city = City::create([
+                'name' => $request->city
+            ]);
+        }
+        $zipcode = Zipcode::where('code', $request->zipcode)->first();
+        if (!$zipcode) {
+            $zipcode = Zipcode::create([
+                'code' => $request->zipcode
+            ]);
+        }
+
+        $address = Address::create([
+            'street_address' => $request->street_address,
+            'lat' => $request->lat,
+            'lng' => $request->lng,
+            'region' => $request->region,
+            'department' => $request->department,
+            'department_code' => $request->department_code,
+            'city_id' => $city->id,
+            'zipcode_id' => $zipcode->id
+        ]);
+
+        return response()->json([
+            'message' => 'address created',
+            'address' => $address
+        ], 201);
+    }
 }

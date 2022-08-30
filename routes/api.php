@@ -7,11 +7,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\HikeVttController;
-use App\Http\Controllers\ClubPostController;
-use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\HikeVttController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ClubPostController;
+use App\Http\Controllers\KiroulouController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\UserPostController;
 
 /*
@@ -105,6 +106,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::delete('/users/posts/comments/{comment}', [UserPostController::class, 'deleteComment']);
 
   Route::get('/users/{user}', [UserController::class, 'user']);
+  Route::put('/users/{user}/update', [UserController::class, 'userUpdate']);
+  Route::post('/users/{user}/storeAvatar', [UserController::class, 'storeAvatar']);
 
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
   Route::post('/users/bikes', [UserController::class, 'storeBike']);
@@ -130,6 +133,12 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::put('/hikes/vtt/{hike_id}', [HikeVttController::class, 'update']);
   Route::delete('/hikes/vtt/{hike_id}', [HikeVttController::class, 'delete']);
   Route::post('/hikes/vtt/{hike_id}/hypeOrUnhype', [HikeVttController::class, 'hypeOrUnhype']);
+
+
+  // ADDRESSES
+  Route::post('/addresses/isAlreadyExist', [KiroulouController::class, 'isAlreadyExist']);
+  Route::post('/addresses/create', [KiroulouController::class, 'createAddress']);
+
 
   Route::middleware('admin.club')->group(function () {
     Route::post('/clubs/{club}/acceptRequestToJoin', [ClubController::class, 'acceptRequestToJoin']);
