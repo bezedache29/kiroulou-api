@@ -495,11 +495,58 @@
                     "201": {
                         "$ref": "#/components/responses/Created"
                     },
+                    "202": {
+                        "$ref": "#/components/responses/Created"
+                    },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/isClubFollowed": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Is user follow a club ?",
+                "description": "Est-ce que le user follow le club ?",
+                "operationId": "f94805acfee6a36490258a9616a39f36",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "followed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -1832,6 +1879,95 @@
                 ]
             }
         },
+        "/addresses/isAlreadyExist": {
+            "post": {
+                "tags": [
+                    "Divers"
+                ],
+                "summary": "Check if address already exist",
+                "description": "Regarde si une adresse similaire existe déjà",
+                "operationId": "e2b823ac88864dc9b9e52510be6d6cf7",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/CheckAddress"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Address créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "isAlreadyExist": {
+                                            "$ref": "#/components/schemas/Address"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/addresses/create": {
+            "post": {
+                "tags": [
+                    "Divers"
+                ],
+                "summary": "Create new address",
+                "description": "Création d'une nouvelle adresse",
+                "operationId": "4cf694cff719134d6c2d848d0ec79d93",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/NewAddress"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Adresse créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "address created"
+                                        },
+                                        "address": {
+                                            "$ref": "#/components/schemas/Address"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/subscriptions/plans": {
             "get": {
                 "tags": [
@@ -2270,6 +2406,59 @@
                 ]
             }
         },
+        "/users/{user_id}/update": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update User",
+                "description": "Modification d'un user",
+                "operationId": "43221430c8bdc67654ca3d278ac68fc1",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/UpdateUser"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Utilisateur modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "user updated"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetails"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/bikes": {
             "post": {
                 "tags": [
@@ -2633,6 +2822,9 @@
                 ],
                 "responses": {
                     "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "202": {
                         "$ref": "#/components/responses/Created"
                     },
                     "404": {
@@ -3145,6 +3337,10 @@
             "Address": {
                 "description": "Adresse simplifié",
                 "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
                     "street_address": {
                         "description": "Rue / lieu-dit",
                         "type": "string",
@@ -4148,6 +4344,11 @@
                                 "type": "number",
                                 "example": 1
                             },
+                            "address_id": {
+                                "description": "Id de l'address du user",
+                                "type": "number",
+                                "example": 1
+                            },
                             "is_club_admin": {
                                 "description": "Est-ce que le user est admin de son club",
                                 "type": "number",
@@ -4162,6 +4363,31 @@
                                 "description": "Nom de l'abonnement du user, s'il est abonné",
                                 "type": "string",
                                 "example": "Premium 1"
+                            },
+                            "premium": {
+                                "description": "active ou inactive - permet de ssavoir si le user a un premium",
+                                "type": "string",
+                                "example": "active"
+                            },
+                            "premium_actif": {
+                                "description": "Permet de savoir le premium actif du user, dans la cas d'un downgrade d'abonnement",
+                                "type": "string",
+                                "example": "Premium 2"
+                            },
+                            "user_join_requests_count": {
+                                "description": "Utile pour les admins de savoir cmb il y a de demande d'adhésion au club",
+                                "type": "number",
+                                "example": 0
+                            },
+                            "followers_count": {
+                                "description": "Nombre d'utilisateur qui suivent cet utilisateur",
+                                "type": "number",
+                                "example": 3
+                            },
+                            "stripe_customer_id": {
+                                "description": "Id client sur stripe",
+                                "type": "string",
+                                "example": "cus_MJEDCDFb8Wot43"
                             },
                             "address": {
                                 "$ref": "#/components/schemas/Address"
@@ -4186,10 +4412,6 @@
                             "posts_count": {
                                 "type": "number",
                                 "example": 12
-                            },
-                            "followers_count": {
-                                "type": "number",
-                                "example": 28
                             }
                         }
                     }
@@ -4434,6 +4656,82 @@
                                 "department_code": {
                                     "type": "string",
                                     "example": "29"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "NewAddress": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "street_address, lat, lng, region, department, department_code, city, zipcode"
+                            ],
+                            "properties": {
+                                "street_address": {
+                                    "type": "string",
+                                    "example": "Ma super rue"
+                                },
+                                "lat": {
+                                    "description": "Lattitude GPS",
+                                    "type": "string",
+                                    "example": "48.5740185"
+                                },
+                                "lng": {
+                                    "description": "Longitude GPS",
+                                    "type": "string",
+                                    "example": "-4.3335965"
+                                },
+                                "region": {
+                                    "type": "string",
+                                    "example": "Bretagne"
+                                },
+                                "department": {
+                                    "type": "string",
+                                    "example": "Finistère"
+                                },
+                                "department_code": {
+                                    "type": "string",
+                                    "example": "29"
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "example": "Lesneven"
+                                },
+                                "zipcode": {
+                                    "type": "string",
+                                    "example": "29260"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "CheckAddress": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "street_address, city, zipcode"
+                            ],
+                            "properties": {
+                                "street_address": {
+                                    "type": "string",
+                                    "example": "Ma super rue"
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "example": "Lesneven"
+                                },
+                                "zipcode": {
+                                    "type": "string",
+                                    "example": "29890"
                                 }
                             },
                             "type": "object"
@@ -4849,6 +5147,43 @@
                         }
                     }
                 }
+            },
+            "UpdateUser": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "email",
+                                "user_id",
+                                "address_id"
+                            ],
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "example": "simon-strueux@gmail.com"
+                                },
+                                "firstname": {
+                                    "type": "string",
+                                    "example": "Simon"
+                                },
+                                "lastname": {
+                                    "type": "string",
+                                    "example": "Strueux"
+                                },
+                                "user_id": {
+                                    "type": "number",
+                                    "example": 10005
+                                },
+                                "address_id": {
+                                    "type": "number",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {
@@ -4886,6 +5221,10 @@
         {
             "name": "Payments",
             "description": "Opérations en relation avec les paiements stripe"
+        },
+        {
+            "name": "Divers",
+            "description": "Opérations diverses"
         }
     ]
 }

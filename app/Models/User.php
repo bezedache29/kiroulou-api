@@ -110,6 +110,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="membre du club ayant l'id du club_id",
  *   ),
  *   @OA\Property(
+ *     property="address_id",
+ *     type="number",
+ *     example=1,
+ *     description="Id de l'address du user",
+ *   ),
+ *   @OA\Property(
  *     property="is_club_admin",
  *     type="number",
  *     example=1,
@@ -126,6 +132,36 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     type="string",
  *     example="Premium 1",
  *     description="Nom de l'abonnement du user, s'il est abonné",
+ *   ),
+ *   @OA\Property(
+ *     property="premium",
+ *     type="string",
+ *     example="active",
+ *     description="active ou inactive - permet de ssavoir si le user a un premium",
+ *   ),
+ *   @OA\Property(
+ *     property="premium_actif",
+ *     type="string",
+ *     example="Premium 2",
+ *     description="Permet de savoir le premium actif du user, dans la cas d'un downgrade d'abonnement",
+ *   ),
+ *   @OA\Property(
+ *     property="user_join_requests_count",
+ *     type="number",
+ *     example=0,
+ *     description="Utile pour les admins de savoir cmb il y a de demande d'adhésion au club",
+ *   ),
+ *   @OA\Property(
+ *     property="followers_count",
+ *     type="number",
+ *     example=3,
+ *     description="Nombre d'utilisateur qui suivent cet utilisateur",
+ *   ),
+ *   @OA\Property(
+ *     property="stripe_customer_id",
+ *     type="string",
+ *     example="cus_MJEDCDFb8Wot43",
+ *     description="Id client sur stripe",
  *   ),
  *   @OA\Property(
  *     property="address",
@@ -147,11 +183,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     property="posts_count",
  *     type="number",
  *     example=12,
- *   ),
- *   @OA\Property(
- *     property="followers_count",
- *     type="number",
- *     example=28,
  *   ),
  * )
  */
@@ -184,7 +215,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'email_verified_at',
-        'address_id',
+        // 'address_id',
         'club'
     ];
 

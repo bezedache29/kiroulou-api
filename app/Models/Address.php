@@ -14,6 +14,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   schema="Address",
  *   description="Adresse simplifié",
  *   @OA\Property(
+ *     property="id",
+ *     type="number",
+ *     example=1,
+ *   ),
+ *   @OA\Property(
  *     property="street_address",
  *     type="string",
  *     example="Ma super adresse",
@@ -86,7 +91,7 @@ class Address extends Model
 
     // Permet de cacher ces valeurs
     protected $hidden = [
-        'id',
+        // 'id',
         'city_id',
         'zipcode_id',
         'created_at',
