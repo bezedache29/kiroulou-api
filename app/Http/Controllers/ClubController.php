@@ -301,69 +301,18 @@ class ClubController extends Controller
      */
     public function updateClub(StoreClubRequest $request, Club $club)
     {
-        $city = City::where('name', $request->city)->first();
-        if (!$city) {
-            $city = City::create([
-                'name' => $request->city
-            ]);
-        }
-        $zipcode = Zipcode::where('code', $request->zipcode)->first();
-        if (!$zipcode) {
-            $zipcode = Zipcode::create([
-                'code' => $request->zipcode
-            ]);
-        }
-
-        $is_address_exist = Address::where('street_address', $request->street_address)
-            ->where('zipcode_id', $zipcode->id)
-            ->where('city_id', $city->id)
-            ->first();
-
-        if (!$is_address_exist) {
-            $create_address = [
-                'street_address' => $request->street_address,
-                'lat' => $request->lat,
-                'lng' => $request->lng,
-                'region' => $request->region,
-                'department' => $request->department,
-                'department_code' => $request->department_code,
-                'city_id' => $city->id,
-                'zipcode_id' => $zipcode->id,
-            ];
-
-            $address = Address::create($create_address);
-        } else {
-            $address = $is_address_exist;
-        }
-
-        $club_data = [
+        $data = [
             'name' => $request->name,
-            'address_id' => $address->id,
-            'organization_id' => $request->organization,
+            'address_id' => $request->address_id,
+            'organization_id' => $request->organization_id,
+            'short_name' => $request->short_name,
+            'website' => $request->website
         ];
 
-        if (is_null($request->website)) {
-            $club_data = array_merge($club_data, ['website' => null]);
-        } else {
-            $club_data = array_merge($club_data, ['website' => $request->website]);
-        }
-
-        if (is_null($request->short_name)) {
-            $club_data = array_merge($club_data, ['short_name' => null]);
-        } else {
-            $club_data = array_merge($club_data, ['short_name' => $request->short_name]);
-        }
-
-        if ($request->avatar) {
-            //TODO Si plus d'avatar, remttre celui par default
-            //TODO Stockage Avatar
-            $club_data = array_merge($club_data, ["avatar" => $request->avatar]);
-        }
-
-        $club->update($club_data);
+        Club::where('id', $club->id)->update($data);
 
         // On récupère toutes les infos du club pour le retourner
-        $club = Club::find($club->id);
+        $club = Club::findOrFail($club->id);
 
         return response()->json([
             "message" => "club updated",

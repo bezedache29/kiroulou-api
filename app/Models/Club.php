@@ -138,7 +138,7 @@ class Club extends Model
     protected $with = [
         'address',
         // 'postImages'
-        // 'organization',
+        'organization',
         // 'members',
         // 'userFollows',
         // 'userJoinRequests',
@@ -148,7 +148,7 @@ class Club extends Model
     // Permet de cacher ces valeurs
     protected $hidden = [
         'address_id',
-        'organization_id',
+        // 'organization_id',
         'created_at',
         'updated_at',
         'deleted_at'
