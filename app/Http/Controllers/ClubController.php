@@ -348,11 +348,11 @@ class ClubController extends Controller
 
     /**
      * @OA\Post(
+     *   tags={"Clubs"},
      *   path="/clubs/{club_id}/followOrUnfollow",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   summary="Follow/UnFollow club",
      *   description="Follow/UnFollow un club",
-     *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
      *   @OA\Response(
      *     response=201,
@@ -391,11 +391,11 @@ class ClubController extends Controller
 
     /**
      * @OA\Get(
+     *   tags={"Clubs"},
      *   path="/clubs/{club_id}/isClubFollowed",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   summary="Is user follow a club ?",
      *   description="Est-ce que le user follow le club ?",
-     *   tags={"Users"},
      *   security={{ "bearer_token": {} }},
      *   @OA\Response(
      *     response=200,
@@ -430,11 +430,11 @@ class ClubController extends Controller
 
     /**
      * @OA\Post(
+     *   tags={"Clubs"},
      *   path="/clubs/{club_id}/requestToJoin",
      *   @OA\Parameter(ref="#/components/parameters/club_id"),
      *   summary="User membership request",
      *   description="Demande d'adhésion au club",
-     *   tags={"Clubs"},
      *   security={{ "bearer_token": {} }},
      *   @OA\Response(
      *     response=201,

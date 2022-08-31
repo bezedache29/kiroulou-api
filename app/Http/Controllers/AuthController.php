@@ -127,7 +127,6 @@ class AuthController extends Controller
 
     public function disconnect(Request $request)
     {
-        // $user->tokens()->delete();
         $request->user()->tokens()->delete();
     }
 
