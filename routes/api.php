@@ -115,6 +115,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::delete('/users/{user}', [UserController::class, 'userDelete']);
   Route::post('/users/{user}/storeAvatar', [UserController::class, 'storeAvatar']);
 
+  Route::put('/users/{user}/leaveClub', [UserController::class, 'leaveClub']);
+
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);
   Route::post('/users/bikes', [UserController::class, 'storeBike']);
   Route::get('/users/bikes/types', [UserController::class, 'bikeTypes']);
@@ -130,8 +132,6 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/users/{user}/followedUsers', [UserController::class, 'followedUsers']);
   Route::get('/users/{user}/isUserFollowed', [UserController::class, 'isUserFollowed']);
   Route::post('/users/{user}/followOrUnfollow', [UserController::class, 'followOrUnfollow']);
-
-  Route::put('/users/leaveClub', [UserController::class, 'leaveClub']);
 
 
   // HIKES VTT

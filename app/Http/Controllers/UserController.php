@@ -771,11 +771,12 @@ class UserController extends Controller
 
     /**
      * @OA\Put(
-     *   path="/users/leaveClub",
+     *   path="/users/{user_id}/leaveClub",
      *   summary="User leave club",
      *   description="Quitter un club",
      *   tags={"Users"},
      *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
      *   @OA\Response(
      *     response=201,
      *     description="left club",
@@ -783,21 +784,25 @@ class UserController extends Controller
      *       @OA\Property(property="message", type="string", example="left club"),
      *       @OA\Property(
      *         property="user",
-     *         ref="#/components/schemas/UserDetailsCount"
+     *         ref="#/components/schemas/UserDetails"
      *       )
      *     )
      *   ),
      *   @OA\Response(
      *     response=404,
      *     ref="#/components/responses/NotFound"
-     *   )
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
      * )
      */
-    public function leaveClub(Request $request)
+    public function leaveClub(User $user)
     {
-        User::where('id', $request->user()->id)->update(['club_id' => null]);
+        User::where('id', $user->id)->update(['club_id' => null]);
 
-        $user = User::with('address')->findOrFail($request->user()->id);
+        $user = User::with('address')->findOrFail($user->id);
 
         return response()->json([
             'message' => 'left club',
