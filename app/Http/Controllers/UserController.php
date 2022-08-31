@@ -113,6 +113,43 @@ class UserController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Post(
+     *   tags={"Users"},
+     *   path="/users/{user_id}/storeAvatar",
+     *   summary="User Avatar on storage",
+     *   description="Ajoute un avatar d'un user au stockage du serveur",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *     @OA\RequestBody(
+     *       required=true,
+     *       @OA\MediaType(
+     *         mediaType="multipart/form-data",
+     *         @OA\Schema(
+     *           @OA\Property(property="title", type="string", description="Type & Extension du fichier", example="images-jpg"),
+     *           @OA\Property(
+     *             property="image",
+     *             type="file",
+     *             description="Fichier de l'image",
+     *             example="file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+     *           ),
+     *         ),
+     *       ),
+     *     ),
+     *     @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
     public function storeAvatar(Request $request, User $user)
     {
         // On split l'ancienne image et l'extension de la nouvelle image
@@ -195,21 +232,64 @@ class UserController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Post(
+     *   tags={"Users"},
+     *   path="/users/bikes/{bike_id}/storeImageBike",
+     *   summary="User Bike on storage",
+     *   description="Ajoute une image d'un bike d'un user au stockage du serveur",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/bike_id"),
+     *     @OA\RequestBody(
+     *       required=true,
+     *       @OA\MediaType(
+     *         mediaType="multipart/form-data",
+     *         @OA\Schema(
+     *           @OA\Property(property="title", type="string", description="Type & Extension du fichier", example="images-jpg"),
+     *           @OA\Property(
+     *             property="image",
+     *             type="file",
+     *             description="Fichier de l'image",
+     *             example="file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+     *           ),
+     *         ),
+     *       ),
+     *     ),
+     *     @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
     public function storeImageBike(Request $request, int $bike_id)
     {
-        // TODO Check pour delete l'ancienne image si elle existe
+        // Split le title
+        $old_image_and_extension = explode("|", $request->title);
+
+        // On check et delete l'ancienne image si elle existe
+        if (Storage::exists($old_image_and_extension[0])) {
+            Storage::delete($old_image_and_extension[0]);
+        }
 
         // On renomme l'image avec l'extension passé dans le title
-        $image_name = $bike_id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $request->title;
+        $image_name = $bike_id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $old_image_and_extension[1];
 
         // Emplacement de stockage de l'image
-        $store = 'images/users/' . $request->user()->id . '/bikes/' . $bike_id . '/images';
+        $store = 'images/users/' . $request->user()->id . '/bikes/' . $bike_id;
 
         $request->image->storeAs($store, $image_name);
 
         $image = $store . '/' . $image_name;
 
-        Bike::where('id', $bike_id)->update(['image' => $image], 201);
+        Bike::where('id', $bike_id)->update(['image' => $image]);
 
         return response()->json(['message' => 'image uploaded'], 201);
     }
@@ -420,6 +500,33 @@ class UserController extends Controller
         $images = PostUserImage::where('user_id', $user->id)->orderBy('id', 'DESC')->paginate(5)->items();
 
         return response()->json($images, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Users"},
+     *   path="/users/{user_id}/allImagesCount",
+     *   summary="All user's images count",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="count", type="number", example=4)
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function allImagesCount(User $user)
+    {
+        $count = PostUserImage::where('user_id', $user->id)->count();
+
+        return response()->json(['count' => $count], 200);
     }
 
     /**

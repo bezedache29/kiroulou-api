@@ -229,7 +229,8 @@ class User extends Authenticatable
         'premium',
         'premium_actif',
         'user_join_requests_count',
-        'followers_count'
+        'followers_count',
+        'short_name_club'
     ];
 
     /**
@@ -426,5 +427,14 @@ class User extends Authenticatable
     public function getFollowersCountAttribute()
     {
         return $this->followers()->count();
+    }
+
+    public function getShortNameClubAttribute()
+    {
+        if ($this->club_id && $this->club->short_name) {
+            return $this->club->short_name;
+        }
+
+        return 'RDLO';
     }
 }

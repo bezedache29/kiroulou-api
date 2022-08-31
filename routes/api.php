@@ -96,6 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/users/posts', [UserPostController::class, 'storePost']);
   Route::post('/users/posts/{post}/storeImage', [UserPostController::class, 'storeImage']);
   Route::put('/users/posts/{post}', [UserPostController::class, 'updatePost']);
+  Route::delete('/users/posts/deleteImage', [UserPostController::class, 'deleteImage']);
   Route::delete('/users/posts/{post}', [UserPostController::class, 'deletePost']);
   Route::post('/users/posts/{post}/likeOrUnlike', [UserPostController::class, 'likeOrUnlike']);
   Route::get('/users/posts/{post}/isPostLiked', [UserPostController::class, 'isPostLiked']);
@@ -118,6 +119,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/users/{user}/profileImages', [UserController::class, 'profileImages']);
   Route::get('/users/{user}/allImages', [UserController::class, 'allImages']);
+  Route::get('/users/{user}/allImagesCount', [UserController::class, 'allImagesCount']);
 
   Route::get('/users/{user}/followedClubs', [UserController::class, 'followedClubs']);
   Route::get('/users/{user}/followedUsers', [UserController::class, 'followedUsers']);

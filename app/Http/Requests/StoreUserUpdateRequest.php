@@ -27,12 +27,10 @@ class StoreUserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email', Rule::exists('users')->where(function ($query) {
-                return $query->where('id', $this->user_id);
-            }),],
+            'email' => ['required', 'email', 'unique:users,email,' . $this->user_id],
             'firstname' => ['string', 'nullable'],
             'lastname' => ['string', 'nullable'],
-            'address_id' => ['required', 'exists:addresses,id'],
+            'address_id' => ['exists:addresses,id'],
             'user_id' => ['required']
         ];
     }
@@ -42,6 +40,7 @@ class StoreUserUpdateRequest extends FormRequest
         return [
             'email.required' => 'L\'adresse email est obligatoire',
             'email.email' => 'L\'adresse email doit être une adresse email valide',
+            'email.unique' => 'L\'adresse email est déjà enregistré sur l\'application',
             'firstname.string' => 'Le prénom doit être une chaine de caratctères',
             'lastname.string' => 'Le nom doit être une chaine de caratctères',
             'address_id.required' => 'L\'adresse est obligatoire',

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePostUserCommentRequest;
-use App\Http\Requests\StorePostUserRequest;
 use App\Models\User;
 use App\Models\PostUser;
 use App\Models\PostUserLike;
 use Illuminate\Http\Request;
 use App\Models\PostUserImage;
 use App\Models\PostUserComment;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StorePostUserRequest;
+use App\Http\Requests\StorePostUserCommentRequest;
 
 class UserPostController extends Controller
 {
@@ -177,6 +178,13 @@ class UserPostController extends Controller
      */
     public function deletePost(PostUser $post)
     {
+        $image = PostUserImage::where('post_user_id', $post->id)->first();
+
+        if ($image) {
+            if (Storage::exists($image->image)) {
+                Storage::delete($image->image);
+            }
+        }
         $post->delete();
 
         return response()->json(['message' => 'post deleted'], 201);
@@ -436,7 +444,7 @@ class UserPostController extends Controller
         $image_name = $post->id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $request->title;
 
         // Emplacement de stockage de l'image
-        $store = 'images/users/' . $request->user()->id . '/posts/' . $post->id . '/images';
+        $store = 'images/users/' . $request->user()->id . '/posts/' . $post->id;
 
         $request->image->storeAs($store, $image_name);
 
@@ -447,5 +455,16 @@ class UserPostController extends Controller
         ]);
 
         return response()->json(['message' => 'image uploaded'], 201);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        if (Storage::exists($request->image['image'])) {
+            Storage::delete($request->image['image']);
+        }
+
+        PostUserImage::where('post_user_id', $request->image['post_user_id'])->where('image', $request->image['image'])->delete();
+
+        return response()->json(['message' => 'image deleted'], 201);
     }
 }

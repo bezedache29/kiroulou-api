@@ -2459,6 +2459,59 @@
                 ]
             }
         },
+        "/users/{user_id}/storeAvatar": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User Avatar on storage",
+                "description": "Ajoute un avatar d'un user au stockage du serveur",
+                "operationId": "957ec632bb0858b0a1038f9b0f0afc23",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Type & Extension du fichier",
+                                        "type": "string",
+                                        "example": "images-jpg"
+                                    },
+                                    "image": {
+                                        "description": "Fichier de l'image",
+                                        "type": "file",
+                                        "example": "file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/bikes": {
             "post": {
                 "tags": [
@@ -2710,6 +2763,46 @@
                                     "items": {
                                         "$ref": "#/components/schemas/PostUserImage"
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/allImagesCount": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "All user's images count",
+                "operationId": "9a37f5321490228104c71c75b7bd6efd",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "count": {
+                                            "type": "number",
+                                            "example": 4
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
