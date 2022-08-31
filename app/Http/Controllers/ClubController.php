@@ -6,14 +6,20 @@ use App\Models\City;
 use App\Models\Club;
 use App\Models\User;
 use App\Models\Address;
+use App\Models\HikeVtt;
 use App\Models\Zipcode;
+use App\Models\ClubPost;
+use App\Models\ClubPostLike;
 use App\Models\HikeVttImage;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\ClubPostImage;
+use App\Models\ClubPostComment;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreClubRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Models\HikeVttHype;
+use App\Models\HikeVttTrip;
 use Illuminate\Support\Facades\Storage;
 
 class ClubController extends Controller
@@ -119,7 +125,24 @@ class ClubController extends Controller
             Storage::delete($club->avatar);
         }
 
-        $club = Club::where('id', $club->id)->delete();
+        ClubPostImage::where('club_id', $club->id)->delete();
+        DB::table('club_follows')->where('club_id', $club->id)->delete();
+        DB::table('club_join_requests')->where('club_id', $club->id)->delete();
+        $posts = ClubPost::where('club_id', $club->id)->get();
+        foreach ($posts as $post) {
+            ClubPostComment::where('club_post_id', $post->id)->delete();
+            ClubPostLike::where('club_post_id', $post->id)->delete();
+        }
+        ClubPost::where('club_id', $club->id)->delete();
+        $hikes = HikeVtt::where('club_id', $club->id)->get();
+        foreach ($hikes as $hike) {
+            HikeVttHype::where('hike_vtt_id', $hike->id)->delete();
+            HikeVttTrip::where('hike_vtt_id', $hike->id)->delete();
+        }
+        HikeVtt::where('club_id', $club->id)->delete();
+        User::where('club_id', $club->id)->update(['club_id' => null, 'is_club_admin' => false]);
+        HikeVttImage::where('club_id', $club->id)->delete();
+        Club::where('id', $club->id)->delete();
 
         return response()->json([
             'message' => 'club deleted'
@@ -741,7 +764,14 @@ class ClubController extends Controller
      *   security={{ "bearer_token": {} }},
      *   @OA\Response(
      *     response=201,
-     *     ref="#/components/responses/Created"
+     *     description="Admin changed",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="admin changed"),
+     *       @OA\Property(
+     *         property="user",
+     *         ref="#/components/schemas/UserDetails"
+     *       )
+     *     )
      *   ),
      *   @OA\Response(
      *     response=404,
@@ -762,9 +792,14 @@ class ClubController extends Controller
             // On met le user souhaité admin du club
             $user->is_club_admin = true;
             $user->save();
+
+            $old_admin_updated = User::with("address")->findOrFail($request->user()->id);
         }
 
-        return response()->json(['message' => 'admin changed'], 201);
+        return response()->json([
+            'message' => 'admin changed',
+            'user' => $old_admin_updated
+        ], 201);
     }
 
     /**

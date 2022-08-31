@@ -152,6 +152,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/clubs/{club}/denyRequestToJoin', [ClubController::class, 'denyRequestToJoin']);
     Route::get('/clubs/{club}/showJoinRequests', [ClubController::class, 'showJoinRequests']);
     Route::post('/clubs/{club}/changeAdmin', [ClubController::class, 'changeAdmin']);
+    Route::delete('/clubs/{club}', [ClubController::class, 'deleteClub']);
 
     Route::post('/clubs/{club}/posts', [ClubPostController::class, 'storePost']);
 
