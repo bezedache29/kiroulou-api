@@ -107,7 +107,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::delete('/users/posts/comments/{comment}', [UserPostController::class, 'deleteComment']);
 
   Route::get('/users/{user}', [UserController::class, 'user']);
-  Route::put('/users/{user}/update', [UserController::class, 'userUpdate']);
+  Route::put('/users/{user}', [UserController::class, 'userUpdate']);
+  Route::delete('/users/{user}', [UserController::class, 'userDelete']);
   Route::post('/users/{user}/storeAvatar', [UserController::class, 'storeAvatar']);
 
   Route::get('/users/{user}/bikes', [UserController::class, 'bikes']);

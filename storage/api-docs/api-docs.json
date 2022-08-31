@@ -515,7 +515,7 @@
         "/clubs/{club_id}/isClubFollowed": {
             "get": {
                 "tags": [
-                    "Users"
+                    "Clubs"
                 ],
                 "summary": "Is user follow a club ?",
                 "description": "Est-ce que le user follow le club ?",
@@ -2404,16 +2404,14 @@
                         "bearer_token": []
                     }
                 ]
-            }
-        },
-        "/users/{user_id}/update": {
+            },
             "put": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Update User",
                 "description": "Modification d'un user",
-                "operationId": "43221430c8bdc67654ca3d278ac68fc1",
+                "operationId": "19ce86664c484844879c6179ab26a2e5",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/user_id"
@@ -2444,6 +2442,35 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user",
+                "description": "Supprime un utilisateur",
+                "operationId": "5bc2327ce8a2d05bbdbddddcdd6c8422",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
@@ -2545,6 +2572,59 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/users/bikes/{bike_id}/storeImageBike": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User Bike on storage",
+                "description": "Ajoute une image d'un bike d'un user au stockage du serveur",
+                "operationId": "861ebb6486d5eb6d09f18101b0448084",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/bike_id"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Type & Extension du fichier",
+                                        "type": "string",
+                                        "example": "images-jpg"
+                                    },
+                                    "image": {
+                                        "description": "Fichier de l'image",
+                                        "type": "file",
+                                        "example": "file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthorized"

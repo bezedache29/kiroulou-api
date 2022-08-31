@@ -61,7 +61,7 @@ class UserController extends Controller
     /**
      * @OA\Put(
      *   tags={"Users"},
-     *   path="/users/{user_id}/update",
+     *   path="/users/{user_id}",
      *   summary="Update User",
      *   description="Modification d'un user",
      *   security={{ "bearer_token": {} }},
@@ -111,6 +111,39 @@ class UserController extends Controller
             'message' => 'user updated',
             'user' => $user
         ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *   tags={"Users"},
+     *   path="/users/{user_id}",
+     *   summary="Delete user",
+     *   description="Supprime un utilisateur",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function userDelete(Request $request, User $user)
+    {
+        // Pour le moment je ne supprime pas tous ce que l'utilisateur a créer.
+        // Possible d'ajouter une option payante pour récupérer son compte dans une autre version.
+
+        // Je soft delete uniquement le user
+        User::where('id', $user->id)->delete();
+
+        return response()->json(['message', 'user deleted'], 201);
     }
 
     /**
