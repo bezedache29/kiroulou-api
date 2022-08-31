@@ -71,6 +71,9 @@ Route::middleware('auth:sanctum')->group(function () {
   // CLUBS
   Route::get('/clubs', [ClubController::class, 'clubs']);
   Route::post('/clubs', [ClubController::class, 'storeClub']);
+  Route::delete('/clubs/{club}', [ClubController::class, 'deleteClub']);
+  Route::post('/clubs/{club}/storeAvatar', [ClubController::class, 'storeAvatar']);
+  Route::get('/clubs/organizations', [ClubController::class, 'organizations']);
   Route::delete('/deleteImagePost/{image_id}', [ClubController::class, 'deleteImagePost']);
   Route::put('/clubs/{club}', [ClubController::class, 'updateClub']);
   Route::get('/clubs/{club}/clubInformations', [ClubController::class, 'clubInformations']);
@@ -108,6 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
   Route::get('/users/{user}', [UserController::class, 'user']);
   Route::put('/users/{user}', [UserController::class, 'userUpdate']);
+  Route::put('/users/{user}/admin', [UserController::class, 'admin']);
   Route::delete('/users/{user}', [UserController::class, 'userDelete']);
   Route::post('/users/{user}/storeAvatar', [UserController::class, 'storeAvatar']);
 

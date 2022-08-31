@@ -17,7 +17,7 @@ class CreateClubsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('short_name')->nullable();
-            $table->foreignId('address_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('address_id')->constrained()->onDelete('cascade');
             $table->foreignId('organization_id')->constrained()->onDelete('cascade');
             $table->string('website')->nullable();
             $table->string('avatar')->nullable();

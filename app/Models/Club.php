@@ -53,10 +53,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     nullable=true
  *   ),
  *   @OA\Property(
- *     property="hike_date",
- *     type="string",
- *     example="2023-08-09",
- *     description="Date de la prochaine rando à compter de la date du jour",
+ *     property="next_hike",
+ *     description="Prochaine randonnée du club",
+ *     ref="#/components/schemas/HikeVttAppends"
  *   ),
  *   @OA\Property(
  *     property="address",

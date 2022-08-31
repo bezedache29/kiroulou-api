@@ -22,6 +22,7 @@ use App\Http\Requests\StoreBikeRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StorePostUserRequest;
 use App\Http\Requests\StoreUserUpdateRequest;
+use App\Http\Requests\UserClubAdminRequest;
 
 class UserController extends Controller
 {
@@ -204,6 +205,56 @@ class UserController extends Controller
         User::where('id', $user->id)->update(['avatar' => $store . '/' . $image_name]);
 
         return response()->json(['message' => 'avatar uploaded'], 201);
+    }
+
+    /**
+     * @OA\Put(
+     *   tags={"Users"},
+     *   path="/users/{user_id}/admin",
+     *   summary="Update user for admin club",
+     *   description="Modifier un user pour qu'il soit admin du club qu'il vient de créer",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/user_id"),
+     *   @OA\RequestBody(ref="#/components/requestBodies/UserAdminClub"),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Vélo du user modifié",
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="message",
+     *         type="string",
+     *         example="user updated"
+     *       ),
+     *       @OA\Property(
+     *         property="user",
+     *         ref="#/components/schemas/UserDetails"
+     *       )
+     *     ),
+     *   ),
+     *   @OA\Response(
+     *     response=422, 
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=404, 
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401, 
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function admin(UserClubAdminRequest $request)
+    {
+        User::where('id', $request->user()->id)->update($request->all());
+
+        $user = User::with('address')->findOrFail($request->user()->id);
+
+        return response()->json([
+            'message' => 'user updated',
+            'user' => $user
+        ], 201);
     }
 
     /**

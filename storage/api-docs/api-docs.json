@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "https://localhost/api",
+            "url": "http://my-default-host.com",
             "description": "Server API KiRoulOu"
         }
     ],
@@ -310,6 +310,59 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/{club_id}/storeAvatar": {
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Club Avatar on storage",
+                "description": "Ajoute un avatar d'un club au stockage du serveur",
+                "operationId": "c7a6e7de4207565cd58b7acbbb9a63f9",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/club_id"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Type & Extension du fichier",
+                                        "type": "string",
+                                        "example": "images-jpg"
+                                    },
+                                    "image": {
+                                        "description": "Fichier de l'image",
+                                        "type": "file",
+                                        "example": "file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -977,6 +1030,38 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/clubs/organizations": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "list of organizations",
+                "operationId": "293dc0208d7bc0511c97052ce48cd0bf",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Organization"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
                     }
                 },
                 "security": [
@@ -2539,6 +2624,59 @@
                 ]
             }
         },
+        "/users/{user_id}/admin": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user for admin club",
+                "description": "Modifier un user pour qu'il soit admin du club qu'il vient de créer",
+                "operationId": "06b002aa649084c681b7b67e84ec725c",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/UserAdminClub"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vélo du user modifié",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "user updated"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserDetails"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/users/bikes": {
             "post": {
                 "tags": [
@@ -3646,10 +3784,8 @@
                         "example": "1.png",
                         "nullable": true
                     },
-                    "hike_date": {
-                        "description": "Date de la prochaine rando à compter de la date du jour",
-                        "type": "string",
-                        "example": "2023-08-09"
+                    "next_hike": {
+                        "$ref": "#/components/schemas/HikeVttAppends"
                     },
                     "address": {
                         "$ref": "#/components/schemas/Address"
@@ -4144,6 +4280,10 @@
             "Organization": {
                 "description": "Type d'organisation de club",
                 "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "Association"
@@ -4961,7 +5101,7 @@
                     "application/json": {
                         "schema": {
                             "required": [
-                                "name, street_address, city, zipcode, lat, lng, region, department, department_code, organization"
+                                "name, address_id, organization_id"
                             ],
                             "properties": {
                                 "name": {
@@ -4977,49 +5117,13 @@
                                     "type": "string",
                                     "example": "https://mon-super-club.com"
                                 },
-                                "avatar": {
-                                    "description": "Renommage de l'avatar avec id du club",
-                                    "type": "string",
-                                    "example": "1.png"
-                                },
-                                "organization": {
-                                    "description": "organization_id du type de club",
+                                "address_id": {
                                     "type": "number",
-                                    "example": "3"
+                                    "example": 1
                                 },
-                                "street_address": {
-                                    "type": "string",
-                                    "example": "Ma super rue"
-                                },
-                                "city": {
-                                    "type": "string",
-                                    "example": "Nantes"
-                                },
-                                "zipcode": {
-                                    "type": "string",
-                                    "example": "44000"
-                                },
-                                "lat": {
-                                    "description": "Lattitude GPS",
-                                    "type": "string",
-                                    "example": "48.5740185"
-                                },
-                                "lng": {
-                                    "description": "Longitude GPS",
-                                    "type": "string",
-                                    "example": "-4.3335965"
-                                },
-                                "region": {
-                                    "type": "string",
-                                    "example": "Bretagne"
-                                },
-                                "department": {
-                                    "type": "string",
-                                    "example": "Finistère"
-                                },
-                                "department_code": {
-                                    "type": "string",
-                                    "example": "29"
+                                "organization_id": {
+                                    "type": "number",
+                                    "example": 2
                                 }
                             },
                             "type": "object"
@@ -5349,6 +5453,30 @@
                                     "example": 10005
                                 },
                                 "address_id": {
+                                    "type": "number",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "UserAdminClub": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "is_club_admin",
+                                "club_id"
+                            ],
+                            "properties": {
+                                "is_club_admin": {
+                                    "type": "boolean",
+                                    "example": true
+                                },
+                                "club_id": {
                                     "type": "number",
                                     "example": 1
                                 }
