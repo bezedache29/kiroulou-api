@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreClubRequest extends FormRequest
+class UserClubAdminRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,20 +26,18 @@ class StoreClubRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string'],
-            'short_name' => ['string', 'nullable'],
-            'website' => ['string', 'nullable'],
-            'organization_id' => ['required', 'exists:organizations,id'],
-            'address_id' => ['required', 'exists:addresses,id'],
+            'is_club_admin' => ['required', 'boolean'],
+            'club_id' => ['required', 'exists:clubs,id'],
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => 'Le nom est obligatoire',
-            'organization_id.required' => 'L\'organisation est obligatoire',
-            'address_id.required' => 'L\'adresse est obligatoire',
+            'is_club_admin.required' => 'L\'admin club est obligatoire',
+            'is_club_admin.boolean' => 'L\'admin club est vrai ou faux',
+            'club_id.required' => 'L\'id du club est obligatoire',
+            'club_id.exists' => 'L\'id du club n\'existe pas',
         ];
     }
 

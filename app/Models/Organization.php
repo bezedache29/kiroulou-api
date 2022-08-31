@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *   schema="Organization",
  *   description="Type d'organisation de club",
  *   @OA\Property(
+ *     property="id",
+ *     type="number",
+ *     example=1,
+ *   ),
+ *   @OA\Property(
  *     property="name",
  *     type="string",
  *     example="Association",
@@ -32,7 +37,7 @@ class Organization extends Model
 
     // Permet de cacher ces valeurs
     protected $hidden = [
-        'id',
+        // 'id',
         'created_at',
         'updated_at',
         'deleted_at',

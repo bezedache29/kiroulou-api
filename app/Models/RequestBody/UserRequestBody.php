@@ -44,6 +44,16 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="address_id", type="number", example=1),
  *   )
  * )
+ * 
+ * @OA\RequestBody(
+ *   request="UserAdminClub",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     required={"is_club_admin", "club_id"},
+ *     @OA\Property(property="is_club_admin", type="boolean", example=true),
+ *     @OA\Property(property="club_id", type="number", example=1),
+ *   )
+ * )
  */
 class UserRequestBody
 {

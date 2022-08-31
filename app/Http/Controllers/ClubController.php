@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClubRequest;
-use App\Http\Requests\StoreUserRequest;
 use App\Models\City;
 use App\Models\Club;
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Zipcode;
 use App\Models\HikeVttImage;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\ClubPostImage;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreClubRequest;
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Storage;
 
 class ClubController extends Controller
 {
@@ -78,49 +80,16 @@ class ClubController extends Controller
         $is_on_club = $request->user()->haveClub();
 
         if ($is_on_club) {
-            return response()->json(["message" => "Vous faites déjà partie d'un club"], 422);
+            return response()->json(["club" => "Vous faites déjà partie d'un club"], 409);
         }
-
-        $city = City::where('name', $request->city)->first();
-        if (!$city) {
-            $city = City::create([
-                'name' => $request->city
-            ]);
-        }
-        $zipcode = Zipcode::where('code', $request->zipcode)->first();
-        if (!$zipcode) {
-            $zipcode = Zipcode::create([
-                'code' => $request->zipcode
-            ]);
-        }
-
-        $create_address = [
-            'street_address' => $request->street_address,
-            'lat' => $request->lat,
-            'lng' => $request->lng,
-            'region' => $request->region,
-            'department' => $request->department,
-            'department_code' => $request->department_code,
-            'city_id' => $city->id,
-            'zipcode_id' => $zipcode->id,
-        ];
-
-        $address = Address::create($create_address);
 
         $club = [
             'name' => $request->name,
-            'address_id' => $address->id,
-            'organization_id' => $request->organization,
+            'address_id' => $request->address_id,
+            'organization_id' => $request->organization_id,
+            'short_name' => $request->short_name,
+            'website' => $request->website
         ];
-
-        if ($request->website) {
-            $club = array_merge($club, ['website' => $request->website]);
-        }
-
-        if ($request->avatar) {
-            //TODO Stockage Avatar
-            $club = array_merge($club, ["avatar" => $request->avatar]);
-        }
 
         $club_created = Club::create($club);
 
@@ -129,7 +98,9 @@ class ClubController extends Controller
             "is_club_admin" => true,
             "club_id" => $club_created->id
         ];
-        User::where('id', $request->user()->id)->update($user_update);
+        // User::where('id', $request->user()->id)->update($user_update);
+
+        // $user = User::with('address')->findOrFail($request->user()->id);
 
         // On récupère toutes les infos du club pour le retourner
         $club = Club::find($club_created->id);
@@ -139,6 +110,80 @@ class ClubController extends Controller
             "user_update" => $user_update,
             "club" => $club
         ], 201);
+    }
+
+    public function deleteClub(Club $club)
+    {
+        // On check et delete l'ancienne image si elle existe
+        if (Storage::exists($club->avatar)) {
+            Storage::delete($club->avatar);
+        }
+
+        $club = Club::where('id', $club->id)->delete();
+
+        return response()->json([
+            'message' => 'club deleted'
+        ], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/storeAvatar",
+     *   summary="Club Avatar on storage",
+     *   description="Ajoute un avatar d'un club au stockage du serveur",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Parameter(ref="#/components/parameters/club_id"),
+     *     @OA\RequestBody(
+     *       required=true,
+     *       @OA\MediaType(
+     *         mediaType="multipart/form-data",
+     *         @OA\Schema(
+     *           @OA\Property(property="title", type="string", description="Type & Extension du fichier", example="images-jpg"),
+     *           @OA\Property(
+     *             property="image",
+     *             type="file",
+     *             description="Fichier de l'image",
+     *             example="file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+     *           ),
+     *         ),
+     *       ),
+     *     ),
+     *     @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function storeAvatar(Request $request, Club $club)
+    {
+        // On split l'ancienne image et l'extension de la nouvelle image
+        $old_image_and_extension = explode("|", $request->title);
+
+        // On check et delete l'ancienne image si elle existe
+        if (Storage::exists($old_image_and_extension[0])) {
+            Storage::delete($old_image_and_extension[0]);
+        }
+
+        // On renomme l'image avec l'extension passé dans le title
+        $image_name = $club->id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $old_image_and_extension[1];
+
+        // Emplacement de stockage de l'image
+        $store = 'images/clubs/' . $club->id . '/avatars';
+
+        $request->image->storeAs($store, $image_name);
+
+        Club::where('id', $club->id)->update(['avatar' => $store . '/' . $image_name]);
+
+        return response()->json(['message' => 'avatar uploaded'], 201);
     }
 
     /**
@@ -838,5 +883,32 @@ class ClubController extends Controller
         ClubPostImage::where('id', $image_id)->delete();
 
         return response()->json(['message' => 'image deleted'], 201);
+    }
+
+    /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/organizations",
+     *   summary="list of organizations",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/Organization")
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   )
+     * )
+     */
+    public function organizations()
+    {
+        $oragnizations = Organization::all();
+
+        return response()->json($oragnizations, 200);
     }
 }
