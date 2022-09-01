@@ -3209,14 +3209,19 @@
                 ]
             }
         },
-        "/users/leaveClub": {
+        "/users/{user_id}/leaveClub": {
             "put": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "User leave club",
                 "description": "Quitter un club",
-                "operationId": "0b518b74ec4038e057576a672d52d1bd",
+                "operationId": "06cfbc050df8e1400b013e1d01529d79",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/user_id"
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "left club",
@@ -3229,7 +3234,7 @@
                                             "example": "left club"
                                         },
                                         "user": {
-                                            "$ref": "#/components/schemas/UserDetailsCount"
+                                            "$ref": "#/components/schemas/UserDetails"
                                         }
                                     },
                                     "type": "object"
@@ -3239,6 +3244,9 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -3805,6 +3813,9 @@
                     },
                     "address": {
                         "$ref": "#/components/schemas/Address"
+                    },
+                    "organization": {
+                        "$ref": "#/components/schemas/Organization"
                     }
                 },
                 "type": "object"
@@ -4720,6 +4731,9 @@
                             },
                             "address": {
                                 "$ref": "#/components/schemas/Address"
+                            },
+                            "club": {
+                                "$ref": "#/components/schemas/Club"
                             }
                         }
                     }

@@ -29,16 +29,10 @@ class StoreHikeVttRequest extends FormRequest
             'name' => ['required', 'string'],
             'description' => ['required', 'string'],
             'public_price' => ['required', 'string'],
-            'private_price' => ['string'],
+            'private_price' => ['string', 'nullable'],
             'date' => ['required', 'date'],
-            'street_address' => ['required', 'string'],
-            'lat' => ['required'],
-            'lng' => ['required'],
-            'region' => ['required'],
-            'department' => ['required'],
-            'department_code' => ['required'],
-            'city' => ['required', 'string'],
-            'zipcode' => ['required', 'string'],
+            'address_id' => ['required', 'exists:addresses,id'],
+            'club_id' => ['required', 'exists:clubs,id'],
         ];
     }
 

@@ -85,15 +85,6 @@ class ClubPostController extends Controller
 
         $post = ClubPost::create($data);
 
-        if ($request->image) {
-            // TODO: Ajout image en store
-            ClubPostImage::create([
-                'user_id' => $request->user()->id,
-                'club_post_id' => $post->id,
-                'image' => 'image-name.png'
-            ]);
-        }
-
         $post = ClubPost::findOrFail($post->id);
 
         return response()->json(['message' => 'post created', 'post' => $post], 201);

@@ -74,57 +74,17 @@ class HikeVttController extends Controller
      */
     public function store(StoreHikeVttRequest $request)
     {
-        $city = City::where('name', $request->city)->first();
-        if (!$city) {
-            $city = City::create([
-                'name' => $request->city
-            ]);
-        }
-        $zipcode = Zipcode::where('code', $request->zipcode)->first();
-        if (!$zipcode) {
-            $zipcode = Zipcode::create([
-                'code' => $request->zipcode
-            ]);
-        }
-
-        $is_address_exist = Address::where('street_address', $request->street_address)
-            ->where('zipcode_id', $zipcode->id)
-            ->where('city_id', $city->id)
-            ->first();
-
-        if (!$is_address_exist) {
-            $create_address = [
-                'street_address' => $request->street_address,
-                'lat' => $request->lat,
-                'lng' => $request->lng,
-                'region' => $request->region,
-                'department' => $request->department,
-                'department_code' => $request->department_code,
-                'city_id' => $city->id,
-                'zipcode_id' => $zipcode->id,
-            ];
-
-            $address = Address::create($create_address);
-        } else {
-            $address = $is_address_exist;
-        }
-
-        // !TODO : Ajout flyer en storage
-        $flyer = 'flyer-name.png';
-
         $data = [
             'name' => $request->name,
             'description' => $request->description,
             'public_price' => $request->public_price,
+            'private_price' => $request->private_price,
             'date' => $request->date,
-            'flyer' => $flyer,
-            'address_id' => $address->id,
-            'club_id' => $request->user()->club_id
+            'address_id' => $request->address_id,
+            'club_id' => $request->club_id
         ];
 
-        if ($request->private_price) {
-            $data['private_price'] = $request->private_price;
-        }
+        $hike = HikeVtt::create($data);
 
         if ($request->trips) {
             foreach ($request->trips as $trip) {
@@ -133,7 +93,7 @@ class HikeVttController extends Controller
             }
         }
 
-        $hike = HikeVtt::create($data);
+
 
         return response()->json([
             'message' => 'hike created',
@@ -159,7 +119,7 @@ class HikeVttController extends Controller
      *   )
      * )
      */
-    public function show(Int $hike_id)
+    public function show(int $hike_id)
     {
         // Permet de rendre le club visible alors qu'il est dans le hidden de HikeVtt
         $hike_vtt = HikeVtt::with('hikeVttImages')->withCount('hikeVttHypes')->with('hikeVttHypes')->with('hikeVttTrips')->findOrFail($hike_id)->makeVisible('club');
@@ -559,7 +519,7 @@ class HikeVttController extends Controller
     public function storeImage(Request $request, Int $hike_id)
     {
         // On explode le title request pour récupérer l'extension du fichier et le type d'image a uploader (flyer ou images)
-        $type_and_extension = explode("-", $request->title);
+        $type_and_extension = explode("|", $request->title);
 
         // On renomme l'image avce l'extension passé dans le title
         $image_name = $hike_id . '-' . rand(10000, 99999) . '-' . rand(100, 999) . '.' . $type_and_extension[1];
