@@ -28,7 +28,7 @@ class StoreClubPostRequest extends FormRequest
         return [
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
-            'hike_vtt_id' => ['required', 'exists:hikes_vtt,id']
+            'hike_vtt_id' => ['required', 'exists:hike_vtts,id'],
         ];
     }
 

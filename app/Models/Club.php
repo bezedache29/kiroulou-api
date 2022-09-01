@@ -62,6 +62,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     description="Adresse du club",
  *     ref="#/components/schemas/Address"
  *   ),
+ *   @OA\Property(
+ *     property="organization",
+ *     description="Type de club",
+ *     ref="#/components/schemas/Organization"
+ *   ),
  * )
  * 
  * @OA\Schema(
@@ -156,7 +161,8 @@ class Club extends Model
 
     protected $appends = [
         'next_hike',
-        'user_join_requests_count'
+        'user_join_requests_count',
+        'hikes_club_count'
     ];
 
     public function address()
@@ -217,5 +223,14 @@ class Club extends Model
     public function getUserJoinRequestsCountAttribute()
     {
         return $this->userJoinRequests()->count();
+    }
+
+    public function getHikesClubCountAttribute()
+    {
+        $today = Carbon::now();
+
+        $hikes_vtt = HikeVtt::where('club_id', $this->id)->whereYear('date', $today->year)->count();
+
+        return $hikes_vtt;
     }
 }

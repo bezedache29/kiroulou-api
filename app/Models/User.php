@@ -45,7 +45,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="Date de création du user",
  *     nullable=true
  *   ),
- *   @OA\Property(
+ *     @OA\Property(
  *     property="updated_at",
  *     type="string",
  *     format="date-time",
@@ -168,6 +168,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="address du user",
  *     ref="#/components/schemas/Address"
  *   ),
+ *   @OA\Property(
+ *     property="club",
+ *     description="club du user",
+ *     ref="#/components/schemas/Club"
+ *   ),
  * )
  * 
  * @OA\Schema(
@@ -216,7 +221,7 @@ class User extends Authenticatable
         'remember_token',
         'email_verified_at',
         // 'address_id',
-        'club'
+        // 'club'
     ];
 
     protected $with = [
