@@ -137,8 +137,6 @@ Route::middleware('auth:sanctum')->group(function () {
   // HIKES VTT
   Route::get('/hikes/vtt', [HikeVttController::class, 'index']);
   Route::get('/hikes/vtt/{hike_id}', [HikeVttController::class, 'show']);
-  Route::put('/hikes/vtt/{hike_id}', [HikeVttController::class, 'update']);
-  Route::delete('/hikes/vtt/{hike_id}', [HikeVttController::class, 'delete']);
   Route::post('/hikes/vtt/{hike_id}/hypeOrUnhype', [HikeVttController::class, 'hypeOrUnhype']);
 
 
@@ -157,13 +155,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/clubs/{club}/posts', [ClubPostController::class, 'storePost']);
 
     Route::post('/hikes/vtt', [HikeVttController::class, 'store']);
+    Route::put('/hikes/vtt/{hike_id}', [HikeVttController::class, 'update']);
+    Route::delete('/hikes/vtt/{hike_id}', [HikeVttController::class, 'delete']);
 
     Route::put('/hikes/vtt/{hike_id}/changeDate', [HikeVttController::class, 'changeDate']);
 
     Route::post('/hikes/vtt/{hike_id}/storeFlyer', [HikeVttController::class, 'storeFlyer']);
     Route::post('/hikes/vtt/{hike_id}/storeImage', [HikeVttController::class, 'storeImage']);
+    Route::delete('/hikes/vtt/{hike_id}/deleteImages', [HikeVttController::class, 'deleteImages']);
 
-    Route::post('/hikes/vtt/{hike_id}/storeTrip', [HikeVttController::class, 'storeTrip']);
+    Route::post('/hikes/vtt/{hike_id}/trip', [HikeVttController::class, 'storeTrip']);
+    Route::put('/hikes/vtt/{hike_id}/trip/{trip_id}', [HikeVttController::class, 'updateTrip']);
+    Route::delete('/hikes/vtt/{hike_id}/trip/{trip_id}', [HikeVttController::class, 'deleteTrip']);
   });
 
   // middleware admin.club.or.premium.one

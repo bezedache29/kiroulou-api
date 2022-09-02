@@ -28,7 +28,7 @@ class StoreTripRequest extends FormRequest
         return [
             'distance' => ['required', 'string'],
             'height_difference' => ['string'],
-            'difficulty' => ['required', 'numeric'],
+            'difficulty' => ['required'],
             'supplies' => ['string'],
         ];
     }
@@ -40,7 +40,6 @@ class StoreTripRequest extends FormRequest
             'distance.string' => 'La distance doit être une distance valide',
             'height_difference.string' => 'Le dénivelé doit être un dénivelé valide',
             'difficulty.required' => 'La difficulté est obligatoire',
-            'difficulty.numeric' => 'La difficulté doit être un chiffre',
             'supplies.string' => 'Le ravitaillement doit être un chiffre',
         ];
     }
