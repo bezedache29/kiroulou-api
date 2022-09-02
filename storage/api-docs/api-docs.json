@@ -1774,6 +1774,90 @@
                 ]
             }
         },
+        "/hikes/vtt/{hike_id}/storeImage": {
+            "post": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Flyer or images to storage",
+                "description": "Ajoute un flyer ou des images au stockage du serveur",
+                "operationId": "62cf4f40bdd1f0c99565107c511ee0e7",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Type & Extension du fichier",
+                                        "type": "string",
+                                        "example": "images-jpg"
+                                    },
+                                    "flyer": {
+                                        "description": "Fichier de l'image",
+                                        "type": "file",
+                                        "example": "file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/hikes/vtt/{hike_id}/deleteImages": {
+            "delete": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Delete hike's vtt images",
+                "description": "Supprime les images d'une randonnée vtt",
+                "operationId": "26008cee991f5501fd36a693cb518f83",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/hikes/vtt/{hike_id}/hypeOrUnhype": {
             "post": {
                 "tags": [
@@ -1890,14 +1974,14 @@
                 ]
             }
         },
-        "/hikes/vtt/{hike_id}/storeTrip": {
+        "/hikes/vtt/{hike_id}/trip": {
             "post": {
                 "tags": [
                     "Hikes VTT"
                 ],
                 "summary": "Store hike's vtt trip",
                 "description": "Ajout un circuit a une randonnée vtt",
-                "operationId": "45eeafde89469213ad29ee99e511e928",
+                "operationId": "4e1ad101821716395460a5afadce906b",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/hike_id"
@@ -1927,40 +2011,24 @@
                 ]
             }
         },
-        "/hikes/vtt/{hike_id}/storeImage": {
-            "post": {
+        "/hikes/vtt/{hike_id}/trip/{trip_id}": {
+            "put": {
                 "tags": [
                     "Hikes VTT"
                 ],
-                "summary": "Flyer or images to storage",
-                "description": "Ajoute un flyer ou des images au stockage du serveur",
-                "operationId": "62cf4f40bdd1f0c99565107c511ee0e7",
+                "summary": "Update hike's vtt trip",
+                "description": "Modifie un circuit a une randonnée vtt",
+                "operationId": "1f262c7a9c0d78ad4e650d9da25e9886",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/hike_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/trip_id"
                     }
                 ],
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "properties": {
-                                    "title": {
-                                        "description": "Type & Extension du fichier",
-                                        "type": "string",
-                                        "example": "images-jpg"
-                                    },
-                                    "flyer": {
-                                        "description": "Fichier de l'image",
-                                        "type": "file",
-                                        "example": "file:///data/user/0/com.kiroulouapp/cache/1074375c-759c-4789-b839-02520b4a74fb.jpg"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "$ref": "#/components/requestBodies/HikeVttAddTrip"
                 },
                 "responses": {
                     "201": {
@@ -1968,6 +2036,44 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Hikes VTT"
+                ],
+                "summary": "Delete hike's vtt trip",
+                "description": "Supprime un circuit a une randonnée vtt",
+                "operationId": "5fc05f34d2ef53a816a447e578f29931",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/hike_id"
+                    },
+                    {
+                        "$ref": "#/components/parameters/trip_id"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntity"
                     },
                     "401": {
                         "$ref": "#/components/responses/Unauthorized"
@@ -2392,33 +2498,19 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "current_page": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/ClubPostClubAndCounts"
-                                            }
-                                        },
-                                        "last_page": {
-                                            "type": "number",
-                                            "example": 3
-                                        },
-                                        "total": {
-                                            "type": "number",
-                                            "example": 11
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClubPostClubAndCounts"
+                                    }
                                 }
                             }
                         }
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -4962,6 +5054,15 @@
                 "schema": {
                     "type": "integer"
                 }
+            },
+            "trip_id": {
+                "name": "trip_id",
+                "in": "path",
+                "description": "ID de ressource",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
             }
         },
         "requestBodies": {
@@ -5278,39 +5379,13 @@
                                     "type": "string",
                                     "example": "2023-02-20"
                                 },
-                                "street_address": {
-                                    "type": "string",
-                                    "example": "Ma super rue"
+                                "address_id": {
+                                    "type": "number",
+                                    "example": 1
                                 },
-                                "city": {
-                                    "type": "string",
-                                    "example": "Nantes"
-                                },
-                                "zipcode": {
-                                    "type": "string",
-                                    "example": "44000"
-                                },
-                                "lat": {
-                                    "description": "Lattitude GPS",
-                                    "type": "string",
-                                    "example": "48.5740185"
-                                },
-                                "lng": {
-                                    "description": "Longitude GPS",
-                                    "type": "string",
-                                    "example": "-4.3335965"
-                                },
-                                "region": {
-                                    "type": "string",
-                                    "example": "Bretagne"
-                                },
-                                "department": {
-                                    "type": "string",
-                                    "example": "Finistère"
-                                },
-                                "department_code": {
-                                    "type": "string",
-                                    "example": "29"
+                                "club_id": {
+                                    "type": "number",
+                                    "example": 2
                                 }
                             },
                             "type": "object"
@@ -5374,8 +5449,8 @@
                                     "example": "280"
                                 },
                                 "difficulty": {
-                                    "type": "number",
-                                    "example": 1
+                                    "type": "string",
+                                    "example": "1"
                                 },
                                 "supplies": {
                                     "description": "Nombre de ravitaillements sur le parcours",

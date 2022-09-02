@@ -22,31 +22,17 @@ class PostController extends Controller
      *     response=200,
      *     description="OK",
      *     @OA\JsonContent(
-     *       @OA\Property(
-     *         property="current_page",
-     *         type="number",
-     *         example=1,
-     *       ),
-     *       @OA\Property(
-     *         property="data",
-     *         type="array",
-     *         @OA\Items(ref="#/components/schemas/ClubPostClubAndCounts"),
-     *       ),
-     *       @OA\Property(
-     *         property="last_page",
-     *         type="number",
-     *         example=3
-     *       ),
-     *       @OA\Property(
-     *         property="total",
-     *         type="number",
-     *         example=11
-     *       )
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/ClubPostClubAndCounts"),
      *     )
      *   ),
      *   @OA\Response(
      *     response=404,
      *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
      *   )
      * )
      */
@@ -66,12 +52,30 @@ class PostController extends Controller
             ->limit(20)
             ->get();
 
-        // On merge les 2 collections avec une pagination
-        // Mettre values en dernier sinon il n'y a que la page 1 qui renvoie un tableau
-        // Voit AppServiceProvider pour faire fonctionner le paginate sur un tableau
-        $posts = collect($clubs_posts)->merge($users_posts)->sortByDesc('created_at')->paginate(5)->values();
+        // On check si une collection est vide pour eviter de merge quelque chose de vide
+        if (count($users_posts) > 0 && count($clubs_posts) == 0) {
+            $posts = PostUser::with('user')->withCount('postUserLikes')
+                ->withCount('postUserComments')
+                ->orderBy('created_at', 'DESC')
+                ->limit(40)
+                ->paginate(5)
+                ->items();
+        } else if (count($users_posts) == 0 && count($clubs_posts) > 0) {
+            $posts = ClubPost::with('club')->with('hikeVtt')->withCount('postlikes')
+                ->withCount('comments')
+                ->orderBy('created_at', 'DESC')
+                ->limit(40)
+                ->paginate(5)
+                ->items();
+        } else {
+            // On merge les 2 collections avec une pagination
+            // Mettre values en dernier sinon il n'y a que la page 1 qui renvoie un tableau
+            // Voit AppServiceProvider pour faire fonctionner le paginate sur un tableau
+            $posts = collect($clubs_posts)->merge($users_posts)->sortByDesc('created_at')->paginate(5)->values();
+            $posts = $posts->toArray();
+        }
 
-        return response()->json(['posts' => $posts->toArray()], 200);
+        return response()->json(['posts' => $posts], 200);
     }
 
     /**
