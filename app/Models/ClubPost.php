@@ -51,6 +51,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="string",
  *     example=null,
  *   ),
+ *   @OA\Property(
+ *     property="comments_post",
+ *     type="number",
+ *     example=3,
+ *   ),
+ *   @OA\Property(
+ *     property="cancelled",
+ *     type="boolean",
+ *     example=false,
+ *   ),
  * )
  * 
  * @OA\Schema(
@@ -139,7 +149,8 @@ class ClubPost extends Model
         'title',
         'description',
         'club_id',
-        'hike_vtt_id'
+        'hike_vtt_id',
+        'cancelled'
     ];
 
     protected $with = [
@@ -151,7 +162,8 @@ class ClubPost extends Model
 
     protected $appends = [
         'club_name',
-        'club_avatar'
+        'club_avatar',
+        'comments_count'
     ];
 
     public function club()
@@ -187,5 +199,10 @@ class ClubPost extends Model
     public function getClubAvatarAttribute()
     {
         return $this->club->avatar;
+    }
+
+    public function getCommentsCountAttribute()
+    {
+        return $this->comments()->count();
     }
 }

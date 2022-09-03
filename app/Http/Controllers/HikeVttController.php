@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\HikeVtt;
+use App\Models\ClubPost;
 use App\Models\HikeVttHype;
 use App\Models\HikeVttTrip;
 use App\Models\HikeVttImage;
@@ -110,7 +111,7 @@ class HikeVttController extends Controller
     public function show(int $hike_id)
     {
         // Permet de rendre le club visible alors qu'il est dans le hidden de HikeVtt
-        $hike_vtt = HikeVtt::with('hikeVttImages')->withCount('hikeVttHypes')->with('hikeVttHypes')->with('hikeVttTrips')->findOrFail($hike_id)->makeVisible('club');
+        $hike_vtt = HikeVtt::with('hikeVttImages')->with('post')->withCount('hikeVttHypes')->with('hikeVttHypes')->with('hikeVttTrips')->findOrFail($hike_id)->makeVisible('club');
 
         return response()->json($hike_vtt, 200);
     }
@@ -254,7 +255,43 @@ class HikeVttController extends Controller
      */
     public function delete(Int $hike_id)
     {
+        $hike = HikeVtt::findOrFail($hike_id);
+
+        $post = ClubPost::where('hike_vtt_id', $hike_id)->where('id', $hike->post->id)->first();
+
+        $format_date = Carbon::create($hike->date)->locale('fr_FR');
+        $day_text = $format_date->getTranslatedDayName('dddd');
+        $day_number = $format_date->day;
+        $day_month = $format_date->getTranslatedMonthName('MMMM');
+        $day_year = $format_date->year;
+        $date = $day_text . ' ' . $day_number . ' ' . $day_month . ' ' . $day_year;
+
+        $data = [
+            'title' => "Rando Annulé !",
+            'description' => "La randonnée VTT " . $post->title . " qui devait se dérouler le " . $date . ", doit malheuresement être annulée.",
+            'hike_vtt_id' => $hike_id,
+            'cancelled' => true,
+            'club_id' => $hike->club_id
+        ];
+
+        $new_post = ClubPost::create($data);
+
+        $post->delete();
+        $post->save();
+        $hike->delete();
+        $hike->save();
+
+        return response()->json([
+            'message' => 'hike deleted',
+            'post' => $new_post
+        ], 201);
+
+        // Uniquement du soft delete pour le moment
         HikeVtt::where('id', $hike_id)->delete();
+
+        // TODO Update le post pour annoncer le cancel
+        // Suppression de l'ancien post
+        // Création d'un nouveau post pour annoncer le cancel
 
         return response()->json(['message' => 'hike deleted'], 201);
     }
@@ -396,8 +433,8 @@ class HikeVttController extends Controller
      *         example="Hyped"
      *       ),
      *       @OA\Property(
-     *         property="post",
-     *         ref="#/components/schemas/HikeVttSimple"
+     *         property="hike_vtt",
+     *         ref="#/components/schemas/HikeVttClub"
      *       )
      *     ),
      *   ),
@@ -414,19 +451,34 @@ class HikeVttController extends Controller
 
         if ($is_hyped) {
             $is_hyped->delete();
-            $message = 'unhyped';
-        } else {
-            HikeVttHype::create([
-                'user_id' => $request->user()->id,
-                'hike_vtt_id' => $hike_id
-            ]);
-            $message = 'hyped';
+
+            $hike_vtt = HikeVtt::with('hikeVttImages')
+                ->withCount('hikeVttHypes')
+                ->with('hikeVttHypes')
+                ->with('hikeVttTrips')
+                ->findOrFail($hike_id)
+                ->makeVisible('club');
+
+            return response()->json([
+                'message' => 'unhype',
+                'hike_vtt' => $hike_vtt,
+            ], 202);
         }
 
-        $hike_vtt = HikeVtt::withCount('hikeVttHypes')->findOrFail($hike_id);
+        HikeVttHype::create([
+            'user_id' => $request->user()->id,
+            'hike_vtt_id' => $hike_id
+        ]);
+
+        $hike_vtt = HikeVtt::with('hikeVttImages')
+            ->withCount('hikeVttHypes')
+            ->with('hikeVttHypes')
+            ->with('hikeVttTrips')
+            ->findOrFail($hike_id)
+            ->makeVisible('club');
 
         return response()->json([
-            'message' => $message,
+            'message' => 'hyped',
             'hike_vtt' => $hike_vtt,
         ], 201);
     }

@@ -1882,8 +1882,8 @@
                                             "type": "string",
                                             "example": "Hyped"
                                         },
-                                        "post": {
-                                            "$ref": "#/components/schemas/HikeVttSimple"
+                                        "hike_vtt": {
+                                            "$ref": "#/components/schemas/HikeVttClub"
                                         }
                                     },
                                     "type": "object"
@@ -4012,6 +4012,14 @@
                     "updated_at": {
                         "type": "string",
                         "example": null
+                    },
+                    "comments_post": {
+                        "type": "number",
+                        "example": 3
+                    },
+                    "cancelled": {
+                        "type": "boolean",
+                        "example": false
                     }
                 },
                 "type": "object"
@@ -4322,6 +4330,9 @@
                             "department_code": {
                                 "type": "string",
                                 "example": "29"
+                            },
+                            "post": {
+                                "$ref": "#/components/schemas/ClubPostWithClub"
                             }
                         }
                     }
@@ -4826,6 +4837,11 @@
                             },
                             "club": {
                                 "$ref": "#/components/schemas/Club"
+                            },
+                            "premium_actif_cancel": {
+                                "description": "Savoir si le premium a été cancel",
+                                "type": "boolean",
+                                "example": false
                             }
                         }
                     }
@@ -5268,7 +5284,7 @@
                     "application/json": {
                         "schema": {
                             "required": [
-                                "title, description"
+                                "title, description, hike_vtt_id"
                             ],
                             "properties": {
                                 "title": {
@@ -5282,6 +5298,10 @@
                                 "hike_vtt_id": {
                                     "type": "number",
                                     "example": 1
+                                },
+                                "cancelled": {
+                                    "type": "boolean",
+                                    "example": true
                                 }
                             },
                             "type": "object"

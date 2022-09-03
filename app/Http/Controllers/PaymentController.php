@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Stripe\Stripe;
 use App\Models\Subs;
+use App\Models\User;
 use Stripe\Customer;
 use Stripe\EphemeralKey;
 use Stripe\StripeClient;
@@ -254,7 +255,12 @@ class PaymentController extends Controller
             ]
         );
 
-        return response()->json(['message' => 'sub canceled'], 201);
+        $user = User::with('address')->findOrFail($request->user()->id);
+
+        return response()->json([
+            'message' => 'sub canceled',
+            'user' => $user
+        ], 201);
     }
 
     /**
@@ -485,5 +491,15 @@ class PaymentController extends Controller
             'ephemeralKey' => $ephemeralKey->secret,
             'customer' => $customer->id,
         ], 200);
+    }
+
+    public function test(Request $request)
+    {
+        $stripe = new \Stripe\StripeClient(
+            'sk_test_51LVAzJGofnt4tufZDf3SLBqrgWHFtwvG5eeA9nimfwYgFjYTRFUKCA3xQNnqwpwMDrnW4lyrFbLF8w7A6GSLq7Zu00h2OkOj7P'
+        );
+        $test = $stripe->subscriptions->all(['limit' => 3]);
+
+        return response()->json($test, 200);
     }
 }

@@ -20,10 +20,11 @@ namespace App\Models\RequestBody;
  *   request="AddClubPost",
  *   required=true,
  *   @OA\JsonContent(
- *     required={"title, description"},
+ *     required={"title, description, hike_vtt_id"},
  *     @OA\Property(property="title", type="string", example="Mon super titre"),
  *     @OA\Property(property="description", type="string", example="Ma super description"),
  *     @OA\Property(property="hike_vtt_id", type="number", example=1),
+ *     @OA\Property(property="cancelled", type="boolean", example=true),
  *   )
  * )
  * 

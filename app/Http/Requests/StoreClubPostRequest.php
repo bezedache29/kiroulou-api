@@ -29,6 +29,7 @@ class StoreClubPostRequest extends FormRequest
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
             'hike_vtt_id' => ['required', 'exists:hike_vtts,id'],
+            'cancelled' => ['boolean', 'nullable']
         ];
     }
 
@@ -41,6 +42,7 @@ class StoreClubPostRequest extends FormRequest
             'description.string' => 'La description doit être une chaine de caractères',
             'hike_vtt_id.required' => 'L\'id de la rando est obligatoire',
             'hike_vtt_id.exists' => 'L\'id de la rando n\'existe pas',
+            'cancelled.boolean' => 'L\'annulation doit être vrai ou faux'
         ];
     }
 
