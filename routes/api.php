@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\HikeVtt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -138,6 +137,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/hikes/vtt', [HikeVttController::class, 'index']);
   Route::get('/hikes/vtt/{hike_id}', [HikeVttController::class, 'show']);
   Route::post('/hikes/vtt/{hike_id}/hypeOrUnhype', [HikeVttController::class, 'hypeOrUnhype']);
+  Route::post('/hikes/vtt/search', [HikeVttController::class, 'searchHikes']);
 
 
   // ADDRESSES

@@ -46,6 +46,16 @@ namespace App\Models\RequestBody;
  *     @OA\Property(property="supplies", type="string", example=1, description="Nombre de ravitaillements sur le parcours"),
  *   )
  * )
+ * 
+ * @OA\RequestBody(
+ *   request="SearchHikes",
+ *   required=true,
+ *   @OA\JsonContent(
+ *     @OA\Property(property="lat", type="string", example="48.568414"),
+ *     @OA\Property(property="lng", type="string", example="-4.31695"),
+ *     @OA\Property(property="distance", type="number", example=12),
+ *   )
+ * )
  */
 class HikeVttRequestBody
 {
