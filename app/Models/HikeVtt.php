@@ -101,13 +101,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *   ),
  *   @OA\Property(
  *     property="club_avatar",
- *     type="string",
+ *         type="string",
  *     example="club-avatar.png"
  *   ),
  *   @OA\Property(
  *     property="department_code",
  *     type="string",
  *     example="29"
+ *   ),
+ *   @OA\Property(
+ *     property="post",
+ *     ref="#/components/schemas/ClubPostWithClub"
  *   ),
  * )
  */
@@ -142,11 +146,12 @@ class HikeVtt extends Model
     protected $appends = [
         'club_name',
         'club_avatar',
-        'department_name'
+        'department_name',
     ];
 
     protected $with = [
-        'address'
+        'address',
+        // 'post'
     ];
 
     public function address()
@@ -174,6 +179,11 @@ class HikeVtt extends Model
         return $this->hasMany(HikeVttTrip::class);
     }
 
+    public function post()
+    {
+        return $this->hasOne(ClubPost::class);
+    }
+
     public function getDepartmentNameAttribute()
     {
         return $this->address->department_code;
@@ -187,10 +197,5 @@ class HikeVtt extends Model
     public function getClubAvatarAttribute()
     {
         return $this->club->avatar;
-    }
-
-    public function post()
-    {
-        return $this->hasOne(ClubPost::class);
     }
 }

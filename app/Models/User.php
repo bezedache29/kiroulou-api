@@ -173,6 +173,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="club du user",
  *     ref="#/components/schemas/Club"
  *   ),
+ *   @OA\Property(
+ *     property="premium_actif_cancel",
+ *     description="Savoir si le premium a été cancel",
+ *     type="boolean",
+ *     example=false
+ *   ),
  * )
  * 
  * @OA\Schema(
@@ -233,6 +239,7 @@ class User extends Authenticatable
         'premium_name',
         'premium',
         'premium_actif',
+        'premium_actif_cancel',
         'user_join_requests_count',
         'followers_count',
         'short_name_club'
@@ -405,6 +412,31 @@ class User extends Authenticatable
         }
 
         return null;
+    }
+
+    public function getPremiumActifCancelAttribute()
+    {
+        $stripe_customer = $this->stripeCustomer();
+
+        if (!is_null($stripe_customer)) {
+            if (!empty($stripe_customer->subscriptions->data)) {
+                if (count($stripe_customer->subscriptions->data) > 1) {
+                    foreach ($stripe_customer->subscriptions->data as $sub) {
+                        if ($sub->cancel_at_period_end && $sub->status == 'active') {
+                            return $sub->cancel_at_period_end;
+                        }
+                    }
+
+                    return false;
+                }
+
+                return $stripe_customer->subscriptions->data[0]->cancel_at_period_end;
+            }
+
+            return false;
+        }
+
+        return false;
     }
 
     // Permet de récupérer le user stripe s'il existe
