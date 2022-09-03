@@ -114,6 +114,175 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     ref="#/components/schemas/ClubPostWithClub"
  *   ),
  * )
+ * 
+ * @OA\Schema(
+ *   schema="SearchHike",
+ *   description="Rando VTT + Club + Address",
+ *   @OA\Property(
+ *     property="id",
+ *     type="number",
+ *     example=1
+ *   ),
+ *   @OA\Property(
+ *     property="name",
+ *     type="string",
+ *     example="Rando Côte Des Légendes VTT"
+ *   ),
+ *   @OA\Property(
+ *     property="description",
+ *     type="string",
+ *     example="Ma super rando VTT ! Venez nombreux !"
+ *   ),
+ *   @OA\Property(
+ *     property="public_price",
+ *     type="string",
+ *     example="6.00"
+ *   ),
+ *   @OA\Property(
+ *     property="private_price",
+ *     type="string",
+ *     example="4.00"
+ *   ),
+ *   @OA\Property(
+ *     property="address_id",
+ *     type="number",
+ *     example=1
+ *   ),
+ *   @OA\Property(
+ *     property="flyer",
+ *     type="string",
+ *     example="images/clubs/1/hikes/6/flyer/6-90793-335.jpg"
+ *   ),
+ *   @OA\Property(
+ *     property="date",
+ *     type="string",
+ *     example="2022-09-11"
+ *   ),
+ *   @OA\Property(
+ *     property="club_id",
+ *     type="number",
+ *     example=1
+ *   ),
+ *   @OA\Property(
+ *     property="created_at",
+ *     type="string",
+ *     example="2022-09-03 14:05:22"
+ *   ),
+ *   @OA\Property(
+ *     property="updated_at",
+ *     type="string",
+ *     example="2022-09-03 14:05:22"
+ *   ),
+ *   @OA\Property(
+ *     property="deleted_at",
+ *     type="string",
+ *     example=null
+ *   ),
+ *   @OA\Property(
+ *     property="id_club",
+ *     type="number",
+ *     example=1
+ *   ),
+ *   @OA\Property(
+ *     property="club_name",
+ *     type="string",
+ *     example="Côte Des Légendes VTT"
+ *   ),
+ *   @OA\Property(
+ *     property="short_name",
+ *     type="string",
+ *     example="CDL VTT"
+ *   ),
+ *   @OA\Property(
+ *     property="avatar",
+ *     type="string",
+ *     example="images/clubs/1/avatars/1-29386-902.jpg"
+ *   ),
+ *   @OA\Property(
+ *     property="id_address",
+ *     type="number",
+ *     example=3
+ *   ),
+ *   @OA\Property(
+ *     property="street_address",
+ *     type="string",
+ *     example="Rue de la Marne"
+ *   ),
+ *   @OA\Property(
+ *     property="region",
+ *     type="string",
+ *     example="Bretagne"
+ *   ),
+ *   @OA\Property(
+ *     property="department",
+ *     type="string",
+ *     example="Finistère"
+ *   ),
+ *   @OA\Property(
+ *     property="department_code",
+ *     type="string",
+ *     example="29"
+ *   ),
+ *   @OA\Property(
+ *     property="city_id",
+ *     type="number",
+ *     example=3
+ *   ),
+ *   @OA\Property(
+ *     property="zipcode_id",
+ *     type="number",
+ *     example=2
+ *   ),
+ *   @OA\Property(
+ *     property="lat",
+ *     type="string",
+ *     example="48.568414"
+ *   ),
+ *   @OA\Property(
+ *     property="lng",
+ *     type="string",
+ *     example="-4.31695"
+ *   ),
+ *   @OA\Property(
+ *     property="distance",
+ *     type="number",
+ *     example=1.311950750397199
+ *   ),
+ *   @OA\Property(
+ *     property="id_city",
+ *     type="number",
+ *     example=3
+ *   ),
+ *   @OA\Property(
+ *     property="city",
+ *     type="string",
+ *     example="Lesneven"
+ *   ),
+ *   @OA\Property(
+ *     property="id_zipcode",
+ *     type="number",
+ *     example=2
+ *   ),
+ *   @OA\Property(
+ *     property="code",
+ *     type="string",
+ *     example="29260"
+ *   ),
+ *   @OA\Property(
+ *     property="icon",
+ *     type="string",
+ *     example="<svg width=24 height=24 xmlns=http://www.w3.org/2000/svg><path d=M11.9 1a8.6 8.6 0 00-8.6 8.6c0 4.35 7.2 12.05 8.42 13.33a.24.24 0 00.35 0c1.22-1.27 8.42-9 8.42-13.33A8.6 8.6 0 0011.9 1zm0 11.67A3.07 3.07 0 1115 9.6a3.07 3.07 0 01-3.1 3.07z/></svg>",
+ *     description="Icon pour mapMarker de la map Leaflet"
+ *   ),
+ *   @OA\Property(
+ *     property="size",
+ *     type="array",
+ *     @OA\Items(
+ *       type="number",
+ *       example=24
+ *     )
+ *   ),
+ * )
  */
 class HikeVtt extends Model
 {
@@ -147,6 +316,8 @@ class HikeVtt extends Model
         'club_name',
         'club_avatar',
         'department_name',
+        'icon',
+        'size'
     ];
 
     protected $with = [
@@ -197,5 +368,16 @@ class HikeVtt extends Model
     public function getClubAvatarAttribute()
     {
         return $this->club->avatar;
+    }
+
+    public function getIconAttribute()
+    {
+        return '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11.9 1a8.6 8.6 0 00-8.6 8.6c0 4.35 7.2 12.05 8.42 13.33a.24.24 0 00.35 0c1.22-1.27 8.42-9 8.42-13.33A8.6 8.6 0 0011.9 1zm0 11.67A3.07 3.07 0 1115 9.6a3.07 3.07 0 01-3.1 3.07z"/></svg>';
+    }
+
+    public function getSizeAttribute()
+    {
+        return [24, 24];
     }
 }

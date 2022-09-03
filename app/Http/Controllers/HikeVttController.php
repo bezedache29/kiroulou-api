@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchHikesRequest;
 use Carbon\Carbon;
+use App\Models\Address;
 use App\Models\HikeVtt;
 use App\Models\ClubPost;
 use App\Models\HikeVttHype;
 use App\Models\HikeVttTrip;
 use App\Models\HikeVttImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreTripRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreHikeVttRequest;
@@ -101,10 +104,7 @@ class HikeVttController extends Controller
      *   @OA\Response(
      *     response=200,
      *     description="OK",
-     *     @OA\JsonContent(
-     *       type="array",
-     *       @OA\Items(ref="#/components/schemas/HikeVttClub")
-     *     )
+     *     @OA\JsonContent(ref="#/components/schemas/HikeVttClub")
      *   )
      * )
      */
@@ -655,5 +655,62 @@ class HikeVttController extends Controller
         HikeVttTrip::where('id', $trip_id)->delete();
 
         return response()->json(['message' => 'trip deleted'], 201);
+    }
+
+    /**
+     * @OA\Post(
+     *   tags={"Hikes VTT"},
+     *   path="/hikes/vtt/search",
+     *   summary="Search hikes vtt",
+     *   description="Recherche des randonnées vtt",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\RequestBody(ref="#/components/requestBodies/SearchHikes"),
+     *     @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="array",
+     *       @OA\Items(ref="#/components/schemas/SearchHike")
+     *     )
+     *     
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     ref="#/components/responses/UnprocessableEntity"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function searchHikes(SearchHikesRequest $request)
+    {
+        // Distance initial (Zoom 12)
+        $distance = 12;
+
+        if ($request->distance) {
+            $distance = $request->distance;
+        }
+
+        // Permet de récupérer les infos de la rando avec le club + l'adresse + cp + ville + la distance calculé grace a la longitude et la lattitude
+        $hikes = DB::select("SELECT * FROM hike_vtts INNER JOIN (SELECT clubs.id AS id_club, name AS club_name, short_name, avatar FROM clubs) clubs ON hike_vtts.club_id = clubs.id_club INNER JOIN (SELECT addresses.id AS id_address, street_address, region, department, department_code, city_id, zipcode_id, lat, lng, (6371 * acos( cos (radians( $request->lat) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians($request->lng) ) + sin( radians($request->lat) ) * sin( radians( lat ) ) ) ) AS distance FROM addresses HAVING distance < $distance) addresses ON hike_vtts.address_id = addresses.id_address INNER JOIN (SELECT cities.id AS id_city, name AS city FROM cities) cities ON addresses.city_id = cities.id_city INNER JOIN (SELECT zipcodes.id AS id_zipcode, code FROM zipcodes) zipcodes ON addresses.zipcode_id = zipcodes.id_zipcode ORDER BY addresses.distance");
+
+        // On rajoute l'icon et la size pour les mapMarkers
+        $hikes = array_map(function ($item) {
+            $new_hike = (array) $item;
+            $new_hike['icon'] = '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M11.9 1a8.6 8.6 0 00-8.6 8.6c0 4.35 7.2 12.05 8.42 13.33a.24.24 0 00.35 0c1.22-1.27 8.42-9 8.42-13.33A8.6 8.6 0 0011.9 1zm0 11.67A3.07 3.07 0 1115 9.6a3.07 3.07 0 01-3.1 3.07z"/></svg>';
+            $new_hike['size'] = [24, 24];
+            $new_hike['position'] = collect([
+                'lat' => $item->lat,
+                'lng' => $item->lng
+            ]);
+            return $new_hike;
+        }, $hikes);
+
+        return response()->json([
+            'hikes' => $hikes,
+            'request' => $request->all()
+        ], 200);
     }
 }
