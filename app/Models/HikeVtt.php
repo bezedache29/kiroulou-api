@@ -63,6 +63,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="number",
  *     example=1,
  *   ),
+ *   @OA\Property(
+ *     property="deleted_at",
+ *     type="string",
+ *     example=null,
+ *   ),
  * )
  * 
  * @OA\Schema(
@@ -268,20 +273,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *     type="string",
  *     example="29260"
  *   ),
- *   @OA\Property(
- *     property="icon",
- *     type="string",
- *     example="<svg width=24 height=24 xmlns=http://www.w3.org/2000/svg><path d=M11.9 1a8.6 8.6 0 00-8.6 8.6c0 4.35 7.2 12.05 8.42 13.33a.24.24 0 00.35 0c1.22-1.27 8.42-9 8.42-13.33A8.6 8.6 0 0011.9 1zm0 11.67A3.07 3.07 0 1115 9.6a3.07 3.07 0 01-3.1 3.07z/></svg>",
- *     description="Icon pour mapMarker de la map Leaflet"
- *   ),
- *   @OA\Property(
- *     property="size",
- *     type="array",
- *     @OA\Items(
- *       type="number",
- *       example=24
- *     )
- *   ),
  * )
  */
 class HikeVtt extends Model
@@ -308,7 +299,7 @@ class HikeVtt extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at',
+        // 'deleted_at',
         'club',
     ];
 
@@ -316,8 +307,6 @@ class HikeVtt extends Model
         'club_name',
         'club_avatar',
         'department_code',
-        'icon',
-        'size'
     ];
 
     protected $with = [
@@ -368,16 +357,5 @@ class HikeVtt extends Model
     public function getClubAvatarAttribute()
     {
         return $this->club->avatar;
-    }
-
-    public function getIconAttribute()
-    {
-        return '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.9 1a8.6 8.6 0 00-8.6 8.6c0 4.35 7.2 12.05 8.42 13.33a.24.24 0 00.35 0c1.22-1.27 8.42-9 8.42-13.33A8.6 8.6 0 0011.9 1zm0 11.67A3.07 3.07 0 1115 9.6a3.07 3.07 0 01-3.1 3.07z"/></svg>';
-    }
-
-    public function getSizeAttribute()
-    {
-        return [24, 24];
     }
 }

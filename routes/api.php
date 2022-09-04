@@ -83,6 +83,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/clubs/{club}/profileImages', [ClubController::class, 'profileImages']);
   Route::get('/clubs/{club}/allImages', [ClubController::class, 'allImages']);
 
+  Route::get('/clubs/{club}/hikes', [ClubController::class, 'hikes']);
+
   Route::get('/clubs/{club}/posts', [ClubPostController::class, 'posts']);
   Route::put('/clubs/{club}/posts/{post}', [ClubPostController::class, 'updatePost']);
   Route::delete('/clubs/{club}/posts/{post}', [ClubPostController::class, 'deletePost']);
