@@ -134,6 +134,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
   // HIKES VTT
+  Route::middleware('premium')->group(function () {
+    Route::post('/hikes/vtt/searchInDepartment', [HikeVttController::class, 'searchInDepartment']);
+    Route::post('/hikes/vtt/searchInMonth', [HikeVttController::class, 'searchInMonth']);
+  });
+
+
   Route::get('/hikes/vtt', [HikeVttController::class, 'index']);
   Route::get('/hikes/vtt/{hike_id}', [HikeVttController::class, 'show']);
   Route::post('/hikes/vtt/{hike_id}/hypeOrUnhype', [HikeVttController::class, 'hypeOrUnhype']);
@@ -175,9 +181,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
   // middleware admin.club
   Route::put('/clubs/{club}/users/{user}/expelMember', [ClubController::class, 'expelMember']);
-
-  Route::middleware('premium')->group(function () {
-    Route::post('/hikes/vtt/searchInDepartment', [HikeVttController::class, 'searchInDepartment']);
-    Route::post('/hikes/vtt/searchInMonth', [HikeVttController::class, 'searchInMonth']);
-  });
 });

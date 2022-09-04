@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchDepartmentRequest;
 use App\Http\Requests\SearchHikesRequest;
 use Carbon\Carbon;
 use App\Models\Address;
@@ -456,6 +457,7 @@ class HikeVttController extends Controller
                 ->withCount('hikeVttHypes')
                 ->with('hikeVttHypes')
                 ->with('hikeVttTrips')
+                ->with('post')
                 ->findOrFail($hike_id)
                 ->makeVisible('club');
 
@@ -474,6 +476,7 @@ class HikeVttController extends Controller
             ->withCount('hikeVttHypes')
             ->with('hikeVttHypes')
             ->with('hikeVttTrips')
+            ->with('post')
             ->findOrFail($hike_id)
             ->makeVisible('club');
 
@@ -505,13 +508,13 @@ class HikeVttController extends Controller
      *   )
      * )
      */
-    public function searchInDepartment(Request $request)
+    public function searchInDepartment(SearchDepartmentRequest $request)
     {
         // On récupère les rando vtt futur
         $hikes = HikeVtt::where('date', '>=', Carbon::now())->orderBy('date', 'ASC')->get();
 
         // On récupère les rando du départment voulu
-        $hikes = $hikes->where('department_name', $request->department_code)->values();
+        $hikes = $hikes->where('department_code', $request->department_code)->values();
 
         return response()->json($hikes->toArray(), 200);
     }
@@ -546,7 +549,7 @@ class HikeVttController extends Controller
             ->whereMonth('date', $date->month)
             ->get();
 
-        $hikes = $hikes->where('department_name', $request->department_code)->values();
+        $hikes = $hikes->where('department_code', $request->department_code)->values();
 
         return response()->json($hikes->toArray(), 200);
     }

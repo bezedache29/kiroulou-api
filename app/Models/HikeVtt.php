@@ -315,7 +315,7 @@ class HikeVtt extends Model
     protected $appends = [
         'club_name',
         'club_avatar',
-        'department_name',
+        'department_code',
         'icon',
         'size'
     ];
@@ -355,7 +355,7 @@ class HikeVtt extends Model
         return $this->hasOne(ClubPost::class);
     }
 
-    public function getDepartmentNameAttribute()
+    public function getDepartmentCodeAttribute()
     {
         return $this->address->department_code;
     }

@@ -836,7 +836,7 @@ class ClubController extends Controller
         $club_hike_images = HikeVttImage::where('club_id', $club->id)->orderBy('created_at', 'DESC')->get();
 
         // On merge les 2 collections
-        $images = collect($club_post_images)->merge($club_hike_images)->sortByDesc('created_at')->values()->paginate(5);
+        $images = collect($club_post_images)->merge($club_hike_images)->sortByDesc('created_at')->paginate(5)->values();
 
         return response()->json($images->toArray(), 200);
     }
