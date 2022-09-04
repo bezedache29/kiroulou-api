@@ -151,6 +151,37 @@ class ClubController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *   tags={"Clubs"},
+     *   path="/clubs/{club_id}/hikes",
+     *   summary="Hikes club",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       ref="#/components/schemas/HikeVttSimple"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function hikes(CLub $club)
+    {
+        $hikes = HikeVtt::where('club_id', $club->id)->withTrashed()->get();
+
+        return response()->json($hikes, 200);
+    }
+
+    /**
      * @OA\Post(
      *   tags={"Clubs"},
      *   path="/clubs/{club_id}/storeAvatar",
