@@ -402,18 +402,108 @@ class PaymentController extends Controller
         return response()->json(['message' => 'subscription canceled'], 201);
     }
 
-    public function invoices(Request $request)
+    /**
+     * @OA\Get(
+     *   tags={"Payments"},
+     *   path="/billing",
+     *   summary="billing's user",
+     *   description="Récupère les informations de paiement du user depuis stripe",
+     *   security={{ "bearer_token": {} }},
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       description="payment infos",
+     *       @OA\Property(
+     *         property="sub",
+     *         description="sub",
+     *         @OA\Property(property="cancel_at_period_end", type="boolean", example=false),
+     *         @OA\Property(property="current_period_end", type="number", example=1664876127, description="timestamp"),
+     *         @OA\Property(property="current_period_start", type="number", example=1662284127, description="timestamp"),
+     *         @OA\Property(
+     *           property="plan",
+     *           description="plan",
+     *           @OA\Property(property="nickname", type="string", example="Premium 2"),
+     *           @OA\Property(property="amount", type="number", example=499, description="Prix en centimes"),
+     *           @OA\Property(property="interval", type="string", example="month"),
+     *         ),
+     *         @OA\Property(property="status", type="string", example="active")
+     *       ),
+     *       @OA\Property(
+     *         property="payment_method",
+     *         description="payment method",
+     *         @OA\Property(property="type", type="string", example="card"),
+     *         @OA\Property(
+     *           property="card",
+     *           description="card",
+     *           @OA\Property(property="last4", type="string", example="4242", description="4 dernier chiffres de la CB"),
+     *           @OA\Property(property="brand", type="string", example="visa"),
+     *         ),
+     *       ),
+     *       @OA\Property(
+     *         property="latest_invoice",
+     *         description="facture",
+     *         @OA\Property(property="invoice_pdf", type="string", example="https://pay.stripe.com/invoice/acct_1LVAzJGofnt4tufZ/test_YWNjdF8xTFZBekpHb2ZudDR0dWZaLF9NTXpESXd6TE5ZNjdtTEdvU3FPRzNsbG1FOThvUTZYLDUyODM0MjU00200yZ5KsDzF/pdf?s=ap"),
+     *       ),
+     *       @OA\Property(
+     *         property="latest_charge",
+     *         description="reçu",
+     *         @OA\Property(property="receipt_url", type="string", example="https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xTFZBekpHb2ZudDR0dWZaKM6r0pgGMgZUWFXIY3A6LBbqp0lys5pQR1HLSE8h3Kip2cSyn8liNpqS8Pk30znHmvH8AkC823zLG_ud?s=ap"),
+     *       ),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     ref="#/components/responses/NotFound"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   )
+     * )
+     */
+    public function billing(Request $request)
     {
         if ($request->user()->stripe_customer_id == "0") {
-            return response()->json(['message' => 'Customer inexistant'], 404);
+            return response()->json(['message' => 'customer not found'], 404);
         }
 
-        $id = strval($request->user()->stripe_customer_id);
-        $invoices = $this->stripe->invoices->search([
-            'query' => 'customer:\'' . $id . '\'',
-        ]);
+        $stripe_customer = $this->stripe->customers->retrieve($request->user()->stripe_customer_id, ['expand' => ['subscriptions']]);
 
-        return response()->json($invoices, 200);
+        if (empty($stripe_customer->subscriptions->data)) {
+            return response()->json(['message' => 'no subscriptions'], 404);
+        }
+
+        $sub = $stripe_customer->subscriptions->data[0];
+
+        $payment_method = $this->stripe->paymentMethods->retrieve(
+            $sub->default_payment_method,
+            []
+        );
+
+        $lastest_invoice = $this->stripe->invoices->retrieve(
+            $sub->latest_invoice,
+            []
+        );
+
+        $latest_charge = $this->stripe->charges->retrieve(
+            $lastest_invoice->charge,
+            []
+        );
+
+        $payment_intent = $this->stripe->paymentIntents->retrieve(
+            $latest_charge->payment_intent,
+            []
+        );
+
+        return response()->json([
+            'sub' => $sub,
+            'payment_method' => $payment_method,
+            'latest_invoice' => $lastest_invoice,
+            'latest_charge' => $latest_charge,
+            'payment_intent' => $payment_intent
+        ], 200);
     }
 
     /**
