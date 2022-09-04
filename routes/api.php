@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
   route::post('/subscriptions/delete', [PaymentController::class, 'deleteSubscription']);
   route::post('/subscriptions/subscribe', [PaymentController::class, 'subscribe']);
 
-  route::get('/invoices', [PaymentController::class, 'invoices']);
+  route::get('/billing', [PaymentController::class, 'billing']);
 
   // POSTS
   Route::get('/posts', [PostController::class, 'posts']);

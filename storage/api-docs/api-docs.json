@@ -2515,6 +2515,127 @@
                 ]
             }
         },
+        "/billing": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "billing's user",
+                "description": "Récupère les informations de paiement du user depuis stripe",
+                "operationId": "c08ad033971c2c96edfd20c1e36d6ac4",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "payment infos",
+                                    "properties": {
+                                        "sub": {
+                                            "description": "sub",
+                                            "properties": {
+                                                "cancel_at_period_end": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "current_period_end": {
+                                                    "description": "timestamp",
+                                                    "type": "number",
+                                                    "example": 1664876127
+                                                },
+                                                "current_period_start": {
+                                                    "description": "timestamp",
+                                                    "type": "number",
+                                                    "example": 1662284127
+                                                },
+                                                "plan": {
+                                                    "description": "plan",
+                                                    "properties": {
+                                                        "nickname": {
+                                                            "type": "string",
+                                                            "example": "Premium 2"
+                                                        },
+                                                        "amount": {
+                                                            "description": "Prix en centimes",
+                                                            "type": "number",
+                                                            "example": 499
+                                                        },
+                                                        "interval": {
+                                                            "type": "string",
+                                                            "example": "month"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "active"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "payment_method": {
+                                            "description": "payment method",
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "card"
+                                                },
+                                                "card": {
+                                                    "description": "card",
+                                                    "properties": {
+                                                        "last4": {
+                                                            "description": "4 dernier chiffres de la CB",
+                                                            "type": "string",
+                                                            "example": "4242"
+                                                        },
+                                                        "brand": {
+                                                            "type": "string",
+                                                            "example": "visa"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "latest_invoice": {
+                                            "description": "facture",
+                                            "properties": {
+                                                "invoice_pdf": {
+                                                    "type": "string",
+                                                    "example": "https://pay.stripe.com/invoice/acct_1LVAzJGofnt4tufZ/test_YWNjdF8xTFZBekpHb2ZudDR0dWZaLF9NTXpESXd6TE5ZNjdtTEdvU3FPRzNsbG1FOThvUTZYLDUyODM0MjU00200yZ5KsDzF/pdf?s=ap"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "latest_charge": {
+                                            "description": "reçu",
+                                            "properties": {
+                                                "receipt_url": {
+                                                    "type": "string",
+                                                    "example": "https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xTFZBekpHb2ZudDR0dWZaKM6r0pgGMgZUWFXIY3A6LBbqp0lys5pQR1HLSE8h3Kip2cSyn8liNpqS8Pk30znHmvH8AkC823zLG_ud?s=ap"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/posts?page={page}": {
             "get": {
                 "tags": [
