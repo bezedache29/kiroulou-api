@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\PostUser;
 use App\Models\ClubMember;
@@ -298,5 +299,28 @@ class AuthController extends Controller
     public function unauthenticated()
     {
         return response()->json(["message" => "unauthenticated"]);
+    }
+
+    /**
+     * @OA\Put(
+     *   path="/lastConnexion",
+     *   summary="User's last connexion",
+     *   description="Dernière connexion du user",
+     *   tags={"Auth"},
+     *   @OA\Response(
+     *     response=201,
+     *     ref="#/components/responses/Created"
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     ref="#/components/responses/Unauthorized"
+     *   ),
+     * )
+     */
+    public function lastConnexion(Request $request)
+    {
+        User::where('id', $request->user()->id)->update(['last_connexion' => Carbon::now()]);
+
+        return response()->json(['message' => 'last connexion updated'], 201);
     }
 }
