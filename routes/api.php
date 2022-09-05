@@ -50,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/me', [AuthController::class, 'me']);
   Route::post('/disconnect', [AuthController::class, 'disconnect']);
 
+  Route::put('/lastConnexion', [AuthController::class, 'lastConnexion']);
+
   // SUBSCRIPTIONS
 
   route::get('/subscriptions/plans', [PaymentController::class, 'plans']);

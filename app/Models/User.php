@@ -39,6 +39,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     description="Email du user",
  *   ),
  *   @OA\Property(
+ *     property="last_connexion",
+ *     type="string",
+ *     format="date-time",
+ *     description="Date de la dernière connexion du user",
+ *     nullable=true
+ *   ),
+ *   @OA\Property(
  *     property="created_at",
  *     type="string",
  *     format="date-time",
@@ -215,6 +222,7 @@ class User extends Authenticatable
         'avatar',
         'is_push_notifications',
         'is_email_notifications',
+        'last_connexion'
     ];
 
     /**

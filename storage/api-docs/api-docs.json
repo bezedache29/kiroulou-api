@@ -243,6 +243,24 @@
                 }
             }
         },
+        "/lastConnexion": {
+            "put": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User's last connexion",
+                "description": "Dernière connexion du user",
+                "operationId": "7261ab3bd7721d132297e1d85674f65d",
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/Created"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
         "/clubs": {
             "post": {
                 "tags": [
