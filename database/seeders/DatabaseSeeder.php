@@ -161,38 +161,38 @@ class DatabaseSeeder extends Seeder
         //     'organization_id' => $organization_1->id
         // ]);
 
-        $user_1 = User::create([
-            'email' => 'test1@gmail.com',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ]);
-        $user_2 = User::create([
-            'email' => 'test2@gmail.com',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ]);
-        $user_3 = User::create([
-            'email' => 'test3@gmail.com',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ]);
-        $user_4 = User::create([
-            'email' => 'test4@gmail.com',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ]);
-        $user_4 = User::create([
-            'email' => 'test5@gmail.com',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ]);
+        // $user_1 = User::create([
+        //     'email' => 'test1@gmail.com',
+        //     'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        // ]);
+        // $user_2 = User::create([
+        //     'email' => 'test2@gmail.com',
+        //     'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        // ]);
+        // $user_3 = User::create([
+        //     'email' => 'test3@gmail.com',
+        //     'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        // ]);
+        // $user_4 = User::create([
+        //     'email' => 'test4@gmail.com',
+        //     'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        // ]);
+        // $user_4 = User::create([
+        //     'email' => 'test5@gmail.com',
+        //     'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        // ]);
 
         // User test avec un token sanctum
-        $user_test = User::create([
-            'id' => 10005,
-            'email' => 'my@email.com',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ])->tokens()->create([
-            'id' => 10005,
-            'name' => 'api',
-            'token' => hash('sha256', 'N7fp6GTjO9CJD1QIhqv0Ty1ZZbJeS3tFIbToFJZQ'),
-            'abilities' => ['*'],
-        ]);
+        // $user_test = User::create([
+        //     'id' => 10005,
+        //     'email' => 'my@email.com',
+        //     'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        // ])->tokens()->create([
+        //     'id' => 10005,
+        //     'name' => 'api',
+        //     'token' => hash('sha256', 'N7fp6GTjO9CJD1QIhqv0Ty1ZZbJeS3tFIbToFJZQ'),
+        //     'abilities' => ['*'],
+        // ]);
 
         // $user_test = User::findOrFail($user_test->id);
 

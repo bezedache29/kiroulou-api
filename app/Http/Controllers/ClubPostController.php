@@ -39,7 +39,7 @@ class ClubPostController extends Controller
     public function posts(Request $request, Club $club)
     {
         $posts = ClubPost::where('club_id', $club->id)
-            // ->with('club')
+            ->with('hikeVtt')
             ->withCount('postlikes')
             ->withCount('comments')
             ->paginate(10)
