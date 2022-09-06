@@ -158,6 +158,7 @@ class ClubPost extends Model
         // 'postlikes',
         // 'comments'
         // 'club'
+        // 'hike_vtt'
     ];
 
     protected $appends = [
