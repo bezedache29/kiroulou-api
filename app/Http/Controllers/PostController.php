@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ClubPost;
 use App\Models\PostUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -36,14 +37,31 @@ class PostController extends Controller
      *   )
      * )
      */
-    public function posts()
+    public function posts(Request $request)
     {
+        $users = DB::table('follow_users')->where('user_follower_id', $request->user()->id)->get();
+
         // On récupère les 20 derniers posts des users
         $users_posts = PostUser::with('user')->withCount('postUserLikes')
             ->withCount('postUserComments')
             ->orderBy('created_at', 'DESC')
-            ->limit(20)
+            // ->limit(20)
             ->get();
+
+        $posts_users = [];
+
+        foreach ($users_posts as $user_posts) {
+            if ($user_posts->user_id == $request->user()->id) {
+                $posts_users[] = $user_posts;
+            }
+            foreach ($users as $user) {
+                if ($user->user_followed_id == $user_posts->user_id) {
+                    $posts_users[] = $user_posts;
+                }
+            }
+        }
+
+
 
         // On récupère les 20 derniers posts des clubs
         $clubs_posts = ClubPost::with('club')->with('hikeVtt')->withCount('postlikes')
@@ -52,7 +70,7 @@ class PostController extends Controller
             ->limit(20)
             ->get();
 
-        $posts = collect($clubs_posts)->merge($users_posts)->sortByDesc('created_at')->paginate(5)->values();
+        $posts = collect($clubs_posts)->merge($posts_users)->sortByDesc('created_at')->paginate(5)->values();
         $posts = $posts->toArray();
 
         return response()->json(['posts' => $posts], 200);

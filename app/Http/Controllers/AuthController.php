@@ -45,7 +45,7 @@ class AuthController extends Controller
         $password_hashed = Hash::make($request->password);
 
         $user = [
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'password' => $password_hashed,
         ];
 
