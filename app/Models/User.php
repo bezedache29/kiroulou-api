@@ -239,7 +239,8 @@ class User extends Authenticatable
     ];
 
     protected $with = [
-        'address'
+        'address',
+        // 'followers'
     ];
 
     protected $appends = [
